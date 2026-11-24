@@ -129,6 +129,58 @@ tbody tr:hover{background:#FAFBFD}
 .legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-top:8px}
 .legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
 @media(max-width:1000px){.grid2,.grid3{grid-template-columns:1fr}.tabs{overflow-x:auto}}
+.mailgrid{display:grid;grid-template-columns:220px 310px 1fr;border-top:1px solid var(--line)}
+@media(max-width:1100px){.mailgrid{grid-template-columns:1fr}}
+.mcol{border-right:1px solid var(--line);padding:10px;min-height:520px}
+.mcol:last-child{border-right:0}
+.folder{display:flex;justify-content:space-between;align-items:center;padding:7px 9px;border-radius:8px;font-size:12.5px;cursor:pointer;color:#3A4655}
+.folder:hover{background:var(--bg)}
+.folder.on{background:#EAF1FF;color:var(--blue);font-weight:700}
+.folder b{font-size:11px;font-weight:700;color:var(--muted)}
+.mbox{display:flex;gap:8px;align-items:center;padding:8px 9px;border-radius:8px;font-size:12px;color:#3A4655}
+.mbox .dot{width:7px;height:7px;border-radius:99px;background:var(--green);flex:none}
+.thread{padding:9px 10px;border-radius:9px;cursor:pointer;border-left:3px solid transparent}
+.thread:hover{background:var(--bg)}
+.thread.on{background:#EAF1FF;border-left-color:var(--blue)}
+.thread .t1{display:flex;justify-content:space-between;gap:8px;font-size:12.5px}
+.thread .t1 b{font-weight:700}
+.thread .t2{font-size:12.5px;color:var(--ink);margin-top:2px}
+.thread .t3{font-size:11.5px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.udot{width:7px;height:7px;border-radius:99px;background:var(--blue);display:inline-block;margin-right:5px}
+.mailread{padding:4px 14px 14px}
+.mailread h3{font-size:15px;margin:6px 0 4px}
+.mbody{font-size:13px;line-height:1.62;color:#243040;margin:10px 0}
+.mbody p{margin:0 0 9px}
+.att{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:5px 9px;margin:0 6px 6px 0;cursor:pointer}
+.att:hover{border-color:var(--blue);color:var(--blue)}
+.replybox{border:1px solid var(--line);border-radius:10px;padding:9px;margin-top:8px}
+.replybox textarea{width:100%;border:0;outline:0;font-family:inherit;font-size:13px;resize:vertical;min-height:64px}
+.presence{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.pchip{display:flex;align-items:center;gap:7px;font-size:12px;background:var(--white);border:1px solid var(--line);border-radius:99px;padding:4px 11px 4px 5px}
+.pchip .av{width:22px;height:22px;border-radius:99px;background:#DCE6F7;color:var(--blue);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.pchip i{width:7px;height:7px;border-radius:99px;display:inline-block}
+.chatgrid{display:grid;grid-template-columns:250px 1fr 290px;border-top:1px solid var(--line);min-height:560px}
+@media(max-width:1100px){.chatgrid{grid-template-columns:1fr}}
+.msgs{padding:12px 14px;max-height:430px;overflow-y:auto}
+.msg{display:flex;gap:9px;margin-bottom:12px}
+.msg .av{width:28px;height:28px;border-radius:99px;background:#DCE6F7;color:var(--blue);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none}
+.msg .who{font-size:12px;font-weight:800}
+.msg .tm{font-size:10.5px;color:var(--muted);font-weight:500;margin-left:6px}
+.msg .tx{font-size:13px;line-height:1.55;color:#243040;margin-top:2px}
+.msg.sys .tx{color:var(--muted);font-style:italic}
+.call{position:fixed;inset:0;background:rgba(8,14,24,.92);z-index:80;display:none;padding:26px;color:#fff}
+.call.on{display:flex;flex-direction:column;gap:14px}
+.tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:0}
+@media(max-width:900px){.tiles{grid-template-columns:1fr}}
+.tile{background:#16202F;border:1px solid #22304a;border-radius:14px;position:relative;display:flex;align-items:center;justify-content:center;min-height:150px}
+.tile .bigav{width:64px;height:64px;border-radius:99px;background:#22304a;color:#cfe0ff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.tile .nm{position:absolute;left:10px;bottom:9px;font-size:12px;background:rgba(0,0,0,.45);padding:3px 8px;border-radius:6px}
+.tile .st{position:absolute;right:10px;top:9px;font-size:11px;color:#9fb2cc}
+.callbar{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.cbtn{background:#1B2739;border:1px solid #2A3A55;color:#e8eefb;border-radius:99px;padding:9px 15px;font-size:12.5px;font-weight:600;cursor:pointer}
+.cbtn:hover{background:#22304a}
+.cbtn.off{background:#3a2028;border-color:#5d2f3a;color:#ffc9d1}
+.cbtn.end{background:var(--red);border-color:var(--red)}
 </style></head><body>
 <div class="gate" id="gate"><div class="box">
   <div class="mark" style="margin-bottom:12px">C</div>
@@ -147,6 +199,8 @@ tbody tr:hover{background:#FAFBFD}
       <button data-v="quotes"><span class="ic">✎</span><span>Quotes</span></button>
       <button data-v="policies"><span class="ic">▤</span><span>Policies</span></button>
       <button data-v="tasks"><span class="ic">✓</span><span>Tasks</span></button>
+      <button data-v="email"><span class="ic">✉</span><span>Email</span></button>
+      <button data-v="messages"><span class="ic">◍</span><span>Messages</span></button>
       <button data-v="campaigns"><span class="ic">↻</span><span>Campaigns</span></button>
       <button data-v="growth"><span class="ic">◈</span><span>Growth</span></button>
       <button data-v="sync"><span class="ic">⇄</span><span>Data sync</span></button>
@@ -253,6 +307,60 @@ tbody tr:hover{background:#FAFBFD}
             <div class="body"><div class="tl" id="actLog"></div></div></div>
         </div>
       </div>
+    </section>
+
+
+    <section class="view" id="v-email">
+      <div class="cards" id="mailKpis"></div>
+      <div class="panel"><div class="head"><h2>Inbox</h2><div class="spacer"></div>
+        <div class="filters" id="mailFilters"><button class="on" onclick="mailFilter('all',this)">All</button><button onclick="mailFilter('unread',this)">Unread</button><button onclick="mailFilter('renewals',this)">Renewals</button><button onclick="mailFilter('carrier',this)">Carrier</button><button onclick="mailFilter('claims',this)">Service</button></div>
+        <button class="btn blue sm" onclick="composeMail()">Compose</button></div>
+        <div class="body" style="padding:0">
+          <div style="display:flex;gap:10px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap">
+            <input id="mailSearch" class="search" placeholder="Search sender, subject or tag" oninput="mailList()" style="max-width:340px">
+            <span style="font-size:11.5px;color:var(--muted)">Every thread matched to a client record by sender, automatically</span>
+          </div>
+          <div class="mailgrid">
+            <div class="mcol">
+              <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:6px">Folders</div>
+              <div id="mailFolders"></div>
+              <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:14px 0 6px">Connected mailboxes</div>
+              <div id="mailBoxes"></div>
+              <div class="note" style="margin-top:10px">Replies go out from the mailbox the message arrived in, so the thread stays in one place for the client.</div>
+            </div>
+            <div class="mcol" style="padding:6px"><div id="mailThreads"></div></div>
+            <div class="mcol" style="padding:0"><div class="mailread" id="mailRead"></div></div>
+          </div>
+        </div></div>
+    </section>
+
+    <section class="view" id="v-messages">
+      <div class="panel"><div class="head"><h2>Team presence</h2><div class="spacer"></div><span class="chip g">5 online</span>
+        <button class="btn blue sm" onclick="startCall('Team huddle')">Start video call</button></div>
+        <div class="body"><div class="presence" id="presence"></div></div></div>
+      <div class="panel" style="padding:0"><div class="chatgrid">
+        <div class="mcol" style="padding:8px">
+          <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:6px">Channels</div>
+          <div id="chanList"></div>
+          <div class="note" style="margin-top:10px">Channels are internal only. Nothing here reaches a client, and every call posts its recap back to the channel it started in.</div>
+        </div>
+        <div class="mcol" style="padding:0;display:flex;flex-direction:column">
+          <div style="padding:11px 14px;border-bottom:1px solid var(--line)"><b id="chanTitle"></b><div style="font-size:11.5px;color:var(--muted)" id="chanSub"></div></div>
+          <div class="msgs" id="msgs" style="flex:1"></div>
+          <div style="padding:9px 12px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center">
+            <input id="chatInput" class="search" placeholder="Message the team, Enter to send" onkeydown="if(event.key==='Enter')sendChat()" style="flex:1;max-width:none">
+            <button class="btn ghost sm" onclick="toast('Attach a policy, ID card or document from the client record')">Attach</button>
+            <button class="btn blue sm" onclick="sendChat()">Send</button>
+          </div>
+        </div>
+        <div class="mcol">
+          <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:6px">Upcoming</div>
+          <div id="meetList"></div>
+          <div class="note" id="callRecap" style="margin-top:10px"></div>
+          <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:14px 0 6px">Video rooms</div>
+          <div class="note">Opens in the browser, no download. Screen share, participants and a running timer, recording off by default. Leaving drops a recap into the channel.</div>
+        </div>
+      </div></div>
     </section>
 
     <section class="view" id="v-campaigns">
@@ -372,6 +480,22 @@ tbody tr:hover{background:#FAFBFD}
 
 <div class="drawer" id="drawer"><div class="dh" id="dh"></div><div class="db" id="db"></div></div>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div class="call" id="call">
+  <div style="display:flex;align-items:center;gap:11px">
+    <div class="mark">C</div>
+    <div><b id="callTitle" style="font-size:14px"></b><div style="font-size:11.5px;color:#9fb2cc" id="callSub"></div></div>
+    <div style="flex:1"></div>
+    <div style="font-size:12.5px;color:#cfe0ff;font-variant-numeric:tabular-nums" id="callTimer">00:00</div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+  <div class="callbar">
+    <button class="cbtn" id="btnMute" onclick="callToggle('mute')">Mute</button>
+    <button class="cbtn" id="btnCam" onclick="callToggle('cam')">Camera on</button>
+    <button class="cbtn" id="btnShare" onclick="callToggle('share')">Share screen</button>
+    <button class="cbtn" onclick="callToggle('people')">Participants</button>
+    <button class="cbtn end" onclick="endCall()">Leave</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <script>
 const CODE='cardinal2026';
@@ -591,7 +715,7 @@ ACTLOG=[
  ['07:44','Steve L. generated an ID card for Elena Kowalski']
 ];
 const PROD_GOALS=[['Jacobo M.',9,14200],['Dana R.',7,11800],['Steve L.',6,10400],['Kayla B.',5,8600]];
-const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Quoted in each carrier portal, sent from here'],policies:['Policies','Renewals, payments and documents'],tasks:['Tasks','Who does what, and who covers'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
+const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Quoted in each carrier portal, sent from here'],policies:['Policies','Renewals, payments and documents'],tasks:['Tasks','Who does what, and who covers'],email:['Email','Every client, carrier and portal thread in one inbox'],messages:['Messages','Team chat, huddles and video in one room'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
 const byId=id=>CLIENTS.find(c=>c.id===id);
 const polsOf=id=>POLICIES.filter(p=>p.clientId===id);
 const premOf=id=>polsOf(id).reduce((s,p)=>s+p.premium,0);
@@ -611,7 +735,7 @@ function go(v){
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   document.getElementById('ttl').textContent=NAV[v][0];
   document.getElementById('sub').textContent=NAV[v][1];
-  const R={dash:renderDash,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,tasks:renderTasks,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
+  const R={dash:renderDash,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,tasks:renderTasks,email:renderEmail,messages:renderMessages,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
   if(R[v])R[v]();
 }
 function quickSearch(v){
@@ -1062,7 +1186,7 @@ function renderProjections(){
 }
 
 /* ---------- boot ---------- */
-function renderAll(){renderDash();renderClients();renderQuotes();renderPolicies();renderTasks();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
+function renderAll(){renderDash();renderClients();renderQuotes();renderPolicies();renderTasks();renderEmail();renderMessages();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 document.querySelectorAll('#clientFilters button').forEach(b=>b.onclick=()=>setClientFilter(b.dataset.f));
 document.querySelectorAll('#polFilters button').forEach(b=>b.onclick=()=>setPolFilter(b.dataset.f));
@@ -1677,4 +1801,285 @@ wireFilters();
 /* ---- boot additions ---- */
 document.querySelectorAll('#rangeFilters button').forEach(b=>b.onclick=()=>setRange(b.dataset.r));
 document.getElementById('qLine').addEventListener('change',()=>{if(MARKETS.length||true)renderMarkets()});
+/* ================= EMAIL ================= */
+const MAILBOXES=[
+  {n:'kelsey@cardinalagency.com',p:'Microsoft 365',ok:1},
+  {n:'service@cardinalagency.com',p:'Microsoft 365',ok:1},
+  {n:'quotes@cardinalagency.com',p:'Google Workspace',ok:1}
+];
+const MAIL_SEED=[
+  {from:'Jill Nakamura',email:'jill.nakamura@example.com',subject:'Auto renewal: need the new rate before Friday',tag:'Renewal',time:'9:12 AM',unread:1,client:'Jill Nakamura',box:'kelsey@cardinalagency.com',
+   body:['Hi Kelsey, my auto policy renews Friday and the notice came in higher than last year. Can you send me the new rate and what changed before I decide?','If the increase is because of the teen driver, I want to talk about whether raising the deductible makes sense.','Thanks, Jill'],
+   att:['renewal-notice-nov.pdf']},
+  {from:'Tom Duffy',email:'tom@duffycontracting.com',subject:'COI for the Gilbert job, need it today',tag:'Certificate',time:'8:47 AM',unread:1,client:'Tom Duffy',box:'service@cardinalagency.com',
+   body:['The general contractor will not let my crew on site without a certificate naming them as additional insured.','Job address is 1420 E Williams Field Rd, Gilbert. Please send it to permits@example.com and copy me.','Tom'],
+   att:['coi-template.pdf']},
+  {from:'Safeco Agency Support',email:'agency.support@safeco.example',subject:'Quote 4471 ready: home + auto bundle',tag:'Carrier',time:'8:20 AM',unread:1,client:'Elena Kowalski',box:'quotes@cardinalagency.com',
+   body:['The bundled quote for Elena Kowalski is available in your agency portal.','Home $1,890, auto $1,240, total $3,130 with the multi-policy credit applied. The quote holds for 14 days.','No action is needed here, this is a notification only.'],
+   att:['safeco-quote-4471.pdf']},
+  {from:'Priya Okafor',email:'priya.okafor@example.com',subject:'Payment went through twice this month',tag:'Billing',time:'Yesterday',unread:1,client:'Priya Okafor',box:'service@cardinalagency.com',
+   body:['I see two charges of $186.40 on my card for November. Can you confirm one is being reversed?','I am not upset, just want it cleaned up before my statement closes.'],
+   att:[]},
+  {from:'Curtis Hale',email:'curtis.hale@example.com',subject:'Re: lapse notice, please call me',tag:'Lapse',time:'Yesterday',unread:0,client:'Curtis Hale',box:'kelsey@cardinalagency.com',
+   body:['Got the lapse notice. I did not realize the autopay card expired in September.','I can pay the balance today if you can tell me the exact amount to reinstate, and I would rather do it on the phone.'],
+   att:['lapse-notice.pdf']},
+  {from:'Progressive Commercial',email:'commercial@progressive.example',subject:'Missing driver schedule for Hector Villanueva',tag:'Carrier',time:'Mon',unread:0,client:'Hector Villanueva',box:'quotes@cardinalagency.com',
+   body:['We cannot finalize the commercial auto quote without the driver schedule and MVR authorization for two added drivers.','Once received, underwriting turns in one business day.'],
+   att:['driver-schedule-blank.xlsx']},
+  {from:'Sofia Okafor',email:'sofia@okaforstudio.com',subject:'Adding a second location in January',tag:'Cross-sell',time:'Mon',unread:0,client:'Sofia Okafor',box:'kelsey@cardinalagency.com',
+   body:['We signed the lease on the Chandler location and open January 12.','I need the BOP extended to cover it, and I want to look at workers comp for the three people we are hiring.'],
+   att:[]},
+  {from:'Tanya Ferraro',email:'tanya.ferraro@example.com',subject:'Thank you, and one question on the dec page',tag:'Service',time:'Fri',unread:0,client:'Tanya Ferraro',box:'service@cardinalagency.com',
+   body:['The declarations page came through, thank you.','One question: the mortgagee is listed with an old loan number. Does that matter, or should we update it?'],
+   att:['dec-page-ferraro.pdf']},
+  {from:'Marisol Cardenas',email:'marisol@cardenasgroup.com',subject:'Umbrella limit question before the board meeting',tag:'Quote',time:'Fri',unread:0,client:'Marisol Cardenas',box:'kelsey@cardinalagency.com',
+   body:['The board wants to know what a $2M umbrella would cost on top of the current $1M.','Can you get me a number by Wednesday? They meet Thursday morning.'],
+   att:[]},
+  {from:'Grant Pierce',email:'grant.pierce@example.com',subject:'New teen driver, what do you need from me',tag:'Endorsement',time:'Thu',unread:0,client:'Grant Pierce',box:'service@cardinalagency.com',
+   body:['My daughter got her permit and turns 16 in January. What do you need from me to add her, and what will it do to the rate?','Happy to send the license and the driver safety course certificate.'],
+   att:[]}
+];
+let MAIL_FILTER='all', MAIL_SELECTED=0, MAIL_FOLDER='Inbox', MAILSENT=[], MAILDRAFTS=[];
+function saveDraft(){
+  const t=document.getElementById('replyText'); const body=(t.value||'').trim();
+  if(!body){toast('Nothing to save yet');return;}
+  const m=MAIL_SEED[MAIL_SELECTED];
+  MAILDRAFTS.unshift({to:m.from,subject:'Re: '+m.subject,body,time:'Just now'});
+  t.value=''; toast('Draft saved, unsent');
+}
+const TPL={
+  'Renewal reminder':{s:'Your policy renews soon: here is what changed',b:'Hi {{first}},\n\nYour policy renews on {{date}}. The new premium is {{premium}}, up from {{old}} last term.\n\nWhat changed: {{reason}}. If you would like to adjust the deductible or review coverage before it renews, reply here or call the office and we will walk through it together.\n\nKelsey\nCardinal Agency'},
+  'Quote follow-up':{s:'Your quotes are ready to review',b:'Hi {{first}},\n\nI have quotes back from {{carriers}}. The strongest option is {{carrier}} at {{premium}} for the term.\n\nNothing is bound until you say go. Reply with a time that works and I will walk you through the differences in five minutes.\n\nKelsey\nCardinal Agency'},
+  'Certificate request':{s:'Certificate of insurance for your records',b:'Hi {{first}},\n\nAttached is the certificate naming {{holder}} as additional insured for {{address}}.\n\nIf the holder needs different wording or a waiver of subrogation, send me their requirement page and I will reissue the same day.\n\nKelsey\nCardinal Agency'},
+  'Lapse notice':{s:'Payment did not go through: coverage at risk',b:'Hi {{first}},\n\nThe payment on {{policy}} did not process, so coverage is at risk of lapsing on {{date}}.\n\nThe amount to bring it current is {{amount}}. You can pay by card through your client portal, or call the office and we will take it over the phone. If something has changed financially, tell me and we will look at options rather than let it lapse.\n\nKelsey\nCardinal Agency'},
+  'Welcome':{s:'Welcome to Cardinal: here is what happens next',b:'Hi {{first}},\n\nWelcome aboard. Here is what happens next:\n\n1. Your policies are loaded and visible in your client portal.\n2. ID cards and declarations pages are available to download any time.\n3. Payments can be made in the portal, and reminders are automatic.\n\nAnything you need, reply to this email and it comes straight to me.\n\nKelsey\nCardinal Agency'}
+};
+function mailTagChip(t){
+  const m={Renewal:'n',Certificate:'g',Carrier:'n',Billing:'r',Lapse:'r','Cross-sell':'g',Service:'n',Quote:'n',Endorsement:'n'};
+  return `<span class="chip ${m[t]||'n'}" style="font-size:10px">${t}</span>`;
+}
+function mailList(){
+  const box=document.getElementById('mailThreads'); if(!box)return;
+  const q=(document.getElementById('mailSearch').value||'').toLowerCase();
+  const rows=MAIL_SEED.map((m,i)=>({m,i})).filter(({m})=>{
+    if(MAIL_FOLDER==='Sent')return false;
+    if(MAIL_FOLDER==='Drafts')return false;
+    if(MAIL_FILTER==='unread'&&!m.unread)return false;
+    if(MAIL_FILTER==='renewals'&&!['Renewal','Lapse'].includes(m.tag))return false;
+    if(MAIL_FILTER==='carrier'&&m.tag!=='Carrier')return false;
+    if(MAIL_FILTER==='claims'&&!['Service','Billing'].includes(m.tag))return false;
+    if(q&&!(m.from+m.subject+m.body[0]+m.tag).toLowerCase().includes(q))return false;
+    return true;
+  });
+  if(MAIL_FOLDER==='Sent'){
+    box.innerHTML=MAILSENT.map((m,i)=>`<div class="thread"><div class="t1"><b>To: ${m.to}</b><span style="font-size:11px;color:var(--muted)">${m.time}</span></div>
+      <div class="t2">${m.subject}</div><div class="t3">${m.body.replace(/\n/g,' ').slice(0,90)}</div></div>`).join('')
+      ||`<div class="note">Nothing sent yet in this session. Send a reply or a new message and it lands here.</div>`;
+    return;
+  }
+  if(MAIL_FOLDER==='Drafts'){
+    box.innerHTML=`<div class="note">3 drafts held: <b>Bianca Ibarra</b> umbrella quote, <b>Reggie Lindqvist</b> payment plan, <b>Owen Sorensen</b> renewal review. Drafts stay unsent until you press send.</div>`;
+    return;
+  }
+  box.innerHTML=rows.map(({m,i})=>`<div class="thread ${i===MAIL_SELECTED?'on':''}" onclick="openMail(${i})">
+    <div class="t1"><span>${m.unread?'<span class="udot"></span>':''}<b>${m.from}</b></span><span style="font-size:11px;color:var(--muted)">${m.time}</span></div>
+    <div class="t2">${m.subject}</div><div class="t3">${m.body[0]}</div>
+    <div style="margin-top:5px">${mailTagChip(m.tag)}<span style="font-size:10.5px;color:var(--muted);margin-left:6px">${m.box.split('@')[0]}</span></div></div>`).join('')
+    ||`<div class="note">No messages match that filter.</div>`;
+}
+function openMail(i){
+  MAIL_SELECTED=i; const m=MAIL_SEED[i]; m.unread=0;
+  document.getElementById('mailRead').innerHTML=`
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="chip n">${m.tag}</span><span style="font-size:11.5px;color:var(--muted)">${m.box} · received ${m.time}</span>
+      <div class="spacer" style="flex:1"></div>
+      <button class="btn ghost sm" onclick="mailAction('task')">Create task</button>
+      <button class="btn ghost sm" onclick="mailAction('client')">Open client record</button>
+      <button class="btn ghost sm" onclick="mailAction('note')">Add to activity</button>
+    </div>
+    <h3>${m.subject}</h3>
+    <div style="font-size:12.5px;color:var(--muted)">${m.from} &lt;${m.email}&gt; · to me · ${m.client?('<b style="color:var(--blue)">'+m.client+'</b>'):'unmatched sender'}</div>
+    <div class="mbody">${m.body.map(p=>`<p>${p}</p>`).join('')}</div>
+    ${m.att.length?`<div>${m.att.map(a=>`<span class="att" onclick="toast('Opening ${a}')">📎 ${a}</span>`).join('')}</div>`:''}
+    <div class="replybox">
+      <textarea id="replyText" placeholder="Reply to ${m.from}…"></textarea>
+      <div style="display:flex;gap:7px;align-items:center;margin-top:7px;flex-wrap:wrap">
+        <button class="btn blue sm" onclick="sendReply()">Send reply</button>
+        <button class="btn ghost sm" onclick="saveDraft()">Save draft</button>
+        <span style="font-size:11px;color:var(--muted)">Sends from ${m.box}</span>
+      </div>
+    </div>`;
+  mailList();
+}
+function sendReply(){
+  const t=document.getElementById('replyText'); const body=(t.value||'').trim();
+  if(!body){toast('Write something first');return;}
+  const m=MAIL_SEED[MAIL_SELECTED];
+  MAILSENT.unshift({to:m.from,subject:'Re: '+m.subject,body,time:'Just now',box:m.box});
+  t.value=''; toast('Reply sent to '+m.from);
+  act(null,'email','Replied to '+m.from+': '+m.subject);
+  log('Email reply sent · '+m.client);
+  renderEmail();
+}
+function mailAction(kind){
+  const m=MAIL_SEED[MAIL_SELECTED];
+  if(kind==='task'){
+    const c=CLIENTS.find(c=>c.name===m.client);
+    TASKS.unshift({id:'T'+(900+TASKS.length),clientId:c?c.id:CLIENTS[0].id,reason:'Follow up on email: '+m.subject,due:'today',owner:'Dana R.',type:'service',pri:'high',done:false});
+    renderTasks(); toast('Task created from email'); act(null,'tasks','Task created from '+m.from+' email');
+  }
+  if(kind==='client'){
+    const c=CLIENTS.find(c=>c.name===m.client);
+    if(c){openClient(c.id);toast('Opened '+c.name);} else toast('No client record matches that sender');
+  }
+  if(kind==='note'){ act(null,'email','Logged to activity: '+m.subject); toast('Added to the client activity feed'); }
+}
+function composeMail(){
+  document.getElementById('sheet').innerHTML=`
+    <div class="head"><h2>New message</h2><div class="spacer"></div><button class="btn ghost sm" onclick="closeModal()">Close</button></div>
+    <div class="body">
+      <div class="grid2">
+        <div class="field"><label>To</label><select id="cmTo">${CLIENTS.map(c=>`<option>${c.name}</option>`).join('')}<option>All clients on a renewal this month</option></select></div>
+        <div class="field"><label>Send from</label><select id="cmFrom">${MAILBOXES.map(b=>`<option>${b.n}</option>`).join('')}</select></div>
+      </div>
+      <div class="field"><label>Template</label><select id="cmTpl" onchange="fillTemplate()"><option value="">Blank message</option>${Object.keys(TPL).map(k=>`<option>${k}</option>`).join('')}</select></div>
+      <div class="field"><label>Subject</label><input id="cmSub" placeholder="Subject line"></div>
+      <div class="field"><label>Message</label><textarea id="cmBody" style="min-height:170px;width:100%;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:9px;padding:9px"></textarea></div>
+      <div style="display:flex;gap:8px"><button class="btn blue" onclick="sendCompose()">Send</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function fillTemplate(){
+  const k=document.getElementById('cmTpl').value; if(!k)return;
+  const c=CLIENTS.find(x=>x.name===document.getElementById('cmTo').value)||{name:'Client'};
+  const first=c.name.split(' ')[0];
+  document.getElementById('cmSub').value=TPL[k].s;
+  document.getElementById('cmBody').value=TPL[k].b.replace(/\{\{first\}\}/g,first).replace(/\{\{date\}\}/g,'December 12').replace(/\{\{premium\}\}/g,'$1,940').replace(/\{\{old\}\}/g,'$1,780').replace(/\{\{reason\}\}/g,'the teen driver added in March').replace(/\{\{carriers\}\}/g,'Safeco, Travelers and Progressive').replace(/\{\{carrier\}\}/g,'Safeco').replace(/\{\{holder\}\}/g,'Duffy Contracting').replace(/\{\{address\}\}/g,'1420 E Williams Field Rd, Gilbert').replace(/\{\{policy\}\}/g,'auto policy').replace(/\{\{amount\}\}/g,'$186.40');
+}
+function sendCompose(){
+  const to=document.getElementById('cmTo').value, sub=document.getElementById('cmSub').value||'(no subject)', body=document.getElementById('cmBody').value;
+  if(!body.trim()){toast('Add a message before sending');return;}
+  MAILSENT.unshift({to,subject:sub,body,time:'Just now',box:document.getElementById('cmFrom').value});
+  closeModal(); toast('Sent to '+to); act(null,'email','Sent email to '+to+': '+sub); log('Email sent · '+to);
+  MAIL_FOLDER='Sent'; renderEmail();
+}
+function renderEmail(){
+  const unread=MAIL_SEED.filter(m=>m.unread).length;
+  const k=[['Unread in queue',unread,'across 3 connected mailboxes','dn'],
+    ['Median first reply','4 min','agency target is under 15','up'],
+    ['Sent this week','86','62 from templates, 24 written',''],
+    ['Linked to a client',MAIL_SEED.filter(m=>m.client).length+' of '+MAIL_SEED.length,'matched automatically by sender','']];
+  document.getElementById('mailKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('mailFolders').innerHTML=[
+    ['Inbox',MAIL_SEED.filter(m=>m.unread).length],['Sent',MAILSENT.length],['Drafts',3+MAILDRAFTS.length],['Templates',Object.keys(TPL).length]
+  ].map(([n,c])=>`<div class="folder ${MAIL_FOLDER===n?'on':''}" onclick="mailFolder('${n}')"><span>${n}</span><b>${c}</b></div>`).join('');
+  document.getElementById('mailBoxes').innerHTML=MAILBOXES.map(b=>`<div class="mbox"><span class="dot"></span><div><div style="font-weight:600">${b.n}</div><div style="font-size:10.5px;color:var(--muted)">${b.p} · synced 1 min ago</div></div></div>`).join('');
+  mailList();
+  if(!document.getElementById('mailRead').innerHTML.trim())openMail(MAIL_SELECTED);
+}
+function mailFolder(n){ MAIL_FOLDER=n; renderEmail(); toast(n+' · '+({Inbox:'live queue',Sent:'sent from here',Drafts:'unsent',Templates:'saved replies'}[n]||'')); }
+function mailFilter(f,el){
+  MAIL_FILTER=f;
+  document.querySelectorAll('#mailFilters button').forEach(b=>b.classList.toggle('on',b===el));
+  mailList();
+  toast('Showing: '+f);
+}
+
+/* ================= MESSAGES + VIDEO ================= */
+const TEAM=[
+  {n:'Kelsey Trevino',r:'Admin',s:'Available',c:'var(--green)'},
+  {n:'Jacobo Morales',r:'Producer',s:'Available',c:'var(--green)'},
+  {n:'Dana Ruiz',r:'CSR',s:'In a huddle',c:'var(--amber)'},
+  {n:'Steve Lundin',r:'Service',s:'On a call',c:'var(--red)'},
+  {n:'Kayla Brooks',r:'Producer',s:'Focusing',c:'var(--muted)'}
+];
+const TEAMCHANS=[
+  {id:'front-desk',n:'# front-desk',d:'Intake, walk-ins and the phone queue',msgs:[
+    {w:'Dana Ruiz',t:'8:04 AM',x:'Morning. Three new web leads came in overnight, all med spa, all assigned to Jacobo.'},
+    {w:'Jacobo Morales',t:'8:06 AM',x:'Got them. Calling the first one at 9, she asked specifically about commercial auto.'},
+    {w:'Kelsey Trevino',t:'8:09 AM',x:'Put the call notes in the client record, not in a text to me, so the next person can pick it up.'},
+    {w:'Dana Ruiz',t:'8:11 AM',x:'Jill Nakamura called at 8:02 about the renewal increase. Wants a callback before Friday.'}
+  ]},
+  {id:'service-desk',n:'# service-desk',d:'Endorsements, certificates, payments',msgs:[
+    {w:'Steve Lundin',t:'7:52 AM',x:'Tom Duffy needs a COI for the Gilbert job today. Issuing it now, naming the GC as additional insured.'},
+    {w:'Dana Ruiz',t:'7:58 AM',x:'Priya Okafor was double charged $186.40. I see both payments in the portal, one needs reversing.'},
+    {w:'Steve Lundin',t:'8:01 AM',x:'Reverse the second one and send her the confirmation. Do not wait for the carrier, it clears faster from our side.'},
+    {w:'Kayla Brooks',t:'8:14 AM',x:'Curtis Hale lapsed on the 18th. He emailed that his autopay card expired in September.'}
+  ]},
+  {id:'sales-floor',n:'# sales-floor',d:'Quotes, pipeline and producer numbers',msgs:[
+    {w:'Jacobo Morales',t:'8:00 AM',x:'Safeco came back on the Kowalski bundle, $3,130 total with the multi-policy credit. That is $210 under what she pays now.'},
+    {w:'Kayla Brooks',t:'8:03 AM',x:'Marisol Cardenas wants a $2M umbrella number by Wednesday, board meets Thursday.'},
+    {w:'Kelsey Trevino',t:'8:05 AM',x:'Run it through Chubb and Travelers, and send her the difference in plain language, not the rating worksheet.'},
+    {w:'Jacobo Morales',t:'8:07 AM',x:'On it. Also Sofia Okafor is opening a second location in January, that is a BOP rewrite plus workers comp.'}
+  ]},
+  {id:'carrier-issues',n:'# carrier-issues',d:'Portal access, MFA and download failures',msgs:[
+    {w:'Steve Lundin',t:'7:40 AM',x:'Progressive commercial portal asked for MFA twice this morning, second code never arrived.'},
+    {w:'Kelsey Trevino',t:'7:44 AM',x:'Vault credential is fine, that is on their side. Log it and retry in 20 minutes, do not reset the login.'},
+    {w:'Steve Lundin',t:'7:46 AM',x:'Retried at 7:45, worked. Quote is in the client record with the driver schedule request attached.'},
+    {w:'Kayla Brooks',t:'8:12 AM',x:'EZLynx download ran clean at 6:00 AM, 48 policies updated, two conflicts flagged.'}
+  ]},
+  {id:'dm-dana',n:'Dana Ruiz',d:'Direct message',msgs:[
+    {w:'Dana Ruiz',t:'8:16 AM',x:'Do you want me to handle the Hale reinstatement or send it to Steve?'},
+    {w:'Kelsey Trevino',t:'8:17 AM',x:'You take it, he prefers the phone. Get the exact amount first so he is not calling back twice.'},
+    {w:'Dana Ruiz',t:'8:18 AM',x:'Will do. Calling him at 9:30.'}
+  ]}
+];
+const MEETINGS=[
+  {t:'Daily huddle',when:'Today 8:30 AM',who:'Whole team · 12 min',live:1},
+  {t:'Renewal review, next 30 days',when:'Today 11:00 AM',who:'Kelsey, Jacobo, Dana',live:0},
+  {t:'John Chleboun, platform walkthrough',when:'Today 2:00 PM',who:'Kelsey, John · external',live:0},
+  {t:'Carrier integration standup',when:'Tomorrow 9:00 AM',who:'Kelsey, Steve',live:0}
+];
+let CH=0, IN_CALL=false, CALL_T=0, CALL_H=null, MUTED=false, CAM=false;
+function renderMessages(){
+  document.getElementById('presence').innerHTML=TEAM.map(p=>`<div class="pchip"><div class="av">${p.n.split(' ').map(x=>x[0]).join('')}</div><div><div style="font-weight:700">${p.n.split(' ')[0]} ${p.n.split(' ')[1][0]}.</div><div style="font-size:10px;color:var(--muted)">${p.r}</div></div><i style="background:${p.c}"></i></div>`).join('');
+  document.getElementById('chanList').innerHTML=TEAMCHANS.map((c,i)=>`<div class="folder ${i===CH?'on':''}" onclick="openChan(${i})"><div><div>${c.n}</div><div style="font-size:10.5px;color:var(--muted);font-weight:500">${c.d}</div></div></div>`).join('');
+  const c=TEAMCHANS[CH];
+  document.getElementById('chanTitle').textContent=c.n;
+  document.getElementById('chanSub').textContent=c.d;
+  document.getElementById('msgs').innerHTML=c.msgs.map(m=>`<div class="msg"><div class="av">${m.w.split(' ').map(x=>x[0]).join('')}</div><div><div class="who">${m.w}<span class="tm">${m.t}</span></div><div class="tx">${m.x}</div></div></div>`).join('');
+  const box=document.getElementById('msgs'); box.scrollTop=box.scrollHeight;
+  document.getElementById('meetList').innerHTML=MEETINGS.map((m,i)=>`<div class="pol" style="background:#fff">
+    <div class="r1"><span class="car">${m.t}</span><span class="chip ${m.live?'g':'n'}">${m.live?'starting':'scheduled'}</span></div>
+    <div class="meta">${m.when} · ${m.who}</div>
+    <div class="acts"><button onclick="startCall('${m.t.replace(/'/g,'')}')">Join video room</button></div></div>`).join('');
+  document.getElementById('callRecap').innerHTML=`<b>Last call:</b> ${CALL_RECAPS.length?CALL_RECAPS[0]:'Daily huddle, 12 min, 5 attendees, recap posted to # front-desk.'}`;
+}
+function openChan(i){ CH=i; renderMessages(); }
+function sendChat(){
+  const el=document.getElementById('chatInput'); const v=(el.value||'').trim();
+  if(!v){toast('Type a message first');return;}
+  const now=new Date(); const t=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  TEAMCHANS[CH].msgs.push({w:'Kelsey Trevino',t,x:v});
+  el.value=''; renderMessages(); toast('Sent to '+TEAMCHANS[CH].n);
+}
+let CALL_RECAPS=['Daily huddle, 12 min, 5 attendees, recap posted to # front-desk.'];
+function startCall(title){
+  IN_CALL=true; CALL_T=0; MUTED=false; CAM=false;
+  document.getElementById('callTitle').textContent=title||TEAMCHANS[CH].n;
+  document.getElementById('callSub').textContent='Cardinal video room · encrypted · recording off';
+  const tiles=[[TEAM[0].n,'host'],[TEAM[1].n,''],['Dana Ruiz',''],['Steve Lundin','muted']];
+  document.getElementById('tiles').innerHTML=tiles.map(([n,st])=>`<div class="tile"><div class="bigav">${n.split(' ').map(x=>x[0]).join('')}</div><div class="nm">${n}</div><div class="st">${st}</div></div>`).join('');
+  document.getElementById('call').classList.add('on');
+  document.getElementById('callTimer').textContent='00:00';
+  clearInterval(CALL_H);
+  CALL_H=setInterval(()=>{CALL_T++;const m=String(Math.floor(CALL_T/60)).padStart(2,'0'),s=String(CALL_T%60).padStart(2,'0');
+    const el=document.getElementById('callTimer'); if(el)el.textContent=m+':'+s;},1000);
+  act(null,'messages','Joined video room: '+(title||TEAMCHANS[CH].n));
+}
+function callToggle(kind){
+  if(kind==='mute'){MUTED=!MUTED;document.getElementById('btnMute').classList.toggle('off',MUTED);document.getElementById('btnMute').textContent=MUTED?'Unmute':'Mute';}
+  if(kind==='cam'){CAM=!CAM;document.getElementById('btnCam').classList.toggle('off',CAM);document.getElementById('btnCam').textContent=CAM?'Camera off':'Camera on';}
+  if(kind==='share'){document.getElementById('btnShare').classList.toggle('off');toast('Screen sharing toggled');}
+  if(kind==='people'){toast('5 in the room · 2 can present');}
+}
+function endCall(){
+  clearInterval(CALL_H); IN_CALL=false;
+  document.getElementById('call').classList.remove('on');
+  const mm=String(Math.floor(CALL_T/60)).padStart(2,'0'),ss=String(CALL_T%60).padStart(2,'0');
+  const recap=`Call ended after ${mm}:${ss}. Recap posted to ${TEAMCHANS[CH].n}: 3 follow-ups, 1 owner assigned.`;
+  CALL_RECAPS.unshift(recap);
+  TEAMCHANS[CH].msgs.push({w:'System',t:'now',x:recap});
+  renderMessages(); toast('Call ended, recap posted'); act(null,'messages','Video call ended, recap posted');
+}
 </script></body></html>
