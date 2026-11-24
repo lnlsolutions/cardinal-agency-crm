@@ -324,19 +324,16 @@ tbody tr:hover{background:#FAFBFD}
     <section class="view" id="v-brand">
       <div class="cards" id="projKpis"></div>
       <div class="panel"><div class="head"><h2>Three tiers, priced against the stack they replace</h2><div class="spacer"></div><span class="chip n">projection</span></div>
-        <div class="body" style="padding:0"><table><thead><tr><th>Tier</th><th>Who it is for</th><th>Included</th><th class="num">Startup</th><th class="num">Monthly</th><th class="num">Year one</th><th class="num">Saved</th></tr></thead><tbody id="tierBody"></tbody></table></div></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Tier</th><th>Who it is for</th><th>Included</th><th class="num">Monthly</th><th class="num">Year one</th><th class="num">Saved</th></tr></thead><tbody id="tierBody"></tbody></table></div></div>
       <div class="panel"><div class="head"><h2>Tiers in detail</h2></div><div class="body" id="tierDetail"></div></div>
       <div class="panel"><div class="head"><h2>Projection calculator</h2><div class="spacer"></div><span class="chip n">adjust any number</span></div>
         <div class="body">
           <div class="grid3">
-            <div class="field"><label>Tier 1 monthly</label><input id="pT1" type="number" value="239" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 1 startup</label><input id="pF1" type="number" value="599" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 1 monthly, dollars</label><input id="pT1" type="number" value="599" oninput="calcProj()"></div>
             <div class="field"><label>Tier 1 agencies</label><input id="pN1" type="number" value="28" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 2 monthly</label><input id="pT2" type="number" value="749" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 2 startup</label><input id="pF2" type="number" value="1750" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 2 monthly, dollars</label><input id="pT2" type="number" value="1299" oninput="calcProj()"></div>
             <div class="field"><label>Tier 2 agencies</label><input id="pN2" type="number" value="17" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 3 monthly</label><input id="pT3" type="number" value="2290" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 3 startup</label><input id="pF3" type="number" value="5500" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 3 monthly, dollars</label><input id="pT3" type="number" value="2499" oninput="calcProj()"></div>
             <div class="field"><label>Tier 3 agencies</label><input id="pN3" type="number" value="5" oninput="calcProj()"></div>
             <div class="field"><label>Support and onboarding, monthly</label><input id="pC1" type="number" value="3200" oninput="calcProj()"></div>
             <div class="field"><label>Sales and marketing, monthly</label><input id="pC2" type="number" value="2600" oninput="calcProj()"></div>
@@ -358,12 +355,12 @@ tbody tr:hover{background:#FAFBFD}
             <tr><td>Startup fees collected</td><td class="num">$13,146</td><td class="num">$43,584</td><td class="num">$74,022</td></tr>
             <tr><td>Monthly profit, recurring</td><td class="num">-$2,827</td><td class="num">$7,764</td><td class="num">$18,355</td></tr>
           </tbody></table>
-          <table style="margin-top:12px"><thead><tr><th>Month, high case</th><th class="num">Users</th><th class="num">Agencies</th><th class="num">MRR</th><th class="num">Startup fees</th><th class="num">Net</th><th class="num">Cumulative</th></tr></thead><tbody>
-            <tr><td>February 2027</td><td class="num">50</td><td class="num">8</td><td class="num">$5,493</td><td class="num">$13,146</td><td class="num">$10,319</td><td class="num">$10,319</td></tr>
-            <tr><td>March 2027</td><td class="num">175</td><td class="num">29</td><td class="num">$18,184</td><td class="num">$30,438</td><td class="num">$38,202</td><td class="num">$48,521</td></tr>
-            <tr><td>April 2027</td><td class="num">300</td><td class="num">50</td><td class="num">$30,875</td><td class="num">$30,438</td><td class="num">$48,793</td><td class="num">$97,314</td></tr>
+          <table style="margin-top:12px"><thead><tr><th>Month, high case</th><th class="num">Users</th><th class="num">Agencies</th><th class="num">Revenue</th><th class="num">Net</th><th class="num">Cumulative</th></tr></thead><tbody>
+            <tr><td>February 2027</td><td class="num">50</td><td class="num">8</td><td class="num">$8,792</td><td class="num">-$4,028</td><td class="num">-$4,028</td></tr>
+            <tr><td>March 2027</td><td class="num">175</td><td class="num">29</td><td class="num">$30,071</td><td class="num">$15,151</td><td class="num">$11,123</td></tr>
+            <tr><td>April 2027</td><td class="num">300</td><td class="num">50</td><td class="num">$51,350</td><td class="num">$34,330</td><td class="num">$45,453</td></tr>
           </tbody></table>
-          <div class="note">Cash outlay back in March 2027, full build repaid in April 2027. The 25-30k band needs 42 to 50 agencies, which is 250 to 300 seats, so conversion of the warm pool is the number to watch. Add one onboarding specialist at $4,500/mo and profit at 50 agencies is $13,855 instead of $18,355.</div>
+          <div class="note">Monthly pricing only, no startup fees. The $27,600 of cash is back in April 2027 and the full $66,000 build is repaid in May 2027. The $25,000 to $30,000 band needs 25 to 29 agencies, which is 150 to 175 seats. Cost includes one onboarding specialist at $4,500 a month, so profit at 50 agencies is $34,330.</div>
         </div></div>
       <div class="grid2">
         <div class="panel"><div class="head"><h2>Monthly revenue by agency count</h2></div><div class="body" style="padding:0"><table><thead><tr><th>Agencies</th><th class="num">T1/T2/T3</th><th class="num">Monthly</th><th class="num">Annual</th></tr></thead><tbody id="mrrBody"></tbody></table></div></div>
@@ -1035,9 +1032,9 @@ function renderSecurity(){
 
 /* ---------- projections ---------- */
 const TIERS=[
- {n:'Tier 1 · Private agent or firm',who:'1 to 3 licensed agents, one location',fee:599,price:239,stack:278,inc:'One login, client records pulled from EZLynx, portal quoting, ID cards, certificates, renewals, drips, client portal under their brand'},
- {n:'Tier 2 · Multi-agent agency',who:'4 to 15 agents, producers and CSRs',fee:1750,price:749,stack:1080,inc:'Everything in tier 1, roles and permissions, out-of-office coverage, ad and lead reporting, nightly EZLynx sync'},
- {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',fee:5500,price:2290,stack:3174,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
+ {n:'Tier 1 · Private agent or firm',who:'1 to 3 licensed agents, one location',fee:0,price:599,stack:786,inc:'One login, client records pulled from EZLynx, portal quoting, ID cards, certificates, renewals, drips, client portal under their brand'},
+ {n:'Tier 2 · Multi-agent agency',who:'4 to 15 agents, producers and CSRs',fee:0,price:1299,stack:1689,inc:'Everything in tier 1, roles and permissions, out-of-office coverage, ad and lead reporting, nightly EZLynx sync'},
+ {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',fee:0,price:2499,stack:3724,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
 ];
 function renderProjections(){
   const k=[['Tier 1 membership',money(499)+' + '+money(199)+'/mo','startup fee plus monthly',''],['Blended member',money(1249)+' + '+money(504)+'/mo','at a 60/30/10 mix','up'],
@@ -1597,14 +1594,13 @@ function exportAudit(){
 /* ---- projections calculator ---- */
 function tierInputs(){
   const g=id=>+((document.getElementById(id)||{}).value||0);
-  return {t1:g('pT1'),f1:g('pF1'),n1:g('pN1'),t2:g('pT2'),f2:g('pF2'),n2:g('pN2'),t3:g('pT3'),f3:g('pF3'),n3:g('pN3'),
+  return {t1:g('pT1'),n1:g('pN1'),t2:g('pT2'),n2:g('pN2'),t3:g('pT3'),n3:g('pN3'),
     c1:g('pC1'),c2:g('pC2'),c3:g('pC3'),c4:g('pC4'),v:g('pV'),build:g('pBuild')};
 }
 function calcProj(){
   const i=tierInputs();
   const n=i.n1+i.n2+i.n3;
   const mrr=i.n1*i.t1+i.n2*i.t2+i.n3*i.t3;
-  const startup=i.n1*i.f1+i.n2*i.f2+i.n3*i.f3;
   const fixed=i.c1+i.c2+i.c3*60+i.c4;
   const variable=n*i.v;
   const profit=mrr-variable-fixed;
@@ -1614,14 +1610,13 @@ function calcProj(){
   const payback=profit>0?Math.max(1,Math.ceil(i.build/profit)):0;
   const margin=mrr?Math.round(profit/mrr*100):0;
   document.getElementById('calcOut').innerHTML=[
-    ['Monthly recurring',money(mrr),n+' agencies',''],
-    ['Startup fees collected',money(startup),'one time',''],
+    ['Monthly recurring',money(mrr),n+' agencies, no startup fee',''],
     ['Monthly fixed cost',money(fixed),'support, sales, maintenance, infra',''],
     ['Monthly profit',money(profit),margin+'% margin',profit>=0?'up':'dn'],
-    ['Breakeven agencies',breakeven,money(contribution)+' contribution each',''],
-    ['Build repaid in',payback?payback+' months':'not at this mix','$'+i.build.toLocaleString()+' to recover','']]
+    ['Breakeven agencies',breakeven,money(contribution)+' kept per agency at this mix',''],
+    ['Build repaid, at this rate',payback?payback+' months':'not at this mix','$'+i.build.toLocaleString()+' to recover','']]
     .map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
-  document.getElementById('calcNote').innerHTML=`At ${n} agencies (${i.n1}/${i.n2}/${i.n3} split) the service runs <b>${money(profit)}</b> a month. You need <b>${breakeven} agencies</b> to cover ${money(fixed)} of fixed cost, and the ${money(i.build)} build is repaid in <b>${payback||'—'} months</b>. Year one gross with startup fees is <b>${money(mrr*12+startup)}</b>.`;
+  document.getElementById('calcNote').innerHTML=`At ${n} agencies (${i.n1}/${i.n2}/${i.n3} split) the service earns <b>${money(mrr)}</b> a month and keeps <b>${money(profit)}</b> of it. You need <b>${breakeven} agencies</b> to cover ${money(fixed)} of fixed cost, and the ${money(i.build)} build is repaid in <b>${payback||'—'} months</b>. Year one revenue at this mix is <b>${money(mrr*12)}</b>, with no startup fee anywhere in it.`;
   const mixT1=i.n1,mixT2=i.n2,mixT3=i.n3,total=Math.max(1,mixT1+mixT2+mixT3);
   document.getElementById('calcRows').innerHTML=[10,25,50,100,200].map(a=>{
     const t1=Math.round(a*mixT1/total),t2=Math.round(a*mixT2/total),t3=a-t1-t2;
@@ -1631,17 +1626,17 @@ function calcProj(){
     <td class="num">${money(m*12)}</td><td class="num">${money(p)}</td><td class="num">${pb?pb+' mo':'—'}</td></tr>`}).join('');
 }
 function renderProjections(){
-  const k=[['Tier 1 membership',money(599)+' + '+money(239)+'/mo','startup fee plus monthly',''],['Blended member',money(1492)+' + '+money(623)+'/mo','at a 55/35/10 mix','up'],
-    ['Breakeven','15 agencies','about 105 users',''],['Revenue at 50 agencies',money(30875)+'/mo','370,500 a year','up']];
+  const k=[['Tier 1 membership',money(599)+'/mo','flat monthly, no startup fee',''],['Blended member',money(1034)+'/mo','at a 55/35/10 mix','up'],
+    ['Breakeven','9 agencies','about 63 users',''],['Revenue at 50 agencies',money(51350)+'/mo',money(616200)+' a year','up']];
   document.getElementById('projKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
   document.getElementById('tierBody').innerHTML=TIERS.map(t=>{const save=Math.round((1-t.price/t.stack)*100);
     return `<tr><td><b>${t.n}</b><div style="font-size:11px;color:var(--muted)">${t.who}</div></td>
-    <td style="font-size:11.5px;color:#4A5768">${t.inc}</td><td class="num">${money(t.fee)}</td><td class="num"><b>${money(t.price)}</b></td>
-    <td class="num">${money(t.fee+t.price*12)}</td><td class="num"><span class="chip g">${save}%</span></td></tr>`}).join('');
+    <td style="font-size:11.5px;color:#4A5768">${t.inc}</td><td class="num"><b>${money(t.price)}</b></td>
+    <td class="num">${money(t.price*12)}</td><td class="num"><span class="chip g">${save}%</span></td></tr>`}).join('');
   document.getElementById('tierDetail').innerHTML=TIERS.map(t=>`<div class="pol" style="background:#fff">
-    <div class="r1"><span class="car">${t.n}</span><span class="chip n">${money(t.fee)} + ${money(t.price)}/mo</span></div>
+    <div class="r1"><span class="car">${t.n}</span><span class="chip n">${money(t.price)}/mo</span></div>
     <div class="meta">${t.inc}</div><div class="acts"><button onclick="useTier(${TIERS.indexOf(t)})">Use this tier</button></div></div>`).join('')
-    +`<div class="note">Startup fee covers onboarding and setup. Monthly covers the platform. EZLynx remains in place for every agent and is not part of this price.</div>`;
+    +`<div class="note">One flat monthly price per agency, no startup fee, no per seat charge. Onboarding and setup are included. EZLynx remains in place for every agent and is not part of this price.</div>`;
   const mix=[[25,14,9,2],[35,19,12,4],[45,25,16,4],[50,28,17,5],[75,41,26,8],[100,55,35,10]];
   document.getElementById('mrrBody').innerHTML=mix.map(m=>{
     const [n,t1,t2,t3]=m;
@@ -1651,14 +1646,13 @@ function renderProjections(){
   const costs=[['Support and onboarding',3200],['Sales and marketing',2600],['Maintenance, 20 hours',1200],['Security and tooling',520]];
   const tot=costs.reduce((s,c)=>s+c[1],0);
   document.getElementById('costBars').innerHTML=costs.map(c=>`<div class="bar"><span>${c[0]}</span><div class="track"><div class="fill" style="width:${Math.round(c[1]/tot*100)}%"></div></div><span class="n">${money(c[1])}</span></div>`).join('');
-  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month fixed, against <b>${money(523)}</b> contribution per agency at the 55/35/10 mix. Breakeven is <b>15 agencies</b>, about 105 users. The build is repaid by July 2027.`;
+  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month fixed, against <b>${money(934)}</b> kept per agency at the 55/35/10 mix. Breakeven is <b>9 agencies</b>, about 63 users. At 25 agencies the service earns <b>${money(25075)}</b> a month and keeps <b>${money(15055)}</b>. The ${money(66000)} build is repaid by July 2027.`;
   calcProj();
 }
 function useTier(i){
   const t=TIERS[i];
-  const map={0:['pT1','pF1'],1:['pT2','pF2'],2:['pT3','pF3']}[i];
-  document.getElementById(map[0]).value=t.price;
-  document.getElementById(map[1]).value=t.fee;
+  const map={0:'pT1',1:'pT2',2:'pT3'}[i];
+  document.getElementById(map).value=t.price;
   calcProj();
   toast(t.n.split('·')[0].trim()+' loaded into the calculator');
 }
