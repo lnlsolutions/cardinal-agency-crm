@@ -329,20 +329,20 @@ tbody tr:hover{background:#FAFBFD}
       <div class="panel"><div class="head"><h2>Projection calculator</h2><div class="spacer"></div><span class="chip n">adjust any number</span></div>
         <div class="body">
           <div class="grid3">
-            <div class="field"><label>Tier 1 monthly</label><input id="pT1" type="number" value="199" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 1 startup</label><input id="pF1" type="number" value="499" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 1 agencies</label><input id="pN1" type="number" value="30" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 2 monthly</label><input id="pT2" type="number" value="649" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 2 startup</label><input id="pF2" type="number" value="1500" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 2 agencies</label><input id="pN2" type="number" value="15" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 3 monthly</label><input id="pT3" type="number" value="1900" oninput="calcProj()"></div>
-            <div class="field"><label>Tier 3 startup</label><input id="pF3" type="number" value="5000" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 1 monthly</label><input id="pT1" type="number" value="239" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 1 startup</label><input id="pF1" type="number" value="599" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 1 agencies</label><input id="pN1" type="number" value="28" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 2 monthly</label><input id="pT2" type="number" value="749" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 2 startup</label><input id="pF2" type="number" value="1750" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 2 agencies</label><input id="pN2" type="number" value="17" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 3 monthly</label><input id="pT3" type="number" value="2290" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 3 startup</label><input id="pF3" type="number" value="5500" oninput="calcProj()"></div>
             <div class="field"><label>Tier 3 agencies</label><input id="pN3" type="number" value="5" oninput="calcProj()"></div>
             <div class="field"><label>Support and onboarding, monthly</label><input id="pC1" type="number" value="3200" oninput="calcProj()"></div>
             <div class="field"><label>Sales and marketing, monthly</label><input id="pC2" type="number" value="2600" oninput="calcProj()"></div>
             <div class="field"><label>Maintenance hours at $60</label><input id="pC3" type="number" value="20" oninput="calcProj()"></div>
-            <div class="field"><label>Infrastructure and security, monthly</label><input id="pC4" type="number" value="900" oninput="calcProj()"></div>
-            <div class="field"><label>Variable cost per agency</label><input id="pV" type="number" value="45" oninput="calcProj()"></div>
+            <div class="field"><label>Security and tooling, monthly</label><input id="pC4" type="number" value="520" oninput="calcProj()"></div>
+            <div class="field"><label>Variable cost per agency</label><input id="pV" type="number" value="100" oninput="calcProj()"></div>
             <div class="field"><label>Build cost to repay</label><input id="pBuild" type="number" value="66000" oninput="calcProj()"></div>
           </div>
           <div class="cards" id="calcOut" style="margin-top:6px"></div>
@@ -1019,9 +1019,9 @@ function renderSecurity(){
 
 /* ---------- projections ---------- */
 const TIERS=[
- {n:'Tier 1 · Private agent or firm',who:'1 to 3 licensed agents, one location',fee:499,price:199,stack:278,inc:'One login, client records pulled from EZLynx, portal quoting, ID cards, certificates, renewals, drips, client portal under their brand'},
- {n:'Tier 2 · Multi-agent agency',who:'4 to 15 agents, producers and CSRs',fee:1500,price:649,stack:1080,inc:'Everything in tier 1, roles and permissions, out-of-office coverage, ad and lead reporting, nightly EZLynx sync'},
- {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',fee:5000,price:1900,stack:3174,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
+ {n:'Tier 1 · Private agent or firm',who:'1 to 3 licensed agents, one location',fee:599,price:239,stack:278,inc:'One login, client records pulled from EZLynx, portal quoting, ID cards, certificates, renewals, drips, client portal under their brand'},
+ {n:'Tier 2 · Multi-agent agency',who:'4 to 15 agents, producers and CSRs',fee:1750,price:749,stack:1080,inc:'Everything in tier 1, roles and permissions, out-of-office coverage, ad and lead reporting, nightly EZLynx sync'},
+ {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',fee:5500,price:2290,stack:3174,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
 ];
 function renderProjections(){
   const k=[['Tier 1 membership',money(499)+' + '+money(199)+'/mo','startup fee plus monthly',''],['Blended member',money(1249)+' + '+money(504)+'/mo','at a 60/30/10 mix','up'],
@@ -1598,8 +1598,8 @@ function calcProj(){
     <td class="num">${money(m*12)}</td><td class="num">${money(p)}</td><td class="num">${pb?pb+' mo':'—'}</td></tr>`}).join('');
 }
 function renderProjections(){
-  const k=[['Tier 1 membership',money(499)+' + '+money(199)+'/mo','startup fee plus monthly',''],['Blended member',money(1249)+' + '+money(504)+'/mo','at a 60/30/10 mix','up'],
-    ['Breakeven','19 agencies','about 135 users',''],['Revenue at 50 agencies',money(37690)+'/mo','monthly plus startup fees','up']];
+  const k=[['Tier 1 membership',money(599)+' + '+money(239)+'/mo','startup fee plus monthly',''],['Blended member',money(1492)+' + '+money(623)+'/mo','at a 55/35/10 mix','up'],
+    ['Breakeven','15 agencies','about 105 users',''],['Revenue at 50 agencies',money(30875)+'/mo','370,500 a year','up']];
   document.getElementById('projKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
   document.getElementById('tierBody').innerHTML=TIERS.map(t=>{const save=Math.round((1-t.price/t.stack)*100);
     return `<tr><td><b>${t.n}</b><div style="font-size:11px;color:var(--muted)">${t.who}</div></td>
@@ -1609,17 +1609,16 @@ function renderProjections(){
     <div class="r1"><span class="car">${t.n}</span><span class="chip n">${money(t.fee)} + ${money(t.price)}/mo</span></div>
     <div class="meta">${t.inc}</div><div class="acts"><button onclick="useTier(${TIERS.indexOf(t)})">Use this tier</button></div></div>`).join('')
     +`<div class="note">Startup fee covers onboarding and setup. Monthly covers the platform. EZLynx remains in place for every agent and is not part of this price.</div>`;
-  const mix=[[10,'60/30/10'],[25,'60/30/10'],[50,'55/35/10'],[100,'50/40/10']];
+  const mix=[[25,14,9,2],[35,19,12,4],[45,25,16,4],[50,28,17,5],[75,41,26,8],[100,55,35,10]];
   document.getElementById('mrrBody').innerHTML=mix.map(m=>{
-    const [a,b,c]=m[1].split('/').map(Number),n=m[0];
-    const t1=Math.round(n*a/100),t2=Math.round(n*b/100),t3=n-t1-t2;
-    const mrr=t1*199+t2*649+t3*1900;
+    const [n,t1,t2,t3]=m;
+    const mrr=t1*TIERS[0].price+t2*TIERS[1].price+t3*TIERS[2].price;
     return `<tr><td><b>${n} agencies</b></td><td class="num" style="font-size:11.5px">${t1} / ${t2} / ${t3}</td>
     <td class="num">${money(mrr)}</td><td class="num">${money(mrr*12)}</td></tr>`}).join('');
   const costs=[['Support and onboarding',3200],['Sales and marketing',2600],['Maintenance, 20 hours',1200],['Security and tooling',520]];
   const tot=costs.reduce((s,c)=>s+c[1],0);
   document.getElementById('costBars').innerHTML=costs.map(c=>`<div class="bar"><span>${c[0]}</span><div class="track"><div class="fill" style="width:${Math.round(c[1]/tot*100)}%"></div></div><span class="n">${money(c[1])}</span></div>`).join('');
-  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month fixed, against <b>${money(402)}</b> contribution per agency. Breakeven is <b>19 agencies</b>, about 135 users. The build is repaid by July 2027.`;
+  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month fixed, against <b>${money(523)}</b> contribution per agency at the 55/35/10 mix. Breakeven is <b>15 agencies</b>, about 105 users. The build is repaid by July 2027.`;
   calcProj();
 }
 function useTier(i){
