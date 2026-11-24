@@ -685,7 +685,7 @@ const TIERS=[
  {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',fee:5000,price:1900,stack:3174,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
 ];
 function renderProjections(){
-  const k=[['Tier 1 membership',money(499)+' + '+money(199)+'/mo','startup fee plus monthly',''],['Blended member',money(1249)+' + '+money(504)+'/mo','at a 60/30/10 mix','up'],['Breakeven','18 agencies','about 130 users',''],['Revenue at 50 agencies',money(37690)+'/mo','monthly plus startup fees','up']];
+  const k=[['Tier 1 membership',money(499)+' + '+money(199)+'/mo','startup fee plus monthly',''],['Blended member',money(1249)+' + '+money(504)+'/mo','at a 60/30/10 mix','up'],['Breakeven','19 agencies','about 135 users',''],['Revenue at 50 agencies',money(37690)+'/mo','monthly plus startup fees','up']];
   document.getElementById('projKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
   document.getElementById('tierBody').innerHTML=TIERS.map(t=>{
     const save=Math.round((1-t.price/t.stack)*100);
@@ -707,10 +707,10 @@ function renderProjections(){
     const mrr=blended(t1,t2,t3);
     return `<tr><td><b>${n} agencies</b></td><td class="num" style="font-size:11.5px">${t1} / ${t2} / ${t3}</td>
     <td class="num"><b>${money(mrr)}</b></td><td class="num">${money(mrr*12)}</td></tr>`}).join('');
-  const costs=[['Support and onboarding',3200],['Sales and marketing',2600],['Maintenance, 20 hours',1200],['Security and tooling',400]];
+  const costs=[['Support and onboarding',3200],['Sales and marketing',2600],['Maintenance, 20 hours',1200],['Security and tooling',520]];
   const tot=costs.reduce((s,c)=>s+c[1],0);
   document.getElementById('costBars').innerHTML=costs.map(c=>`<div class="bar"><span>${c[0]}</span><div class="track"><div class="fill" style="width:${Math.round(c[1]/tot*100)}%"></div></div><span class="n">${money(c[1])}</span></div>`).join('');
-  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month fixed, against <b>${money(408)}</b> contribution per agency. Breakeven is <b>18 agencies</b>, about 130 users. The build is repaid by June 2027.`;
+  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month fixed, against <b>${money(402)}</b> contribution per agency. Breakeven is <b>19 agencies</b>, about 135 users. The build is repaid by July 2027.`;
 }
 
 function renderRecentQuotes(){
