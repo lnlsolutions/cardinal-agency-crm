@@ -198,6 +198,9 @@ tbody tr:hover{background:#FAFBFD}
       <button data-v="clients"><span class="ic">◉</span><span>Clients</span></button>
       <button data-v="quotes"><span class="ic">✎</span><span>Quotes</span></button>
       <button data-v="policies"><span class="ic">▤</span><span>Policies</span></button>
+      <button data-v="claims"><span class="ic">⚑</span><span>Claims</span></button>
+      <button data-v="payments"><span class="ic">$</span><span>Payments</span></button>
+      <button data-v="commissions"><span class="ic">%</span><span>Commissions</span></button>
       <button data-v="tasks"><span class="ic">✓</span><span>Tasks</span></button>
       <button data-v="email"><span class="ic">✉</span><span>Email</span></button>
       <button data-v="messages"><span class="ic">◍</span><span>Messages</span></button>
@@ -205,6 +208,7 @@ tbody tr:hover{background:#FAFBFD}
       <button data-v="growth"><span class="ic">◈</span><span>Growth</span></button>
       <button data-v="sync"><span class="ic">⇄</span><span>Data sync</span></button>
       <button data-v="security"><span class="ic">⛨</span><span>Security</span></button>
+      <button data-v="access"><span class="ic">☗</span><span>Users</span></button>
       <button data-v="brand"><span class="ic">◐</span><span>Projections</span></button>
     </nav>
     <div class="sidefoot">Signed in as<br><b style="color:#fff">Jacobo M.</b> · owner<br>Gilbert office</div>
@@ -282,6 +286,60 @@ tbody tr:hover{background:#FAFBFD}
         <div class="panel"><div class="head"><h2>Renewal pipeline</h2></div><div class="body"><div class="bars" id="renBars"></div></div></div>
         <div class="panel"><div class="head"><h2>Commission by carrier</h2><div class="spacer"></div><span class="chip n">this month</span></div>
           <div class="body" style="padding:0"><table><thead><tr><th>Carrier</th><th class="num">Policies</th><th class="num">Premium</th><th class="num">Rate</th><th class="num">Commission</th><th>Status</th></tr></thead><tbody id="commBody"></tbody></table></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-claims">
+      <div class="cards" id="claimKpis"></div>
+      <div class="cols">
+        <div>
+          <div class="panel"><div class="head"><h2>Claims</h2><span class="chip n" id="claimCount"></span><div class="spacer"></div>
+            <div class="filters" id="claimFilters"><button class="on" onclick="claimFilter('all',this)">All</button><button onclick="claimFilter('open',this)">Open</button><button onclick="claimFilter('review',this)">Under review</button><button onclick="claimFilter('closed',this)">Closed</button></div>
+            <button class="btn blue sm" onclick="newClaim()">New claim</button></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Claim</th><th>Client</th><th>Carrier</th><th>Loss</th><th>Type</th><th>Status</th><th class="num">Reserve</th><th class="num">Paid</th><th>Adjuster</th><th></th></tr></thead><tbody id="claimBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Claim timeline</h2><div class="spacer"></div><span class="chip n" id="claimPick"></span></div>
+            <div class="body" id="claimTimeline"></div></div>
+        </div>
+        <div>
+          <div class="panel"><div class="head"><h2>Loss ratio by carrier</h2><div class="spacer"></div><span class="chip n">12 months</span></div>
+            <div class="body"><div class="bars" id="lossBars"></div><div class="note">Red means the carrier is losing money on your book, which shows up at renewal. Worth a conversation before they reprice.</div></div></div>
+          <div class="panel"><div class="head"><h2>What needs a nudge</h2></div><div class="body" id="claimNudges"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="v-payments">
+      <div class="cards" id="payKpis"></div>
+      <div class="panel"><div class="head"><h2>Payment queue</h2><span class="chip n" id="payCount"></span><div class="spacer"></div>
+        <div class="filters" id="payFilters"><button class="on" onclick="payFilter('all',this)">All</button><button onclick="payFilter('due',this)">Due</button><button onclick="payFilter('failed',this)">Failed</button><button onclick="payFilter('link',this)">Link sent</button><button onclick="payFilter('paid',this)">Paid</button></div>
+        <button class="btn blue sm" onclick="sendPayLinkModal()">Send secure payment link</button></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Policy</th><th class="num">Amount</th><th>Due</th><th>Method</th><th>Status</th><th>Last action</th><th></th></tr></thead><tbody id="payBody"></tbody></table></div></div>
+      <div class="cols">
+        <div class="panel"><div class="head"><h2>Autopay and dunning</h2><div class="spacer"></div><span class="chip g">retry ladder on</span></div><div class="body"><div class="bars" id="payBars"></div>
+          <div class="note">Card details are never entered in the CRM or the client portal. The client pays through a secure link and the receipt lands back on the record.</div></div></div>
+        <div class="panel"><div class="head"><h2>Secure links out now</h2></div><div class="body" id="payLinks"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-commissions">
+      <div class="cards" id="commKpis"></div>
+      <div class="panel"><div class="head"><h2>Carrier statements</h2><div class="spacer"></div>
+        <div class="filters" id="commFilters"><button class="on" onclick="commFilter('nov',this)">November</button><button onclick="commFilter('all',this)">All</button><button onclick="commFilter('variance',this)">Variance</button><button onclick="commFilter('clean',this)">Reconciled</button><button onclick="commFilter('paid',this)">Paid</button></div></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Carrier</th><th>Statement</th><th class="num">Policies</th><th class="num">Premium</th><th class="num">Rate</th><th class="num">Expected</th><th class="num">Received</th><th class="num">Variance</th><th>Status</th><th></th></tr></thead><tbody id="commBody"></tbody></table></div></div>
+      <div class="cols">
+        <div class="panel"><div class="head"><h2>Producer split</h2><div class="spacer"></div><span class="chip n">November</span></div><div class="body"><div class="bars" id="commSplit"></div></div></div>
+        <div class="panel"><div class="head"><h2>Reconciliation log</h2></div><div class="body" id="commLog"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-access">
+      <div class="cards" id="accKpis"></div>
+      <div class="panel"><div class="head"><h2>Cardinal users</h2><div class="spacer"></div><span class="chip n">role set before first sign-in</span>
+        <button class="btn blue sm" onclick="inviteUser()">Invite user</button></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>User</th><th>Role</th><th>Email</th><th>MFA</th><th>Last sign-in</th><th>What they see</th><th>Status</th><th></th></tr></thead><tbody id="accBody"></tbody></table></div></div>
+      <div class="cols">
+        <div class="panel"><div class="head"><h2>Role permissions</h2></div><div class="body" id="roleMatrix"></div></div>
+        <div class="panel"><div class="head"><h2>Access log</h2></div><div class="body" id="accessLog"></div></div>
       </div>
     </section>
 
@@ -715,7 +773,77 @@ ACTLOG=[
  ['07:44','Steve L. generated an ID card for Elena Kowalski']
 ];
 const PROD_GOALS=[['Jacobo M.',9,14200],['Dana R.',7,11800],['Steve L.',6,10400],['Kayla B.',5,8600]];
-const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Quoted in each carrier portal, sent from here'],policies:['Policies','Renewals, payments and documents'],tasks:['Tasks','Who does what, and who covers'],email:['Email','Every client, carrier and portal thread in one inbox'],messages:['Messages','Team chat, huddles and video in one room'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
+/* ================= capability layer seeds: claims, payments, commissions, access ================= */
+let CLAIM_CASES=[
+ {id:'CLM-4471',clientId:'C1003',carrier:'Safeco',pol:'AU-4471',loss:'Nov 18',type:'Auto collision',status:'Under review',reserve:9800,paid:0,adj:'M. Reyes',filed:'Nov 18',detail:'Rear-end at Warner and Cooper. Other driver cited. Photos and police report uploaded, vehicle at Copart for estimate.',steps:[['Nov 18','FNOL taken by Steve, claim opened with Safeco'],['Nov 18','Photos, police report and other driver info uploaded'],['Nov 20','Adjuster assigned, estimate ordered'],['Nov 21','Vehicle inspected, supplement pending']]},
+ {id:'CLM-4468',clientId:'C1007',carrier:'Travelers',pol:'HO-2210',loss:'Nov 12',type:'Water damage',status:'Open',reserve:24500,paid:4200,adj:'L. Chen',filed:'Nov 12',detail:'Supply line to the upstairs laundry failed. Two rooms and the hallway affected. Mitigation started same day.',steps:[['Nov 12','FNOL, emergency mitigation authorized'],['Nov 13','Water mitigation vendor on site, $4,200 paid'],['Nov 15','Adjuster inspection completed'],['Nov 19','Contents list requested from the insured']]},
+ {id:'CLM-4460',clientId:'C1011',carrier:'Chubb',pol:'UM-8814',loss:'Nov 6',type:'Liability',status:'Under review',reserve:15000,paid:0,adj:'R. Patel',filed:'Nov 6',detail:'Third-party slip and fall at the insured premises. Carrier counsel engaged, insured notified.',steps:[['Nov 6','Notice of claim received from the claimant attorney'],['Nov 7','Reported to Chubb, claim number issued'],['Nov 10','Carrier counsel assigned'],['Nov 20','Insured statement collected']]},
+ {id:'CLM-4455',clientId:'C1015',carrier:'Openly',pol:'HO-1188',loss:'Oct 29',type:'Wind and hail',status:'Approved',reserve:18200,paid:18200,adj:'M. Reyes',filed:'Oct 29',detail:'Hail damage to roof and gutters. Replacement cost approved, payment issued to the insured and mortgagee.',steps:[['Oct 29','FNOL, roof photos uploaded'],['Nov 2','Adjuster inspection, scope agreed'],['Nov 8','ACV payment issued'],['Nov 16','Recoverable depreciation released, claim closed']]},
+ {id:'CLM-4450',clientId:'C1019',carrier:'Foremost',pol:'RE-3320',loss:'Oct 22',type:'Theft',status:'Closed',reserve:6100,paid:5850,adj:'T. Okafor',filed:'Oct 22',detail:'Bicycle and electronics stolen from a rental unit. Police report on file, deductible applied.',steps:[['Oct 22','FNOL, police report uploaded'],['Oct 24','Proof of ownership collected'],['Oct 30','Payment issued net of deductible'],['Nov 3','Claim closed, satisfaction confirmed']]},
+ {id:'CLM-4444',clientId:'C1009',carrier:'Progressive',pol:'CA-7712',loss:'Oct 14',type:'Commercial auto',status:'Denied',reserve:0,paid:0,adj:'D. Whitmore',filed:'Oct 14',detail:'Driver not listed on the schedule at the time of loss. Carrier denied, we are reviewing whether to dispute.',steps:[['Oct 14','FNOL, driver added to the policy the same week'],['Oct 17','Carrier requested driver schedule'],['Oct 24','Denial letter received, excluded driver'],['Oct 27','Reviewing dispute, insured notified']]},
+ {id:'CLM-4438',clientId:'C1021',carrier:'Safeco',pol:'BP-5521',loss:'Oct 8',type:'Equipment breakdown',status:'Closed',reserve:3400,paid:3120,adj:'L. Chen',filed:'Oct 8',detail:'Compressor failure at the shop. Repaired, invoice and technician report submitted.',steps:[['Oct 8','FNOL with technician report'],['Oct 10','Adjuster approved repair'],['Oct 18','Invoice paid'],['Oct 21','Closed']]},
+ {id:'CLM-4431',clientId:'C1005',carrier:'Travelers',pol:'AU-9932',loss:'Sep 30',type:'Glass',status:'Closed',reserve:640,paid:640,adj:'M. Reyes',filed:'Sep 30',detail:'Windshield replacement, zero deductible glass endorsement applied.',steps:[['Sep 30','FNOL, glass vendor dispatched'],['Oct 1','Replacement completed'],['Oct 4','Paid and closed']]}
+];
+let PAYMENTS=[
+ {clientId:'C1001',pol:'AU-2214',carrier:'Safeco',amount:214,due:'Dec 1',method:'Autopay · Visa 4412',status:'Scheduled',last:'Autopay scheduled Nov 26'},
+ {clientId:'C1003',pol:'AU-4471',carrier:'Safeco',amount:186.4,due:'Nov 20',method:'Autopay · card expired',status:'Failed',last:'Autopay failed Nov 20, retry 1 of 3'},
+ {clientId:'C1005',pol:'HO-9932',carrier:'Travelers',amount:342,due:'Nov 28',method:'Secure link',status:'Link sent',last:'Link texted Nov 24, 9:12 AM, expires 9:42 AM'},
+ {clientId:'C1007',pol:'HO-2210',carrier:'Travelers',amount:128,due:'Dec 5',method:'ACH',status:'Scheduled',last:'ACH authorized Nov 22'},
+ {clientId:'C1009',pol:'CA-7712',carrier:'Progressive',amount:1240,due:'Nov 25',method:'Secure link',status:'Link sent',last:'Link emailed Nov 23, viewed twice'},
+ {clientId:'C1011',pol:'UM-8814',carrier:'Chubb',amount:410,due:'Dec 12',method:'Autopay · Visa 1188',status:'Scheduled',last:'Autopay scheduled Dec 1'},
+ {clientId:'C1013',pol:'BP-4410',carrier:'Openly',amount:298,due:'Nov 15',method:'Secure link',status:'Paid',last:'Paid Nov 15 by secure link, receipt sent'},
+ {clientId:'C1015',pol:'HO-1188',carrier:'Openly',amount:176,due:'Nov 10',method:'Autopay · Amex 3007',status:'Paid',last:'Paid Nov 10, confirmation on file'},
+ {clientId:'C1017',pol:'AU-6650',carrier:'Safeco',amount:232,due:'Nov 12',method:'Autopay · card declined',status:'Failed',last:'Declined Nov 12, second attempt Nov 26'},
+ {clientId:'C1019',pol:'RE-3320',carrier:'Foremost',amount:290,due:'Dec 8',method:'Secure link',status:'Not sent',last:'No link yet'},
+ {clientId:'C1021',pol:'BP-5521',carrier:'Safeco',amount:365,due:'Dec 3',method:'ACH',status:'Scheduled',last:'ACH authorized Nov 20'},
+ {clientId:'C1023',pol:'AU-8811',carrier:'Travelers',amount:198,due:'Nov 18',method:'Secure link',status:'Paid',last:'Paid Nov 18, receipt texted'}
+];
+let COMMISSIONS=[
+ {carrier:'Safeco',stmt:'Nov 2026',pols:41,premium:18420,rate:0.13,comm:2394.6,recv:2394.6,status:'Reconciled',variance:0},
+ {carrier:'Travelers',stmt:'Nov 2026',pols:33,premium:15880,rate:0.12,comm:1905.6,recv:1742.4,status:'Variance',variance:-163.2},
+ {carrier:'Progressive',stmt:'Nov 2026',pols:22,premium:12640,rate:0.11,comm:1390.4,recv:1390.4,status:'Reconciled',variance:0},
+ {carrier:'Openly',stmt:'Nov 2026',pols:14,premium:7140,rate:0.14,comm:999.6,recv:999.6,status:'Reconciled',variance:0},
+ {carrier:'Chubb',stmt:'Nov 2026',pols:6,premium:9120,rate:0.15,comm:1368,recv:1231.2,status:'Variance',variance:-136.8},
+ {carrier:'Foremost',stmt:'Nov 2026',pols:9,premium:2410,rate:0.12,comm:289.2,recv:289.2,status:'Reconciled',variance:0},
+ {carrier:'Safeco',stmt:'Oct 2026',pols:38,premium:16980,rate:0.13,comm:2207.4,recv:2207.4,status:'Paid',variance:0},
+ {carrier:'Travelers',stmt:'Oct 2026',pols:29,premium:14120,rate:0.12,comm:1694.4,recv:1694.4,status:'Paid',variance:0}
+];
+const COMM_LOG=[['Nov 24 9:04 AM','Safeco Nov statement reconciled, $2,394.60 matches the book to the penny'],
+ ['Nov 24 8:52 AM','Travelers variance flagged: 2 policies on the statement are not on our schedule'],
+ ['Nov 23 4:31 PM','Chubb variance flagged: $136.80 short, rate applied at 13.5% not 15%'],
+ ['Nov 23 10:12 AM','Openly Oct statement received, matched automatically'],
+ ['Nov 21 3:40 PM','Foremost Nov statement received, matched automatically']];
+let USERS=[
+ {n:'John Chleboun',role:'Agency owner',email:'john@cardinalagency.com',mfa:'Enrolled',last:'Today 8:12 AM',status:'Active',sees:'Everything'},
+ {n:'Andrew Whitehead',role:'Producer',email:'andrew@cardinalagency.com',mfa:'Enrolled',last:'Today 8:31 AM',status:'Active',sees:'No ad spend, campaigns or closure rates'},
+ {n:'Jacobo Morales',role:'Producer',email:'jacobo@cardinalagency.com',mfa:'Enrolled',last:'Today 8:04 AM',status:'Active',sees:'Everything except security and access'},
+ {n:'Kayla Brooks',role:'Producer',email:'kayla@cardinalagency.com',mfa:'Enrolled',last:'Yesterday 5:22 PM',status:'Active',sees:'Everything except security and access'},
+ {n:'Dana Ruiz',role:'CSR',email:'dana@cardinalagency.com',mfa:'Enrolled',last:'Today 8:02 AM',status:'Active',sees:'Clients, policies, payments, tasks, email, messages'},
+ {n:'Steve Lundin',role:'Service',email:'steve@cardinalagency.com',mfa:'Pending',last:'Nov 20 4:48 PM',status:'Active',sees:'Clients, policies, claims, payments, tasks'},
+ {n:'Marisol Vega',role:'Bookkeeper',email:'marisol@cardinalagency.com',mfa:'Enrolled',last:'Nov 18 11:30 AM',status:'Active',sees:'Commissions and payments only, read only'},
+ {n:'Kelsey Trevino',role:'Platform admin',email:'lnlsolutions@proton.me',mfa:'Enrolled',last:'Today 7:58 AM',status:'Active',sees:'Everything, plus the platform build'}
+];
+const ACCESS_LOG=[['Nov 24 8:31 AM','Andrew Whitehead signed in from Gilbert office, Chrome on Windows, MFA satisfied'],
+ ['Nov 24 8:12 AM','John Chleboun signed in, viewed Commissions'],
+ ['Nov 24 7:58 AM','Kelsey Trevino signed in as platform admin'],
+ ['Nov 23 5:22 PM','Kayla Brooks signed out after 8h 14m'],
+ ['Nov 22 9:10 AM','Steve Lundin MFA reset requested by Dana Ruiz'],
+ ['Nov 21 2:03 PM','Marisol Vega access changed to Bookkeeper, read only']];
+
+/* mirror the detailed claim cases into the legacy CLAIMS array so the client record and the Claims tab agree */
+CLAIMS.length=0;
+CLAIM_CASES.forEach(c=>CLAIMS.push({id:c.id,clientId:c.clientId,carrier:c.carrier,line:c.type,type:c.type,date:c.loss,
+  adjuster:c.adj,reserve:c.reserve,paid:c.paid,status:(c.status==='Open'||c.status==='Under review')?'open':'closed'}));
+function syncClaims(){
+  CLAIMS.length=0;
+  CLAIM_CASES.forEach(c=>CLAIMS.push({id:c.id,clientId:c.clientId,carrier:c.carrier,line:c.type,type:c.type,date:c.loss,
+    adjuster:c.adj,reserve:c.reserve,paid:c.paid,status:(c.status==='Open'||c.status==='Under review')?'open':'closed'}));
+}
+const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Quoted in each carrier portal, sent from here'],policies:['Policies','Renewals, payments and documents'],claims:['Claims','Losses, reserves and status by carrier'],
+  payments:['Payments','Who owes what, and how it gets collected'],
+  commissions:['Commissions','Carrier statements reconciled against the book'],
+  tasks:['Tasks','Who does what, and who covers'],
+  access:['Users and access','Who can see what at Cardinal'],email:['Email','Every client, carrier and portal thread in one inbox'],messages:['Messages','Team chat, huddles and video in one room'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
 const byId=id=>CLIENTS.find(c=>c.id===id);
 const polsOf=id=>POLICIES.filter(p=>p.clientId===id);
 const premOf=id=>polsOf(id).reduce((s,p)=>s+p.premium,0);
@@ -735,7 +863,7 @@ function go(v){
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   document.getElementById('ttl').textContent=NAV[v][0];
   document.getElementById('sub').textContent=NAV[v][1];
-  const R={dash:renderDash,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,tasks:renderTasks,email:renderEmail,messages:renderMessages,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
+  const R={dash:renderDash,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,claims:renderClaims,payments:renderPayments,commissions:renderComms,tasks:renderTasks,email:renderEmail,access:renderAccess,messages:renderMessages,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
   if(R[v])R[v]();
 }
 function quickSearch(v){
@@ -1186,7 +1314,7 @@ function renderProjections(){
 }
 
 /* ---------- boot ---------- */
-function renderAll(){renderDash();renderClients();renderQuotes();renderPolicies();renderTasks();renderEmail();renderMessages();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
+function renderAll(){renderDash();renderClients();renderQuotes();renderPolicies();renderTasks();renderEmail();renderMessages();renderClaims();renderPayments();renderComms();renderAccess();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 document.querySelectorAll('#clientFilters button').forEach(b=>b.onclick=()=>setClientFilter(b.dataset.f));
 document.querySelectorAll('#polFilters button').forEach(b=>b.onclick=()=>setPolFilter(b.dataset.f));
@@ -1373,6 +1501,9 @@ function claimDetail(cid2){
 }
 function claimStatus(id,st){
   const x=CLAIMS.find(c=>c.id===id);x.status=st;
+  const y=(typeof CLAIM_CASES!=='undefined')?CLAIM_CASES.find(k=>k.id===id):null;
+  if(y){y.status=(st==='closed')?'Closed':'Open'; if(st==='closed'&&y.paid===0)y.paid=y.reserve;}
+  if(typeof renderClaims==='function'&&document.getElementById('claimBody'))renderClaims();
   act(x.clientId,'claim','Claim '+x.id+' marked '+st);
   closeModal();renderDrawer();
   toast('Claim marked '+st);
@@ -2081,5 +2212,283 @@ function endCall(){
   CALL_RECAPS.unshift(recap);
   TEAMCHANS[CH].msgs.push({w:'System',t:'now',x:recap});
   renderMessages(); toast('Call ended, recap posted'); act(null,'messages','Video call ended, recap posted');
+}
+/* ================= CLAIM_CASES ================= */
+let CLAIM_FILTER='all', CLAIM_PICK=0;
+function claimFilter(f,el){CLAIM_FILTER=f;document.querySelectorAll('#claimFilters button').forEach(b=>b.classList.toggle('on',b===el));renderClaims();toast('Claims: '+f);}
+function claimRows(){
+  return CLAIM_CASES.filter(c=>{
+    if(CLAIM_FILTER==='all')return true;
+    if(CLAIM_FILTER==='open')return c.status==='Open';
+    if(CLAIM_FILTER==='review')return c.status==='Under review';
+    if(CLAIM_FILTER==='closed')return c.status==='Closed'||c.status==='Approved';
+    return true;
+  });
+}
+function renderClaims(){
+  const box=document.getElementById('claimBody'); if(!box)return;
+  const open=CLAIM_CASES.filter(c=>c.status==='Open'||c.status==='Under review').length;
+  const res=CLAIM_CASES.reduce((s,c)=>s+c.reserve,0), paid=CLAIM_CASES.reduce((s,c)=>s+c.paid,0);
+  const k=[['Open claims',open,'of '+CLAIM_CASES.length+' on file','dn'],['Reserves outstanding',money(res),'carrier held, not ours',''],
+    ['Paid this year',money(paid),'across 5 carriers','up'],['Average days to close',18,'agency target is under 30','up']];
+  document.getElementById('claimKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('claimCount').textContent=claimRows().length+' shown';
+  box.innerHTML=claimRows().map((c,i)=>{const cl=byId(c.clientId);const idx=CLAIM_CASES.indexOf(c);
+    return `<tr style="cursor:pointer" onclick="pickClaim(${idx})"><td><b>${c.id}</b></td><td>${cl?cl.name:'—'}</td><td>${c.carrier}</td>
+      <td>${c.loss}</td><td style="font-size:12px">${c.type}</td>
+      <td><span class="chip ${c.status==='Open'?'r':c.status==='Under review'?'a':c.status==='Denied'?'r':'g'}">${c.status}</span></td>
+      <td class="num">${money(c.reserve)}</td><td class="num">${money(c.paid)}</td><td>${c.adj}</td>
+      <td><button class="btn ghost sm" onclick="event.stopPropagation();pickClaim(${idx})">Open</button></td></tr>`;}).join('')
+    ||`<tr><td colspan="10" style="color:var(--muted)">No claims match that filter.</td></tr>`;
+  const c=CLAIM_CASES[CLAIM_PICK];
+  document.getElementById('claimPick').textContent=c.id;
+  document.getElementById('claimTimeline').innerHTML=`
+    <div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">${c.carrier} · policy ${c.pol} · ${c.type} · loss date ${c.loss}</div>
+    <div style="font-size:13px;color:#243040;line-height:1.6;margin-bottom:10px">${c.detail}</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px">
+      <div><div class="lab" style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:800">Reserve</div><b>${money(c.reserve)}</b></div>
+      <div><div class="lab" style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:800">Paid</div><b>${money(c.paid)}</b></div>
+      <div><div class="lab" style="font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:800">Adjuster</div><b>${c.adj}</b></div>
+    </div>
+    ${c.steps.map(s=>`<div style="display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--line)"><div style="font-size:11.5px;color:var(--muted);min-width:64px">${s[0]}</div><div style="font-size:12.5px">${s[1]}</div></div>`).join('')}
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+      <button class="btn blue sm" onclick="advanceClaim()">Advance status</button>
+      <button class="btn ghost sm" onclick="claimNote()">Add note</button>
+      <button class="btn ghost sm" onclick="toast('Adjuster ${c.adj} emailed for an update')">Chase the adjuster</button>
+      <button class="btn ghost sm" onclick="toast('Claim summary PDF generated')">Claim summary</button>
+    </div>`;
+  const lr=[['Safeco',38,45],['Travelers',52,45],['Progressive',44,45],['Openly',21,45],['Chubb',63,45],['Foremost',18,45]];
+  document.getElementById('lossBars').innerHTML=lr.map(([n,v,t])=>`<div class="bar"><span>${n}</span><div class="track"><div class="fill" style="width:${Math.min(100,Math.round(v/70*100))}%;background:${v>t?'var(--red)':'var(--green)'}"></div></div><b>${v}%</b></div>`).join('');
+  const nudges=CLAIM_CASES.filter(c=>c.status==='Open'||c.status==='Under review');
+  document.getElementById('claimNudges').innerHTML=nudges.map(c=>{const cl=byId(c.clientId);
+    return `<div class="pol" style="background:#fff"><div class="r1"><span class="car">${c.id} · ${cl?cl.name:''}</span><span class="chip a">${c.status}</span></div>
+      <div class="meta">${c.carrier} · ${c.type} · last step ${c.steps[c.steps.length-1][0]}</div>
+      <div class="acts"><button onclick="pickClaim(${CLAIM_CASES.indexOf(c)})">Open claim</button><button onclick="toast('Update request sent to ${c.adj}')">Request update</button></div></div>`;}).join('')
+    ||`<div class="note">Nothing open. Every claim on file is closed.</div>`;
+}
+function pickClaim(i){CLAIM_PICK=i;renderClaims();}
+function advanceClaim(){
+  const c=CLAIM_CASES[CLAIM_PICK];
+  const next={Open:'Under review','Under review':'Approved',Approved:'Closed',Closed:'Closed',Denied:'Closed'}[c.status];
+  c.status=next; c.steps.push(['now','Status moved to '+next+' by Kelsey']);
+  if(next==='Approved'&&!c.paid){c.paid=c.reserve;}
+  syncClaims(); renderClaims(); toast(c.id+' moved to '+next);
+  act(c.clientId,'claims','Claim '+c.id+' moved to '+next);
+}
+function claimNote(){
+  const c=CLAIM_CASES[CLAIM_PICK];
+  document.getElementById('sheet').innerHTML=`
+    <div class="head"><h2>Add a note to ${c.id}</h2><div class="spacer"></div><button class="btn ghost sm" onclick="closeModal()">Close</button></div>
+    <div class="body">
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">${c.carrier} · ${c.type} · adjuster ${c.adj}</div>
+      <div class="field"><label>Note</label><textarea id="cnText" style="min-height:100px;width:100%;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:9px;padding:9px" placeholder="Called the insured, estimate expected Friday."></textarea></div>
+      <div class="field"><label>Also create a follow-up</label><select id="cnTask"><option>Yes, due tomorrow</option><option>No</option></select></div>
+      <button class="btn blue" onclick="saveClaimNote()">Save note</button>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function saveClaimNote(){
+  const c=CLAIM_CASES[CLAIM_PICK];
+  const t=(document.getElementById('cnText').value||'').trim()||'Note added by Kelsey';
+  const mk=document.getElementById('cnTask').value;
+  c.steps.push(['now',t]);
+  if(mk.startsWith('Yes')){
+    TASKS.unshift({id:'T'+(970+TASKS.length),clientId:c.clientId,reason:'Claim '+c.id+' follow-up: '+t.slice(0,60),due:'tomorrow',owner:'Andrew W.',type:'claim',pri:'high',done:false});
+    renderTasks();
+  }
+  syncClaims(); closeModal(); renderClaims(); toast('Note saved to '+c.id);
+  act(c.clientId,'claims','Note on '+c.id+': '+t);
+}
+function newClaim(){
+  document.getElementById('sheet').innerHTML=`
+    <div class="head"><h2>New claim (FNOL)</h2><div class="spacer"></div><button class="btn ghost sm" onclick="closeModal()">Close</button></div>
+    <div class="body">
+      <div class="grid2">
+        <div class="field"><label>Client</label><select id="ncClient">${CLIENTS.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
+        <div class="field"><label>Carrier</label><select id="ncCarrier"><option>Safeco</option><option>Travelers</option><option>Progressive</option><option>Openly</option><option>Chubb</option><option>Foremost</option></select></div>
+        <div class="field"><label>Date of loss</label><input id="ncLoss" value="Nov 24"></div>
+        <div class="field"><label>Type</label><select id="ncType"><option>Auto collision</option><option>Water damage</option><option>Wind and hail</option><option>Theft</option><option>Liability</option><option>Commercial auto</option><option>Glass</option><option>Equipment breakdown</option></select></div>
+      </div>
+      <div class="field"><label>What happened</label><input id="ncWhat" placeholder="Rear-ended at a light, other driver cited"></div>
+      <div class="field"><label>Reserve estimate</label><input id="ncRes" value="5000"></div>
+      <button class="btn blue" onclick="saveClaim()">File the claim</button>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function saveClaim(){
+  const cid=document.getElementById('ncClient').value, car=document.getElementById('ncCarrier').value,
+        loss=document.getElementById('ncLoss').value, type=document.getElementById('ncType').value,
+        what=document.getElementById('ncWhat').value||type+' reported by the insured', res=parseInt(document.getElementById('ncRes').value)||5000;
+  const pol=POLICIES.find(p=>p.clientId===cid);
+  CLAIM_CASES.unshift({id:'CLM-'+(4480+CLAIM_CASES.length),clientId:cid,carrier:car,pol:pol?pol.number:'new',loss,type,status:'Open',reserve:res,paid:0,adj:'Unassigned',filed:loss,
+    detail:what,steps:[[loss,'FNOL taken and reported to '+car],[loss,'Carrier acknowledged, claim number issued'],[loss,'Adjuster assignment pending']]});
+  closeModal(); CLAIM_PICK=0; syncClaims(); renderClaims(); toast('Claim filed with '+car);
+  act(cid,'claims','FNOL filed: '+type+' with '+car);
+}
+
+/* ================= PAYMENTS ================= */
+let PAY_FILTER='all';
+const PAY_LINKS=[];
+function payFilter(f,el){PAY_FILTER=f;document.querySelectorAll('#payFilters button').forEach(b=>b.classList.toggle('on',b===el));renderPayments();toast('Payments: '+f);}
+function renderPayments(){
+  const box=document.getElementById('payBody'); if(!box)return;
+  const due=PAYMENTS.filter(p=>p.status!=='Paid');
+  const dueAmt=due.reduce((s,p)=>s+p.amount,0), failed=PAYMENTS.filter(p=>p.status==='Failed').length;
+  const k=[['Collected this month',money(PAYMENTS.filter(p=>p.status==='Paid').reduce((s,p)=>s+p.amount,0)),'12 payments, zero chargebacks','up'],
+    ['Due and not yet paid',money(dueAmt),due.length+' policies in the queue','dn'],
+    ['Failed payments',failed,'retry ladder running','dn'],
+    ['Secure links outstanding',PAY_LINKS.filter(l=>!l.paid).length,'each one expires in 30 minutes','']];
+  document.getElementById('payKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  const rows=PAYMENTS.filter(p=>PAY_FILTER==='all'||(PAY_FILTER==='due'&&p.status!=='Paid')||(PAY_FILTER==='failed'&&p.status==='Failed')||(PAY_FILTER==='link'&&p.status==='Link sent')||(PAY_FILTER==='paid'&&p.status==='Paid'));
+  document.getElementById('payCount').textContent=rows.length+' shown';
+  box.innerHTML=rows.map(p=>{const c=byId(p.clientId);const i=PAYMENTS.indexOf(p);
+    return `<tr><td><b>${c?c.name:'—'}</b></td><td>${p.carrier} · ${p.pol}</td><td class="num">${money(p.amount)}</td><td>${p.due}</td>
+      <td style="font-size:12px">${p.method}</td><td><span class="chip ${p.status==='Paid'?'g':p.status==='Failed'?'r':p.status==='Link sent'?'a':'n'}">${p.status}</span></td>
+      <td style="font-size:11.5px;color:var(--muted)">${p.last}</td>
+      <td style="display:flex;gap:5px;flex-wrap:wrap">${p.status==='Paid'?`<button class="btn ghost sm" onclick="toast('Receipt emailed to the client')">Receipt</button>`:
+        `<button class="btn ghost sm" onclick="sendLink(${i})">Send link</button>
+         <button class="btn ghost sm" onclick="markPaid(${i})">Mark paid</button>`}</td></tr>`;}).join('')
+    ||`<tr><td colspan="8" style="color:var(--muted)">Nothing in that filter.</td></tr>`;
+  const bars=[['Autopay on file',Math.round(PAYMENTS.filter(p=>p.method.startsWith('Autopay')).length/PAYMENTS.length*100),100],['Paid on time',92,100],['Lapses prevented this year',17,20],['Links paid within an hour',78,100]];
+  document.getElementById('payBars').innerHTML=bars.map(b=>`<div class="bar"><span>${b[0]}</span><div class="track"><div class="fill" style="width:${b[1]}%"></div></div><b>${b[0].includes('%')||b[0].includes('on file')?b[1]+'%':b[1]}</b></div>`).join('');
+  document.getElementById('payLinks').innerHTML=PAY_LINKS.length?PAY_LINKS.map(l=>`<div class="pol" style="background:#fff"><div class="r1"><span class="car">${l.who}</span><span class="chip ${l.paid?'g':'a'}">${l.paid?'paid':'open'}</span></div>
+    <div class="meta">${money(l.amount)} · sent ${l.sent} · ${l.channel} · expires ${l.exp}</div>
+    <div class="acts">${l.paid?'<button onclick="toast(\'Receipt resent\')">Receipt</button>':`<button onclick="markPaid(${l.idx})">Mark paid</button><button onclick="toast('Link resent')">Resend</button>`}</div></div>`).join('')
+    :`<div class="note">No links out right now. Send one from the queue and it shows here with its expiry.</div>`;
+}
+function sendLink(i){
+  const p=PAYMENTS[i]; const c=byId(p.clientId);
+  p.status='Link sent'; p.method='Secure link'; p.last='Link texted just now, expires in 30 minutes';
+  PAY_LINKS.unshift({who:c?c.name:'Client',amount:p.amount,sent:'just now',channel:'text to the number on file',exp:'in 30 minutes',paid:false,idx:i});
+  renderPayments(); toast('Secure payment link sent to '+(c?c.name:'the client'));
+  act(p.clientId,'payments','Secure payment link sent for '+money(p.amount));
+}
+function markPaid(i){
+  const p=PAYMENTS[i]; const c=byId(p.clientId);
+  p.status='Paid'; p.last='Paid just now, receipt sent';
+  PAY_LINKS.forEach(l=>{if(l.idx===i)l.paid=true;});
+  renderPayments(); toast('Marked paid, receipt sent'); act(p.clientId,'payments','Payment of '+money(p.amount)+' processed by the agency');
+}
+function sendPayLinkModal(){
+  document.getElementById('sheet').innerHTML=`
+    <div class="head"><h2>Send a secure payment link</h2><div class="spacer"></div><button class="btn ghost sm" onclick="closeModal()">Close</button></div>
+    <div class="body">
+      <div class="note">The client never enters card details in the portal. The link goes to their phone or email, they enter it there, the processor handles it, and the receipt lands back on the client record.</div>
+      <div class="grid2">
+        <div class="field"><label>Client</label><select id="slClient">${PAYMENTS.map((p,i)=>{const c=byId(p.clientId);return `<option value="${i}">${c?c.name:''} · ${p.carrier} ${money(p.amount)}</option>`;}).join('')}</select></div>
+        <div class="field"><label>Send by</label><select id="slCh"><option>Text message</option><option>Email</option><option>Both</option></select></div>
+      </div>
+      <button class="btn blue" onclick="confirmSendLink()">Send link</button>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function confirmSendLink(){
+  const i=parseInt(document.getElementById('slClient').value), ch=document.getElementById('slCh').value;
+  const p=PAYMENTS[i]; const c=byId(p.clientId);
+  p.status='Link sent'; p.method='Secure link'; p.last='Link sent just now by '+ch.toLowerCase()+', expires in 30 minutes';
+  PAY_LINKS.unshift({who:c?c.name:'Client',amount:p.amount,sent:'just now',channel:ch.toLowerCase(),exp:'in 30 minutes',paid:false,idx:i});
+  closeModal(); renderPayments(); toast('Link sent by '+ch.toLowerCase()); act(p.clientId,'payments','Secure payment link sent for '+money(p.amount));
+}
+
+/* ================= COMMISSIONS ================= */
+let COMM_FILTER='nov';
+function commFilter(f,el){COMM_FILTER=f;document.querySelectorAll('#commFilters button').forEach(b=>b.classList.toggle('on',b===el));renderComms();toast('Statements: '+f);}
+function renderComms(){
+  const box=document.getElementById('commBody'); if(!box)return;
+  const nov=COMMISSIONS.filter(c=>c.stmt==='Nov 2026');
+  const expected=nov.reduce((s,c)=>s+c.comm,0), recv=nov.reduce((s,c)=>s+c.recv,0);
+  const varCount=COMMISSIONS.filter(c=>c.status==='Variance').length;
+  const k=[['Commission this month',money(recv),'of '+money(expected)+' expected','up'],
+    ['Variance open',money(expected-recv),varCount+' carriers short','dn'],
+    ['Premium in force',money(COMMISSIONS.filter(c=>c.stmt==='Nov 2026').reduce((s,c)=>s+c.premium,0)),'135 policies this statement cycle',''],
+    ['Reconciled clean',(COMMISSIONS.filter(c=>c.status==='Reconciled').length)+' of '+COMMISSIONS.length,'statements matched to the penny','up']];
+  document.getElementById('commKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  const rows=COMMISSIONS.filter(c=>COMM_FILTER==='all'||(COMM_FILTER==='nov'&&c.stmt==='Nov 2026')||(COMM_FILTER==='variance'&&c.status==='Variance')||(COMM_FILTER==='paid'&&c.status==='Paid')||(COMM_FILTER==='clean'&&c.status==='Reconciled'));
+  box.innerHTML=rows.map(c=>{const i=COMMISSIONS.indexOf(c);
+    return `<tr><td><b>${c.carrier}</b></td><td>${c.stmt}</td><td class="num">${c.pols}</td><td class="num">${money(c.premium)}</td>
+      <td class="num">${(c.rate*100).toFixed(1)}%</td><td class="num">${money(c.comm)}</td><td class="num">${money(c.recv)}</td>
+      <td class="num" style="color:${c.variance<0?'var(--red)':'var(--green)'}">${c.variance===0?'—':money(c.variance)}</td>
+      <td><span class="chip ${c.status==='Variance'?'r':c.status==='Paid'?'n':'g'}">${c.status}</span></td>
+      <td style="display:flex;gap:5px"><button class="btn ghost sm" onclick="reconcile(${i})">${c.status==='Variance'?'Reconcile':'Statement'}</button></td></tr>`;}).join('')
+    ||`<tr><td colspan="10" style="color:var(--muted)">No statements in that filter.</td></tr>`;
+  const splits=[['Andrew W.',22],['Jacobo M.',34],['Kayla B.',26],['Steve L.',18]];
+  const tot=splits.reduce((s,x)=>s+x[1],0);
+  document.getElementById('commSplit').innerHTML=splits.map(([n,v])=>`<div class="bar"><span>${n}</span><div class="track"><div class="fill" style="width:${Math.round(v/tot*100)}%"></div></div><b>${v}%</b></div>`).join('')+
+    `<div class="note">Producer splits come off the agency commission, not the premium, and they post the day the carrier pays.</div>`;
+  document.getElementById('commLog').innerHTML=COMM_LOG.map(l=>`<div style="display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><div style="font-size:11px;color:var(--muted);min-width:88px">${l[0]}</div><div style="font-size:12.5px">${l[1]}</div></div>`).join('');
+}
+function reconcile(i){
+  const c=COMMISSIONS[i];
+  if(c.status==='Variance'){
+    c.recv=c.comm; c.variance=0; c.status='Reconciled';
+    COMM_LOG.unshift(['just now',c.carrier+' '+c.stmt+' variance cleared, carrier issued a supplement']);
+    toast(c.carrier+' reconciled, supplement requested');
+  } else { toast(c.carrier+' '+c.stmt+' statement downloaded'); }
+  renderComms();
+}
+
+/* ================= USERS AND ACCESS ================= */
+function renderAccess(){
+  const box=document.getElementById('accBody'); if(!box)return;
+  const k=[['Cardinal users',USERS.length,'4 producers, 1 CSR, 1 service, 1 bookkeeper, owner',''],
+    ['MFA enrolled',USERS.filter(u=>u.mfa==='Enrolled').length+' of '+USERS.length,'one pending, nudged daily','up'],
+    ['Signed in today',USERS.filter(u=>u.last.startsWith('Today')).length,'Gilbert office and remote',''],
+    ['Sessions with restricted scope',USERS.filter(u=>u.sees!=='Everything').length,'least privilege by role','up']];
+  document.getElementById('accKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  box.innerHTML=USERS.map(u=>{const i=USERS.indexOf(u);
+    return `<tr><td><b>${u.n}</b></td>
+      <td><select onchange="setRole(${i},this.value)" style="font-size:12px;border:1px solid var(--line);border-radius:6px;padding:3px 5px">
+        ${['Agency owner','Producer','CSR','Service','Bookkeeper','Platform admin'].map(r=>`<option ${r===u.role?'selected':''}>${r}</option>`).join('')}</select></td>
+      <td style="font-size:12px">${u.email}</td>
+      <td><span class="chip ${u.mfa==='Enrolled'?'g':'a'}">${u.mfa}</span></td>
+      <td style="font-size:12px;color:var(--muted)">${u.last}</td>
+      <td style="font-size:11.5px;color:#3A4655">${u.sees}</td>
+      <td><span class="chip ${u.status==='Active'?'g':'r'}">${u.status}</span></td>
+      <td style="display:flex;gap:5px"><button class="btn ghost sm" onclick="resetMfa(${i})">Reset MFA</button>
+        <button class="btn ghost sm" onclick="toggleUser(${i})">${u.status==='Active'?'Suspend':'Restore'}</button></td></tr>`;}).join('');
+  const roles=[['Agency owner','Everything including security, access, commissions and projections'],
+    ['Producer','Clients, quotes, policies, claims, payments, commissions, own outreach. No ad spend, campaigns or closure rates on the employee login'],
+    ['CSR','Clients, policies, payments, tasks, email, messages. No commissions, security or access'],
+    ['Service','Clients, policies, claims, payments, tasks. No quotes or commissions'],
+    ['Bookkeeper','Commissions and payments, read only'],
+    ['Platform admin','LNL only. Build, tiers, projections and every agency on the platform']];
+  document.getElementById('roleMatrix').innerHTML=roles.map(([r,d])=>`<div class="pol" style="background:#fff"><div class="r1"><span class="car">${r}</span></div><div class="meta">${d}</div></div>`).join('');
+  document.getElementById('accessLog').innerHTML=ACCESS_LOG.map(l=>`<div style="display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--line)"><div style="font-size:11px;color:var(--muted);min-width:88px">${l[0]}</div><div style="font-size:12.5px">${l[1]}</div></div>`).join('');
+}
+function setRole(i,r){
+  const u=USERS[i]; u.role=r;
+  const map={'Agency owner':'Everything','Producer':'No ad spend, campaigns or closure rates','CSR':'Clients, policies, payments, tasks, email, messages','Service':'Clients, policies, claims, payments, tasks','Bookkeeper':'Commissions and payments only, read only','Platform admin':'Everything, plus the platform build'};
+  u.sees=map[r]||u.sees;
+  ACCESS_LOG.unshift(['just now',u.n+' role changed to '+r+' by Kelsey']);
+  renderAccess(); toast(u.n+' is now '+r);
+}
+function resetMfa(i){const u=USERS[i];u.mfa='Pending';ACCESS_LOG.unshift(['just now','MFA reset link sent to '+u.email]);renderAccess();toast('MFA reset sent to '+u.n);}
+function toggleUser(i){
+  const u=USERS[i]; u.status=u.status==='Active'?'Suspended':'Active';
+  ACCESS_LOG.unshift(['just now',u.n+' '+(u.status==='Active'?'restored':'suspended')+' by Kelsey']);
+  renderAccess(); toast(u.n+' '+u.status.toLowerCase());
+}
+function inviteUser(){
+  document.getElementById('sheet').innerHTML=`
+    <div class="head"><h2>Invite a Cardinal user</h2><div class="spacer"></div><button class="btn ghost sm" onclick="closeModal()">Close</button></div>
+    <div class="body">
+      <div class="grid2">
+        <div class="field"><label>Name</label><input id="ivName" placeholder="First and last"></div>
+        <div class="field"><label>Email</label><input id="ivEmail" placeholder="name@cardinalagency.com"></div>
+        <div class="field"><label>Role</label><select id="ivRole"><option>Producer</option><option>CSR</option><option>Service</option><option>Bookkeeper</option><option>Agency owner</option></select></div>
+        <div class="field"><label>Require MFA</label><select id="ivMfa"><option>Yes, at first sign-in</option><option>No</option></select></div>
+      </div>
+      <div class="note">The invite sets the role before the first sign-in, so nobody starts with more access than the job needs.</div>
+      <button class="btn blue" onclick="saveInvite()">Send invite</button>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function saveInvite(){
+  const n=document.getElementById('ivName').value||'New user', e=document.getElementById('ivEmail').value||'new@cardinalagency.com',
+        r=document.getElementById('ivRole').value, m=document.getElementById('ivMfa').value.startsWith('Yes')?'Pending':'Enrolled';
+  const map={'Agency owner':'Everything','Producer':'No ad spend, campaigns or closure rates','CSR':'Clients, policies, payments, tasks, email, messages','Service':'Clients, policies, claims, payments, tasks','Bookkeeper':'Commissions and payments only, read only'};
+  USERS.push({n,role:r,email:e,mfa:m,last:'Never',status:'Active',sees:map[r]});
+  ACCESS_LOG.unshift(['just now','Invite sent to '+n+' as '+r]);
+  closeModal(); renderAccess(); toast('Invite sent to '+n);
 }
 </script></body></html>
