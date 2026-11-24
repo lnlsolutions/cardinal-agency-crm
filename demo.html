@@ -239,8 +239,8 @@ tbody tr:hover{background:#FAFBFD}
     <section class="view" id="v-brand">
       <div class="cards" id="projKpis"></div>
       <div class="panel"><div class="head"><h2>Three tiers, priced against the stack they replace</h2><div class="spacer"></div><span class="chip a">projection</span></div>
-        <div class="body" style="padding:0"><table><thead><tr><th>Tier</th><th>Who it is for</th><th>Included</th><th class="num">Our price / mo</th><th class="num">Their stack today</th><th class="num">Saved</th></tr></thead><tbody id="tierBody"></tbody></table></div>
-        <div class="body" style="border-top:1px solid var(--line)"><div class="note" style="margin:0">Every price is per agency, not per user. Competitor figures are median published and reported rates for the tools this replaces: EZLynx at $70 to $129 per user plus modules, HawkSoft at $89 per user, AgencyZoom at $79 per user, plus a texting tool. These are projections for the meeting, not published pricing.</div></div></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Tier</th><th>Who it is for</th><th>Included</th><th class="num">Our price / mo</th><th class="num">Tools replaced</th><th class="num">Saved</th></tr></thead><tbody id="tierBody"></tbody></table></div>
+        <div class="body" style="border-top:1px solid var(--line)"><div class="note" style="margin:0">EZLynx stays with the agency and is not part of this price. What is priced here is the layer on top: the download of the book into one record, and everything the agent uses all day. Benchmarks are reported rates for the tools this layer replaces: CRM at $79 per user, texting at about $50 per seat, reviews at $99, reporting and data feeds at $200 to $400. Per agency, not per user. Projections for the meeting, not published pricing.</div></div></div>
       <div class="cols" style="margin-top:14px">
         <div class="panel"><div class="head"><h2>What each tier includes</h2></div><div class="body" id="tierDetail"></div></div>
         <div>
@@ -680,12 +680,12 @@ function sendWQ(){
 }
 
 const TIERS=[
- {n:'Tier 1 · Private agent or firm',who:'1 to 3 licensed agents, one location',price:349,stack:520,inc:'One login, client records, portal quoting, ID cards, certificates, renewals, drips, client portal under their brand'},
- {n:'Tier 2 · Multi-agent agency',who:'4 to 15 agents, producers and CSRs',price:899,stack:1660,inc:'Everything in tier 1, roles and permissions, out-of-office coverage, ad and lead reporting, EZLynx sync'},
- {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',price:2400,stack:4820,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
+ {n:'Tier 1 · Private agent or firm',who:'1 to 3 licensed agents, one location',price:199,stack:278,inc:'One login, client records pulled from EZLynx, portal quoting, ID cards, certificates, renewals, drips, client portal under their brand'},
+ {n:'Tier 2 · Multi-agent agency',who:'4 to 15 agents, producers and CSRs',price:649,stack:1080,inc:'Everything in tier 1, roles and permissions, out-of-office coverage, ad and lead reporting, nightly EZLynx sync'},
+ {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',price:1900,stack:3174,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
 ];
 function renderProjections(){
-  const k=[['Tier 1',money(349)+'/mo','entry point for a private firm',''],['Median competitor stack',money(1660)+'/mo','for a 4 to 15 agent agency','dn'],['Blended target',money(820)+'/mo','across a 60/30/10 mix','up'],['Gross margin at 25 agencies',money(18500)+'/mo','before support cost','up']];
+  const k=[['Tier 1',money(199)+'/mo','entry point for a private firm',''],['Tools replaced, 4 to 15 agents',money(1080)+'/mo','CRM, texting, reviews, reporting','dn'],['Blended target',money(504)+'/mo','across a 60/30/10 mix','up'],['Revenue at 25 agencies',money(12602)+'/mo','projected, before cost to serve','up']];
   document.getElementById('projKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
   document.getElementById('tierBody').innerHTML=TIERS.map(t=>{
     const save=Math.round((1-t.price/t.stack)*100);
@@ -697,9 +697,9 @@ function renderProjections(){
     <div class="r1"><span class="car">${t.n}</span><span class="chip n">${money(t.price)}/mo</span></div>
     <div class="meta">${t.inc}</div>
     <div class="acts"><button onclick="toast('${t.n} selected for the proposal')">Use this tier</button></div></div>`).join('')
-    +`<div class="note">Priced per agency with unlimited seats. An agency that adds a producer adds no cost, which is the argument against $300 to $350 per seat per tool.</div>`;
+    +`<div class="note">Priced per agency with unlimited seats. EZLynx remains in place for every agent. This is the layer that turns the downloaded book into one login, and adding a producer adds no cost.</div>`;
   const mix=[[10,'60/30/10'],[25,'60/30/10'],[50,'55/35/10'],[100,'50/40/10']];
-  const blended=(a,b,c)=>a*349+b*899+c*2400;
+  const blended=(a,b,c)=>a*199+b*649+c*1900;
   document.getElementById('mrrBody').innerHTML=mix.map(m=>{
     const [a,b,c]=m[1].split('/').map(Number);
     const n=m[0], t1=Math.round(n*a/100), t2=Math.round(n*b/100), t3=n-t1-t2;
@@ -709,7 +709,7 @@ function renderProjections(){
   const costs=[['Infrastructure and hosting',900],['Support, one person',3200],['Carrier and data fees',1400],['Sales and marketing',2600]];
   const tot=costs.reduce((s,c)=>s+c[1],0);
   document.getElementById('costBars').innerHTML=costs.map(c=>`<div class="bar"><span>${c[0]}</span><div class="track"><div class="fill" style="width:${Math.round(c[1]/tot*100)}%"></div></div><span class="n">${money(c[1])}</span></div>`).join('');
-  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month to serve the first 25 agencies, against <b>${money(18500)}</b> projected revenue at that size. Breakeven sits near 8 agencies.`;
+  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month to serve the first 25 agencies, against <b>${money(12602)}</b> projected revenue at that size. Breakeven sits near 16 agencies.`;
 }
 
 function renderRecentQuotes(){
