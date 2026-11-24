@@ -222,14 +222,14 @@ tbody tr:hover{background:#FAFBFD}
       <div class="cols">
         <div class="panel"><div class="head"><h2>EZLynx connection</h2><div class="spacer"></div><span class="chip g">connected</span></div><div class="body">
           <div class="pol"><div class="r1"><span class="car">EZLynx</span><span class="chip g">source of record</span></div>
-            <div class="meta">Policy and client data pull only. Cardinal keeps EZLynx for rating and carrier appointments. Last sync 8:04am, 593 policies, 0 errors.</div>
+            <div class="meta">Policy, claims, eDocs and commission data arrive by download into EZLynx, which is where the agency already sits. Last sync 8:04am, 593 policies, 0 errors.</div>
             <div class="acts"><button onclick="syncNow()">Pull now</button><button onclick="toast('Field mapping opened')">Field mapping</button><button onclick="toast('Export queued')">Export book</button></div></div>
           <div class="pol"><div class="r1"><span class="car">Carrier portals</span><span class="chip a">12 markets</span></div>
-            <div class="meta">Policy detail, ID cards and declarations pages pulled per client, from the carrier that insures them. Credentials sealed in the vault, never in the browser.</div>
+            <div class="meta">Where a carrier grants a partner API, we call it. Where it does not, the portal window handles the request. Credentials sealed in the vault, never in the browser.</div>
             <div class="acts"><button onclick="toast('Vault opened')">Manage connections</button></div></div>
           <div class="pol"><div class="r1"><span class="car">Website and lead forms</span><span class="chip g">live</span></div>
             <div class="meta">Form fills, quote starts and calls land in the CRM within seconds, tagged with source and campaign.</div></div>
-          <div class="note">Production path: carrier API where granted, agency portal link everywhere else. Stored logins are not permission, and portals break when a carrier adds MFA. We build outward from the markets that grant access.</div>
+          <div class="note">Three real paths, in order of reliability: download into EZLynx (most carriers), a carrier partner API where the agency is approved (Travelers and Progressive publish developer portals, Openly is partner only), and the carrier portal itself for everything else. Stored logins are not permission, and portals break when a carrier adds MFA.</div>
         </div></div>
         <div class="panel"><div class="head"><h2>Sync activity</h2></div><div class="body"><div id="syncLog" class="mono" style="line-height:1.9;color:#4A5768"></div></div></div>
       </div>
@@ -276,7 +276,7 @@ tbody tr:hover{background:#FAFBFD}
 <div class="toast" id="toast"></div>
 <script>
 const CODE='cardinal2026';
-const CAR=[['Travelers','api'],['Progressive','api'],['Safeco','api'],['Nationwide','api'],['Stillwater','api'],['Openly','api'],['Chubb','api'],['The Hartford','link'],['Foremost','portal'],['Mercury','portal'],['Bristol West','portal'],['GAINSCO','portal']];
+const CAR=[['Travelers','api'],['Progressive','api'],['Openly','api'],['Safeco','download'],['Nationwide','download'],['Stillwater','download'],['Chubb','download'],['The Hartford','download'],['Foremost','portal'],['Mercury','portal'],['Bristol West','portal'],['GAINSCO','portal']];
 const LINES=['Auto','Home','Umbrella','Commercial Auto','General Liability','Workers Comp','BOP','Renters','Life'];
 const FIRST=['Jill','Marcus','Elena','Dwayne','Priya','Tom','Rosa','Caleb','Nina','Andre','Sofia','Grant','Yvonne','Hector','Lena','Owen','Tanya','Reggie'];
 const LAST=['Nakamura','Whitfield','Ortiz','Brennan','Raman','Delgado','Kowalski','Mercer','Haddad','Boateng','Salazar','Pierce','Okafor','Villanueva','Sorensen','Duffy','Ferraro','Lindqvist'];
@@ -405,7 +405,7 @@ function openClient(id){
   <button class="btn sm ghost" onclick="closeDrawer()">Close</button>`;
   const pols=ps.map(p=>`<div class="pol"><div class="r1"><span class="car">${p.carrier}</span><span class="chip ${p.payDue?'r':'g'}">${p.status}</span><span class="chip n">${p.conn}</span></div>
   <div class="meta">${p.line} · ${p.policy}<br>Renews ${p.renewal} (${p.daysOut} days) · ${money(p.premium)}/yr</div>
-  <div class="acts"><button onclick="idCard('${p.id}')">ID card</button><button onclick="coi('${p.id}')">Certificate</button><button onclick="carrierLogin('${p.id}')" style="border-color:#1D5BD6;color:#1D5BD6;font-weight:700">${p.conn==='api'?'Pull (API)':'Carrier login'}</button><button onclick="payNow('${p.id}')">Pay / autopay</button><button onclick="toast('Declarations page downloaded')">Dec page</button></div></div>`).join('');
+  <div class="acts"><button onclick="idCard('${p.id}')">ID card</button><button onclick="coi('${p.id}')">Certificate</button><button onclick="carrierLogin('${p.id}')" style="border-color:#1D5BD6;color:#1D5BD6;font-weight:700">${p.conn==='api'?'Pull (API)':p.conn==='download'?'Pull (download)':'Carrier login'}</button><button onclick="payNow('${p.id}')">Pay / autopay</button><button onclick="toast('Declarations page downloaded')">Dec page</button></div></div>`).join('');
   document.getElementById('db').innerHTML=`
   <div style="display:flex;gap:8px;margin-bottom:14px">
     <button class="btn sm blue" onclick="openQuoteFor('${c.id}')">New quote</button>
@@ -622,8 +622,8 @@ function mvpBlock(c){
 let WQ=null;
 function renderCarrierQuote(){
   document.getElementById('cqBody').innerHTML=CAR.map(c=>{
-    const how=c[1]==='api'?'Rated by carrier API, returned instantly':c[1]==='link'?"Rated through the agency portal link":'Rated inside the carrier portal';
-    return `<tr><td><b>${c[0]}</b></td><td><span class="chip ${c[1]==='api'?'g':c[1]==='link'?'a':'n'}">${c[1]}</span></td>
+    const how=c[1]==='api'?'Partner API, agency appointment required':c[1]==='download'?'Policy data by download into EZLynx, quote via portal or real time':'Rated inside the carrier portal';
+    return `<tr><td><b>${c[0]}</b></td><td><span class="chip ${c[1]==='api'?'g':c[1]==='download'?'a':'n'}">${c[1]}</span></td>
     <td style="color:#4A5768">${how}</td>
     <td><button class="btn sm ${c[1]==='portal'?'blue':'ghost'}" onclick="openCarrierWindow('${c[0]}','${c[1]}')">${c[1]==='portal'?'Open window':'Pull quote'}</button></td></tr>`}).join('');
 }
@@ -634,7 +634,7 @@ function openCarrierWindow(carrier,conn){
   const domain=carrier.toLowerCase().replace(/[^a-z]/g,'')+'.com';
   document.getElementById('sheet').innerHTML=`
   <h3>${carrier} · quote window</h3>
-  <p class="p">${name} · ${line} · ${conn==='api'?'API returns the quote directly':conn==='link'?'agency portal link':'You rate inside the carrier portal'}</p>
+  <p class="p">${name} · ${line} · ${conn==='api'?'Partner API returns the quote directly':conn==='download'?'Downloaded from EZLynx, quoted in the carrier window':'You rate inside the carrier portal'}</p>
   <div style="border:1px solid var(--line);border-radius:10px;overflow:hidden">
     <div style="background:#EEF1F6;padding:7px 10px;display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5A6675">
       <span style="display:flex;gap:3px"><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i></span>
