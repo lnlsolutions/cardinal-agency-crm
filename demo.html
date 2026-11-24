@@ -1349,7 +1349,13 @@ function bindQuote(carrier,prem,method){
   if(!prem){toast('That market did not return a number');return}
   const name=(document.getElementById('qName').value||'').trim();
   let c=clientOfName(name)||QUOTE_CLIENT;
-  if(!c){toast('Pick a client first');return}
+  if(!c && name){
+    c={id:'C'+(9000+CLIENTS.length),name,type:'household',city:'Queen Creek',zip:'85142',owner:PROD[0],
+      since:'2026',tag:'prospect',touch:0,phone:'(480) 555-01'+String(10+CLIENTS.length).slice(-2),
+      email:name.toLowerCase().replace(/[^a-z]+/g,'.')+'@example.com',street:'—',dob:'—'};
+    CLIENTS.push(c);QUOTE_CLIENT=c;
+  }
+  if(!c){toast('Enter a client or prospect name first');return}
   const line=document.getElementById('qLine').value;
   const p={id:'P'+(9000+POLICIES.length),clientId:c.id,carrier,policy:'AZ-'+carrier.slice(0,2).toUpperCase()+'-'+String(700000+POLICIES.length*41),line,
     eff:d2(TODAY),renewal:d2(addDays(TODAY,365)),daysOut:365,premium:prem,status:'active',payDue:false,commRate:0.15,docs:['Declarations page','ID card']};
@@ -1407,7 +1413,7 @@ function renderCampaigns(){
     <td class="num">${Math.round(c.reply/c.enrolled*100)}%</td><td class="num">${c.bound}</td>
     <td style="white-space:nowrap"><button class="btn sm ghost" onclick="showCamp(${i})">View</button>
     <button class="btn sm ghost" onclick="toggleCamp(${i})">${c.status==='paused'?'Resume':'Pause'}</button></td></tr>`).join('');
-  showCamp(SELECTED_CAMP);
+  showCamp(SELECTED_CAMP,false);
 }
 function toggleCamp(i){
   const c=CAMPS[i];c.status=c.status==='paused'?'running':'paused';
@@ -1415,8 +1421,10 @@ function toggleCamp(i){
   renderCampaigns();
   toast(c.name+' '+(c.status==='paused'?'paused':'running again'));
 }
-function showCamp(i){
+function showCamp(i,fromUser){
   SELECTED_CAMP=i;const c=CAMPS[i];
+  document.querySelectorAll('#campBody tr').forEach((tr,j)=>tr.style.background=j===i?'#F3F7FF':'');
+  if(fromUser!==false)toast('Showing '+c.name+' · '+c.steps+' steps');
   document.getElementById('campName').textContent=c.name;
   document.getElementById('campDetail').innerHTML=
     `<div class="kpi"><div class="k">Trigger</div><div class="v" style="font-size:13px">${c.trig}</div><div class="s">Runs whether or not anyone remembers it</div></div>
@@ -1428,7 +1436,7 @@ function showCamp(i){
     ['Email · quote follow-up',"Subject: your numbers, side by side. {first}, attached is what each market came back with. The difference is mostly in the deductible and the roof age."],
     ['SMS · birthday',"Happy birthday {first}. No pitch, just hoping the year treats you well. — {producer}"]]
     .map((m,j)=>`<div class="pol"><div class="r1"><span class="car">${m[0]}</span></div><div class="meta">${m[1]}</div>
-      <div class="acts"><button onclick="editTemplate(${j})">Edit</button><button onclick="copyTemplate(${j})">Copy</button><button onclick="act(null,'campaign','Test sent: ${m[0]}')">Send test</button></div></div>`).join('');
+      <div class="acts"><button onclick="editTemplate(${j})">Edit</button><button onclick="copyTemplate(${j})">Copy</button><button onclick="testSend('${m[0]}')">Send test</button></div></div>`).join('');
 }
 const MSG_LIB=[['SMS · renewal',"Hi {first}, your {carrier} renewal lands {date}. I re-shopped it and I have two options before it auto-renews. Want me to send them over?"],
     ['SMS · payment',"{first}, the {carrier} payment of {amount} did not go through. Coverage is at risk after {date}. Here is the secure link."],
@@ -1445,6 +1453,10 @@ function saveTemplate(j){
   closeModal();showCamp(SELECTED_CAMP);
   act(null,'campaign','Template updated: '+MSG_LIB[j][0]);
   toast('Template saved');
+}
+function testSend(label){
+  act(null,'campaign','Test sent: '+label);
+  toast('Test sent to your own phone and inbox · '+label);
 }
 function copyTemplate(j){
   navigator.clipboard&&navigator.clipboard.writeText(MSG_LIB[j][1]).catch(()=>{});
@@ -1470,7 +1482,12 @@ function enrollTest(i){
   toast('Test contact enrolled in '+CAMPS[i].name);
 }
 /* ---- growth ---- */
-function setRange(r){PROJ_RANGE=r;document.querySelectorAll('#rangeFilters button').forEach(b=>b.classList.toggle('on',b.dataset.r===r));renderGrowth()}
+function setRange(r){
+  PROJ_RANGE=r;
+  document.querySelectorAll('#rangeFilters button').forEach(b=>b.classList.toggle('on',b.dataset.r===r));
+  renderGrowth();
+  toast('Showing '+(r==='q'?'the quarter':r==='y'?'the year':'this month'));
+}
 function renderGrowth(){
   const mult=PROJ_RANGE==='q'?3:PROJ_RANGE==='y'?12:1;
   const label=PROJ_RANGE==='q'?'quarter':PROJ_RANGE==='y'?'year':'month';
@@ -1645,6 +1662,24 @@ function useTier(i){
   calcProj();
   toast(t.n.split('·')[0].trim()+' loaded into the calculator');
 }
+/* ---- filter wiring ---- */
+function wireFilters(){
+  document.querySelectorAll('#clientFilters button').forEach(b=>{
+    b.onclick=()=>{CLIENT_FILTER=b.dataset.f;
+      document.querySelectorAll('#clientFilters button').forEach(x=>x.classList.toggle('on',x===b));
+      renderClients();
+      toast('Showing: '+b.innerText.trim().toLowerCase());
+    };
+  });
+  document.querySelectorAll('#polFilters button').forEach(b=>{
+    b.onclick=()=>{POL_FILTER=b.dataset.f;
+      document.querySelectorAll('#polFilters button').forEach(x=>x.classList.toggle('on',x===b));
+      renderPolicies();
+      toast('Showing: '+b.innerText.trim().toLowerCase());
+    };
+  });
+}
+wireFilters();
 /* ---- boot additions ---- */
 document.querySelectorAll('#rangeFilters button').forEach(b=>b.onclick=()=>setRange(b.dataset.r));
 document.getElementById('qLine').addEventListener('change',()=>{if(MARKETS.length||true)renderMarkets()});
