@@ -121,7 +121,7 @@ tbody tr:hover{background:#FAFBFD}
       <button data-v="growth"><span class="ic">◈</span><span>Growth</span></button>
       <button data-v="sync"><span class="ic">⇄</span><span>Data sync</span></button>
       <button data-v="security"><span class="ic">⛨</span><span>Security</span></button>
-      <button data-v="brand"><span class="ic">◐</span><span>White label</span></button>
+      <button data-v="brand"><span class="ic">◐</span><span>Projections</span></button>
     </nav>
     <div class="sidefoot">Demo build · Nov 24, 2026<br>Synthetic data only</div>
   </aside>
@@ -173,6 +173,8 @@ tbody tr:hover{background:#FAFBFD}
         <div class="panel"><div class="head"><h2>Market results</h2><div class="spacer"></div><span class="chip n" id="quoteChip">idle</span></div>
           <div class="body" id="quoteResults"><div style="color:var(--muted);font-size:12.5px">Run a quote to see markets, premiums and bind options.</div></div></div>
       </div>
+      <div class="panel"><div class="head"><h2>Quotes in play</h2><div class="spacer"></div><span class="chip n" id="recentChip">0</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Carrier</th><th>Line</th><th class="num">Premium</th><th>Issued</th><th>Status</th><th></th></tr></thead><tbody id="recentBody"></tbody></table></div></div>
     </section>
       <div class="panel"><div class="head"><h2>Quote by carrier, in the carrier's own window</h2><div class="spacer"></div><span class="chip n">12 markets</span></div>
         <div class="body" style="padding:0"><table><thead><tr><th>Carrier</th><th>Connection</th><th>How the quote is rated</th><th>Window</th></tr></thead><tbody id="cqBody"></tbody></table></div>
@@ -235,34 +237,17 @@ tbody tr:hover{background:#FAFBFD}
       </div>
     </section>
     <section class="view" id="v-brand">
-      <div class="cols">
-        <div class="panel"><div class="head"><h2>Your brand, our engine</h2><div class="spacer"></div><span class="chip g">white label</span></div><div class="body">
-          <div class="field"><label>Agency name</label><input id="wlName" value="Cardinal Insurance Group" oninput="document.getElementById('wlPreviewName').textContent=this.value"></div>
-          <div class="field"><label>Primary color</label><input id="wlColor" type="color" value="#1D5BD6" style="height:36px;padding:3px" oninput="document.getElementById('wlPreview').style.background=this.value"></div>
-          <div class="field"><label>Portal domain</label><input value="portal.cardinalinsgroup.com"></div>
-          <div class="field"><label>Support email shown to clients</label><input value="service@cardinalinsgroup.com"></div>
-          <div class="acts" style="margin-top:6px"><button onclick="toast('Branding applied across the portal and emails')">Apply branding</button>
-          <button onclick="toast('Custom domain verification started')">Verify domain</button></div>
-          <div class="note">The agency's logo, colors and domain on every screen the client sees. LNL stays invisible unless the agency wants the credit.</div>
-        </div></div>
+      <div class="cards" id="projKpis"></div>
+      <div class="panel"><div class="head"><h2>Three tiers, priced against the stack they replace</h2><div class="spacer"></div><span class="chip a">projection</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Tier</th><th>Who it is for</th><th>Included</th><th class="num">Our price / mo</th><th class="num">Their stack today</th><th class="num">Saved</th></tr></thead><tbody id="tierBody"></tbody></table></div>
+        <div class="body" style="border-top:1px solid var(--line)"><div class="note" style="margin:0">Every price is per agency, not per user. Competitor figures are median published and reported rates for the tools this replaces: EZLynx at $70 to $129 per user plus modules, HawkSoft at $89 per user, AgencyZoom at $79 per user, plus a texting tool. These are projections for the meeting, not published pricing.</div></div></div>
+      <div class="cols" style="margin-top:14px">
+        <div class="panel"><div class="head"><h2>What each tier includes</h2></div><div class="body" id="tierDetail"></div></div>
         <div>
-          <div class="panel"><div class="head"><h2>Preview</h2></div><div class="body">
-            <div id="wlPreview" style="border-radius:12px;padding:18px;background:#1D5BD6;color:#fff">
-              <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:800">Client portal</div>
-              <div id="wlPreviewName" style="font-size:17px;font-weight:800;margin-top:6px">Cardinal Insurance Group</div>
-              <div style="font-size:12px;opacity:.9;margin-top:4px">Policies, ID cards and payments in one place</div>
-              <div style="margin-top:12px;background:rgba(255,255,255,.16);border-radius:8px;padding:9px 11px;font-size:12px">Welcome back, Jordan. Your auto policy renews 01-29-2027.</div>
-            </div>
-          </div></div>
-          <div class="panel"><div class="head"><h2>Users and roles</h2><div class="spacer"></div><span class="chip n">role based</span></div>
-            <div class="body" style="padding:0"><table><thead><tr><th>User</th><th>Role</th><th>Sees</th></tr></thead><tbody>
-              <tr><td><b>John Chleboun</b></td><td>Owner</td><td>Everything, commissions, spend</td></tr>
-              <tr><td>Jacobo M.</td><td>Producer</td><td>Own book, own tasks</td></tr>
-              <tr><td>Dana R.</td><td>Producer</td><td>Own book, own tasks</td></tr>
-              <tr><td>Kayla B.</td><td>CSR</td><td>Service queue, no financials</td></tr>
-            </tbody></table>
-            <div class="body" style="border-top:1px solid var(--line)"><div class="note" style="margin:0">Add a producer and nothing new has to be bought, installed or learned. One system, one place to look.</div></div>
-            </div></div>
+          <div class="panel"><div class="head"><h2>Revenue projection</h2><div class="spacer"></div><span class="chip n">per month</span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Agencies on board</th><th class="num">Mix</th><th class="num">MRR</th><th class="num">ARR</th></tr></thead><tbody id="mrrBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Cost to serve</h2></div><div class="body"><div class="bars" id="costBars"></div>
+            <div class="note" id="costNote"></div></div></div>
         </div>
       </div>
     </section>
@@ -342,7 +327,7 @@ const CAMPS=[
   LOGS.push({t:'08:06',m:'Payment reminder sequence sent 4 texts'});
   LOGS.push({t:'08:11',m:'Jacobo logged in from Gilbert office'});
 })();
-const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Rate across markets, bind without leaving'],policies:['Policies','Renewals, payments and documents'],tasks:['Tasks','Who does what, and who covers'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLintx, carriers and the website'],security:['Security','How client data is protected'],brand:['White label','Your brand on every screen']};
+const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Rate across markets, bind without leaving'],policies:['Policies','Renewals, payments and documents'],tasks:['Tasks','Who does what, and who covers'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLintx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1900)}
 function unlock(){
   const v=document.getElementById('gateCode').value.trim().toLowerCase();
@@ -358,6 +343,7 @@ function go(v){
   document.getElementById('ttl').textContent=NAV[v][0];
   document.getElementById('sub').textContent=NAV[v][1];
   if(v==='policies')renderPolicies();
+  if(v==='brand')renderProjections();
   if(v==='tasks')renderTasks();
   if(v==='dash'||v==='clients')renderAll();
 }
@@ -693,6 +679,65 @@ function sendWQ(){
   WQ=null;
 }
 
+const TIERS=[
+ {n:'Tier 1 · Private agent or firm',who:'1 to 3 licensed agents, one location',price:349,stack:520,inc:'One login, client records, portal quoting, ID cards, certificates, renewals, drips, client portal under their brand'},
+ {n:'Tier 2 · Multi-agent agency',who:'4 to 15 agents, producers and CSRs',price:899,stack:1660,inc:'Everything in tier 1, roles and permissions, out-of-office coverage, ad and lead reporting, EZLynx sync'},
+ {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',price:2400,stack:4820,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
+];
+function renderProjections(){
+  const k=[['Tier 1',money(349)+'/mo','entry point for a private firm',''],['Median competitor stack',money(1660)+'/mo','for a 4 to 15 agent agency','dn'],['Blended target',money(820)+'/mo','across a 60/30/10 mix','up'],['Gross margin at 25 agencies',money(18500)+'/mo','before support cost','up']];
+  document.getElementById('projKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('tierBody').innerHTML=TIERS.map(t=>{
+    const save=Math.round((1-t.price/t.stack)*100);
+    return `<tr><td><b>${t.n}</b><div style="font-size:11px;color:var(--muted)">${t.who}</div></td>
+    <td style="font-size:11.5px;color:#4A5768">${t.inc}</td>
+    <td class="num"><b>${money(t.price)}</b></td><td class="num">${money(t.stack)}</td>
+    <td class="num"><span class="chip g">${save}%</span></td></tr>`}).join('');
+  document.getElementById('tierDetail').innerHTML=TIERS.map(t=>`<div class="pol" style="background:#fff">
+    <div class="r1"><span class="car">${t.n}</span><span class="chip n">${money(t.price)}/mo</span></div>
+    <div class="meta">${t.inc}</div>
+    <div class="acts"><button onclick="toast('${t.n} selected for the proposal')">Use this tier</button></div></div>`).join('')
+    +`<div class="note">Priced per agency with unlimited seats. An agency that adds a producer adds no cost, which is the argument against $300 to $350 per seat per tool.</div>`;
+  const mix=[[10,'60/30/10'],[25,'60/30/10'],[50,'55/35/10'],[100,'50/40/10']];
+  const blended=(a,b,c)=>a*349+b*899+c*2400;
+  document.getElementById('mrrBody').innerHTML=mix.map(m=>{
+    const [a,b,c]=m[1].split('/').map(Number);
+    const n=m[0], t1=Math.round(n*a/100), t2=Math.round(n*b/100), t3=n-t1-t2;
+    const mrr=blended(t1,t2,t3);
+    return `<tr><td><b>${n} agencies</b></td><td class="num" style="font-size:11.5px">${t1} / ${t2} / ${t3}</td>
+    <td class="num"><b>${money(mrr)}</b></td><td class="num">${money(mrr*12)}</td></tr>`}).join('');
+  const costs=[['Infrastructure and hosting',900],['Support, one person',3200],['Carrier and data fees',1400],['Sales and marketing',2600]];
+  const tot=costs.reduce((s,c)=>s+c[1],0);
+  document.getElementById('costBars').innerHTML=costs.map(c=>`<div class="bar"><span>${c[0]}</span><div class="track"><div class="fill" style="width:${Math.round(c[1]/tot*100)}%"></div></div><span class="n">${money(c[1])}</span></div>`).join('');
+  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month to serve the first 25 agencies, against <b>${money(18500)}</b> projected revenue at that size. Breakeven sits near 8 agencies.`;
+}
+
+function renderRecentQuotes(){
+  const seed=[
+    {c:'Jill Nakamura',car:'Safeco',line:'Auto',prem:1840,days:2,st:'sent'},
+    {c:'Marcus Brennan',car:'Travelers',line:'Home',prem:2210,days:3,st:'sent'},
+    {c:'Priya Okafor',car:'Progressive',line:'Auto',prem:1560,days:5,st:'viewed'},
+    {c:'Tom Duffy',car:'Openly',line:'Home',prem:1980,days:6,st:'viewed'},
+    {c:'Rosa Kowalski',car:'Mercury',line:'Auto',prem:2120,days:8,st:'bound'}
+  ];
+  document.getElementById('recentChip').textContent=seed.length+' open';
+  document.getElementById('recentBody').innerHTML=seed.map(q=>{
+    const chip=q.st==='bound'?'g':q.st==='viewed'?'a':'n';
+    return `<tr><td><b>${q.c}</b></td><td>${q.car}</td><td>${q.line}</td><td class="num">${money(q.prem)}</td>
+    <td>${q.days} days ago</td><td><span class="chip ${chip}">${q.st}</span></td>
+    <td><button class="btn sm ghost" onclick="toast('Quote opened for ${q.c}')">Open</button></td></tr>`}).join('');
+}
+function seedSyncLog(){
+  const el=document.getElementById('syncLog');
+  el.innerHTML=[
+   ['07:58','Download received · 12 policy updates'],
+   ['08:04','EZLynx sync completed, 593 policies, 0 errors'],
+   ['08:06','Website form · 2 new leads tagged Google Ads'],
+   ['08:11','Carrier portal pull · Safeco · 1 policy'],
+   ['08:19','Commission file reconciled · November']
+  ].map(r=>`<div><span style="color:#9AA5B4">${r[0]}</span> ${r[1]}</div>`).join('');
+}
+
 let SESS={},QUOTES=[];
 function carrierLogin(pid){
   const p=POLICIES.find(x=>x.id===pid), c=byId(p.clientId);
@@ -810,6 +855,6 @@ function renderAll(){
   });
 }
 
-renderDash();renderClients();renderPolicies();renderTasks();renderCampaigns();renderGrowth();renderSecurity();renderBanner();renderCarrierQuote();
+renderDash();renderClients();renderPolicies();renderTasks();renderCampaigns();renderGrowth();renderSecurity();renderBanner();renderCarrierQuote();renderProjections();renderRecentQuotes();seedSyncLog();showCamp(0);runQuote();
 document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
 </script></body></html>
