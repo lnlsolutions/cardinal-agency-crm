@@ -173,6 +173,10 @@ tbody tr:hover{background:#FAFBFD}
           <div class="body" id="quoteResults"><div style="color:var(--muted);font-size:12.5px">Run a quote to see markets, premiums and bind options.</div></div></div>
       </div>
     </section>
+      <div class="panel"><div class="head"><h2>Quote by carrier, in the carrier's own window</h2><div class="spacer"></div><span class="chip n">12 markets</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Carrier</th><th>Connection</th><th>How the quote is rated</th><th>Window</th></tr></thead><tbody id="cqBody"></tbody></table></div>
+        <div class="body" style="border-top:1px solid var(--line)"><div class="note" style="margin:0">For markets with no API, the carrier does the rating in its own interface. We open the window, you sign in, the quote is captured as a document, and it goes to the client from this record.</div></div></div>
+    </section>
     <section class="view" id="v-policies">
       <div class="cards" id="polKpis"></div>
       <div class="panel"><div class="head"><h2>All policies</h2><div class="spacer"></div>
@@ -614,6 +618,80 @@ function mvpBlock(c){
   <button onclick="toast('Prior carrier comparison started')">Compare coverages</button></div>`;
 }
 
+let WQ=null;
+function renderCarrierQuote(){
+  document.getElementById('cqBody').innerHTML=CAR.map(c=>{
+    const how=c[1]==='api'?'Rated by carrier API, returned instantly':c[1]==='rater'?'Rated in EZLynx rater, bridge returns the quote':'Rated inside the carrier portal';
+    return `<tr><td><b>${c[0]}</b></td><td><span class="chip ${c[1]==='api'?'g':c[1]==='rater'?'a':'n'}">${c[1]}</span></td>
+    <td style="color:#4A5768">${how}</td>
+    <td><button class="btn sm ${c[1]==='portal'?'blue':'ghost'}" onclick="openCarrierWindow('${c[0]}','${c[1]}')">${c[1]==='portal'?'Open window':'Pull quote'}</button></td></tr>`}).join('');
+}
+function openCarrierWindow(carrier,conn){
+  const name=(document.getElementById('qName')||{}).value||'Prospect';
+  const line=document.getElementById('qLine')?document.getElementById('qLine').value:'Auto';
+  WQ={carrier,conn,line,client:name,premium:null,doc:null};
+  const domain=carrier.toLowerCase().replace(/[^a-z]/g,'')+'.com';
+  document.getElementById('sheet').innerHTML=`
+  <h3>${carrier} · quote window</h3>
+  <p class="p">${name} · ${line} · ${conn==='api'?'API returns the quote directly':conn==='rater'?'EZLynx rater bridge':'You rate inside the carrier portal'}</p>
+  <div style="border:1px solid var(--line);border-radius:10px;overflow:hidden">
+    <div style="background:#EEF1F6;padding:7px 10px;display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5A6675">
+      <span style="display:flex;gap:3px"><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i></span>
+      <span class="mono" style="background:#fff;border:1px solid var(--line);border-radius:6px;padding:3px 8px;flex:1">https://${domain}/agent/quote</span>
+    </div>
+    <div style="padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <b style="font-size:12.5px">${carrier} agent portal</b>
+        <span class="chip ${conn==='portal'?'a':'g'}">${conn==='portal'?'signed in':'token auth'}</span>
+      </div>
+      <div class="meta" style="font-size:11.5px;color:var(--muted);line-height:1.7">Insured: ${name}<br>Line: ${line}<br>Agency credentials filled from the vault · MFA completed by you</div>
+      <div class="acts" style="margin-top:10px">
+        <button onclick="rateInWindow()">Rate this client</button>
+        <button onclick="toast('Existing policy pulled into the window')">Load current policy</button>
+      </div>
+      <div id="wqResult" style="margin-top:12px"></div>
+    </div>
+  </div>
+  <div class="note">The carrier's own interface, not a copy of it. Whatever the portal requires, the portal does, and we take the result out as a document.</div>
+  <div style="display:flex;gap:8px;margin-top:12px"><button class="btn ghost" onclick="closeModal()">Close</button></div>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+function rateInWindow(){
+  const base=WQ.line==='Auto'?1180:WQ.line==='Home'?1640:WQ.line==='Commercial Auto'?3480:2250;
+  const prem=Math.round(base*(0.9+Math.random()*0.3));
+  WQ.premium=prem; WQ.doc=WQ.carrier.slice(0,3).toUpperCase()+'-QUOTE-'+Math.floor(Math.random()*900000+100000)+'.pdf';
+  document.getElementById('wqResult').innerHTML=`
+    <div class="pol" style="margin:0"><div class="r1"><span class="car">Quote returned</span><span class="chip g">${WQ.carrier}</span></div>
+      <div class="meta">Premium <b style="color:#0D1622">${money(prem)}/yr</b> · ${money(Math.round(prem/12))}/mo · 12 month term<br>Document: <span class="mono">${WQ.doc}</span></div>
+      <div class="acts"><button onclick="downloadWQ()">Download quote</button><button onclick="attachWQ()">Attach to client record</button></div></div>`;
+  toast('Rated in '+WQ.carrier+' · '+money(prem));
+}
+function downloadWQ(){ toast(WQ.doc+' downloaded'); LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Quote document downloaded from '+WQ.carrier}) }
+function attachWQ(){
+  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Quote '+WQ.doc+' attached to '+WQ.client});
+  toast('Attached to the client record');
+  sendQuoteStep();
+}
+function sendQuoteStep(){
+  document.getElementById('sheet').innerHTML=`
+  <h3>Send the quote</h3><p class="p">${WQ.client} · ${WQ.carrier} · ${money(WQ.premium)}/yr · ${WQ.doc}</p>
+  <div class="field"><label>Send by</label><select id="sendBy"><option>Email</option><option>Text message</option><option>Both</option></select></div>
+  <div class="field"><label>Message</label><input id="sendNote" value="Here is your quote from ${WQ.carrier}. Happy to walk through the coverages."></div>
+  <div class="field"><label>Attach</label><input value="${WQ.doc}" readonly style="background:#F1F4F9;color:#5A6675"></div>
+  <div style="display:flex;gap:8px;margin-top:6px"><button class="btn blue" onclick="sendWQ()">Send from the CRM</button>
+  <button class="btn ghost" onclick="closeModal()">Cancel</button></div>
+  <div class="note">Sent from the client record, so the document, the message and the follow-up task all live in one place. Nothing is retyped into a portal and nothing is lost in an inbox.</div>`;
+}
+function sendWQ(){
+  const by=document.getElementById('sendBy').value;
+  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Quote sent to '+WQ.client+' by '+by});
+  TASKS.unshift({id:'T'+Math.floor(Math.random()*9999),clientId:(CLIENTS.find(c=>c.name===WQ.client)||CLIENTS[0]).id,reason:'Quote '+WQ.doc+' sent, follow up in 2 days',owner:'Jacobo M.',due:'tomorrow',done:false,pri:'high'});
+  closeModal(); renderTasks(); renderDash();
+  toast('Quote sent by '+by+' · follow-up task created');
+  WQ=null;
+}
+
 let SESS={},QUOTES=[];
 function carrierLogin(pid){
   const p=POLICIES.find(x=>x.id===pid), c=byId(p.clientId);
@@ -731,6 +809,6 @@ function renderAll(){
   });
 }
 
-renderDash();renderClients();renderPolicies();renderTasks();renderCampaigns();renderGrowth();renderSecurity();renderBanner();
+renderDash();renderClients();renderPolicies();renderTasks();renderCampaigns();renderGrowth();renderSecurity();renderBanner();renderCarrierQuote();
 document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
 </script></body></html>
