@@ -136,6 +136,7 @@ tbody tr:hover{background:#FAFBFD}
       <option value="Dana R.">Dana R. · Producer</option>
       <option value="Kayla B.">Kayla B. · CSR</option>
     </select>
+    <a href="index.html" style="font-size:12px;color:#66707E;text-decoration:none;font-weight:600">Site</a>
     <div class="avatar" id="avatar">JC</div>
     </header>
     <div id="roleBanner" style="display:none;background:#0D1622;color:#DCE4EE;padding:8px 20px;font-size:12px;display:none;align-items:center;gap:10px"></div>
@@ -167,7 +168,7 @@ tbody tr:hover{background:#FAFBFD}
           <div class="field"><label>Garaging ZIP</label><input id="qZip" value="85234"></div>
           <div class="field"><label>Drivers or locations</label><input id="qN" type="number" value="2" min="1" max="8"></div>
           <button class="btn blue" onclick="runQuote()">Rate across markets</button>
-          <div class="note">Rating is simulated against each carrier's appetite rules for demo purposes. In production this calls your rater and carrier APIs.</div>
+          <div class="note">Rating is simulated against each carrier's appetite rules for demo purposes. In production this opens the carrier portal link and returns the carrier-quoted number.</div>
         </div></div>
         <div class="panel"><div class="head"><h2>Market results</h2><div class="spacer"></div><span class="chip n" id="quoteChip">idle</span></div>
           <div class="body" id="quoteResults"><div style="color:var(--muted);font-size:12.5px">Run a quote to see markets, premiums and bind options.</div></div></div>
@@ -228,7 +229,7 @@ tbody tr:hover{background:#FAFBFD}
             <div class="acts"><button onclick="toast('Vault opened')">Manage connections</button></div></div>
           <div class="pol"><div class="r1"><span class="car">Website and lead forms</span><span class="chip g">live</span></div>
             <div class="meta">Form fills, quote starts and calls land in the CRM within seconds, tagged with source and campaign.</div></div>
-          <div class="note">Production path: API or approved rater bridge per carrier. Stored logins are not permission, and portals break when a carrier adds MFA. We build outward from the markets that grant access.</div>
+          <div class="note">Production path: carrier API where granted, agency portal link everywhere else. Stored logins are not permission, and portals break when a carrier adds MFA. We build outward from the markets that grant access.</div>
         </div></div>
         <div class="panel"><div class="head"><h2>Sync activity</h2></div><div class="body"><div id="syncLog" class="mono" style="line-height:1.9;color:#4A5768"></div></div></div>
       </div>
@@ -250,7 +251,7 @@ tbody tr:hover{background:#FAFBFD}
               <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;font-weight:800">Client portal</div>
               <div id="wlPreviewName" style="font-size:17px;font-weight:800;margin-top:6px">Cardinal Insurance Group</div>
               <div style="font-size:12px;opacity:.9;margin-top:4px">Policies, ID cards and payments in one place</div>
-              <div style="margin-top:12px;background:rgba(255,255,255,.16);border-radius:8px;padding:9px 11px;font-size:12px">Welcome back, Bryan. Your auto policy renews 01-29-2027.</div>
+              <div style="margin-top:12px;background:rgba(255,255,255,.16);border-radius:8px;padding:9px 11px;font-size:12px">Welcome back, Jordan. Your auto policy renews 01-29-2027.</div>
             </div>
           </div></div>
           <div class="panel"><div class="head"><h2>Users and seats</h2><div class="spacer"></div><span class="chip n">unlimited</span></div>
@@ -275,7 +276,7 @@ tbody tr:hover{background:#FAFBFD}
 <div class="toast" id="toast"></div>
 <script>
 const CODE='cardinal2026';
-const CAR=[['Travelers','api'],['Progressive','api'],['Safeco','api'],['Nationwide','api'],['Stillwater','api'],['Openly','api'],['Chubb','api'],['The Hartford','rater'],['Foremost','portal'],['Mercury','portal'],['Bristol West','portal'],['GAINSCO','portal']];
+const CAR=[['Travelers','api'],['Progressive','api'],['Safeco','api'],['Nationwide','api'],['Stillwater','api'],['Openly','api'],['Chubb','api'],['The Hartford','link'],['Foremost','portal'],['Mercury','portal'],['Bristol West','portal'],['GAINSCO','portal']];
 const LINES=['Auto','Home','Umbrella','Commercial Auto','General Liability','Workers Comp','BOP','Renters','Life'];
 const FIRST=['Jill','Marcus','Elena','Dwayne','Priya','Tom','Rosa','Caleb','Nina','Andre','Sofia','Grant','Yvonne','Hector','Lena','Owen','Tanya','Reggie'];
 const LAST=['Nakamura','Whitfield','Ortiz','Brennan','Raman','Delgado','Kowalski','Mercer','Haddad','Boateng','Salazar','Pierce','Okafor','Villanueva','Sorensen','Duffy','Ferraro','Lindqvist'];
@@ -575,13 +576,13 @@ function syncNow(){
 }
 function renderSecurity(){
   const rows=[['Synthetic data','Every client, policy and premium in this demo is generated. No real policyholder data is present.'],
-  ['No credentials in the browser','Carrier and rater credentials live in an encrypted server-side vault. The browser only ever receives data, never logins.'],
+  ['No credentials in the browser','Carrier credentials live in an encrypted server-side vault. The browser only ever receives data, never logins.'],
   ['Tenant isolation','Each agency gets its own data partition. White-label deployments do not share records or indexes.'],
   ['Role-based access','Owner, producer, CSR and read-only roles. Commission and producer performance are hidden from roles that should not see them.'],
   ['Audit trail','Every record view, export, quote and bind is written to an immutable log with user, time and IP.'],
   ['Encryption','TLS in transit, AES-256 at rest, field-level encryption on SSNs, dates of birth and driver licence numbers.'],
   ['Data handling','PII retention rules, export controls, and a deletion path that satisfies state insurance privacy requirements.'],
-  ['Production path','SOC 2 aligned controls, penetration test before white-label launch, and carrier API or rater agreements before automated pulls.']];
+  ['Production path','SOC 2 aligned controls, penetration test before white-label launch, and carrier API agreements before automated pulls.']];
   document.getElementById('secBody').innerHTML=rows.map(r=>`<div style="display:grid;grid-template-columns:200px 1fr;gap:14px;padding:10px 0;border-bottom:1px solid #EEF1F6"><b style="font-size:12.5px">${r[0]}</b><span style="font-size:12.5px;color:#4A5768;line-height:1.6">${r[1]}</span></div>`).join('')
    +`<div class="note">This build is a simulation for the meeting. The security model above is what the production deployment implements, and it is the section to walk through with any agency that asks about white-labeling.</div>`;
 }
@@ -621,8 +622,8 @@ function mvpBlock(c){
 let WQ=null;
 function renderCarrierQuote(){
   document.getElementById('cqBody').innerHTML=CAR.map(c=>{
-    const how=c[1]==='api'?'Rated by carrier API, returned instantly':c[1]==='rater'?'Rated in EZLynx rater, bridge returns the quote':'Rated inside the carrier portal';
-    return `<tr><td><b>${c[0]}</b></td><td><span class="chip ${c[1]==='api'?'g':c[1]==='rater'?'a':'n'}">${c[1]}</span></td>
+    const how=c[1]==='api'?'Rated by carrier API, returned instantly':c[1]==='link'?"Rated through the agency portal link":'Rated inside the carrier portal';
+    return `<tr><td><b>${c[0]}</b></td><td><span class="chip ${c[1]==='api'?'g':c[1]==='link'?'a':'n'}">${c[1]}</span></td>
     <td style="color:#4A5768">${how}</td>
     <td><button class="btn sm ${c[1]==='portal'?'blue':'ghost'}" onclick="openCarrierWindow('${c[0]}','${c[1]}')">${c[1]==='portal'?'Open window':'Pull quote'}</button></td></tr>`}).join('');
 }
@@ -633,7 +634,7 @@ function openCarrierWindow(carrier,conn){
   const domain=carrier.toLowerCase().replace(/[^a-z]/g,'')+'.com';
   document.getElementById('sheet').innerHTML=`
   <h3>${carrier} · quote window</h3>
-  <p class="p">${name} · ${line} · ${conn==='api'?'API returns the quote directly':conn==='rater'?'EZLynx rater bridge':'You rate inside the carrier portal'}</p>
+  <p class="p">${name} · ${line} · ${conn==='api'?'API returns the quote directly':conn==='link'?'agency portal link':'You rate inside the carrier portal'}</p>
   <div style="border:1px solid var(--line);border-radius:10px;overflow:hidden">
     <div style="background:#EEF1F6;padding:7px 10px;display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5A6675">
       <span style="display:flex;gap:3px"><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i></span>
