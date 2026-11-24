@@ -46,8 +46,9 @@ input,select{font:inherit;color:inherit}
 .panel .head{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line)}
 .panel .head h2{font-size:13px;font-weight:700;letter-spacing:-.01em}
 .panel .head .spacer{flex:1}
-.panel .body{padding:14px 15px}
+.panel .body{padding:14px 15px;overflow-x:auto}
 .cols{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;align-items:start}
+.cols>*,.grid2>*,.grid3>*,.panel{min-width:0}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th{text-align:left;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 10px 8px;border-bottom:1px solid var(--line)}
 td{padding:9px 10px;border-bottom:1px solid #EEF1F6;vertical-align:middle}
@@ -96,21 +97,50 @@ tbody tr:hover{background:#FAFBFD}
 .gate .box{background:#fff;border-radius:16px;padding:28px;width:330px}
 .gate h2{font-size:18px;margin-bottom:5px;letter-spacing:-.01em}
 .gate p{font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.5}
-@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}.drawer{width:100%}.app{grid-template-columns:64px 1fr}.logo b,.logo span,.navi button span:not(.ic),.sidefoot{display:none}}
+@media(max-width:1000px){.view{padding:14px}.top .search{width:150px}.cards{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}.drawer{width:100%}.app{grid-template-columns:64px 1fr}.logo b,.logo span,.navi button span:not(.ic),.sidefoot{display:none}}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.tabs button{font-size:12px;font-weight:600;color:var(--muted);padding:7px 10px;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--blue)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.filters button{font-size:11.5px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 10px;color:var(--ink2)}
+.filters button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kpi{background:#FBFCFF;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kpi .k{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.kpi .v{font-size:16px;font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:11px;color:var(--muted);margin-top:2px}
+.tl{border-left:2px solid var(--line);margin-left:5px;padding-left:14px}
+.tl .ev{position:relative;padding-bottom:13px;font-size:12px;line-height:1.5}
+.tl .ev:before{content:'';position:absolute;left:-20px;top:4px;width:7px;height:7px;border-radius:50%;background:var(--blue)}
+.tl .ev .w{color:var(--muted);font-size:11px;margin-top:1px}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#EEF1F6;color:#5A6675;margin-left:5px}
+.docrow{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #EEF1F6;font-size:12.5px}
+.docrow:last-child{border-bottom:0}
+.docrow .ic{width:26px;height:26px;border-radius:7px;background:#EDF2FB;color:var(--blue);display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0}
+.scroll{max-height:330px;overflow:auto}
+#v-clients table{min-width:940px}
+#v-policies table{min-width:900px}
+#v-quotes table{min-width:640px}
+#v-sync table{min-width:520px}
+#v-security table{min-width:480px}
+.view{overflow-x:hidden}
+.legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+@media(max-width:1000px){.grid2,.grid3{grid-template-columns:1fr}.tabs{overflow-x:auto}}
 </style></head><body>
-<div class="gate" id="gate">
-  <div class="box">
-    <div class="mark" style="margin-bottom:12px">C</div>
-    <h2>Cardinal OS</h2>
-    <p>Demo environment. Enter the access code to continue.</p>
-    <div class="field"><input id="gateCode" type="password" placeholder="Access code" autocomplete="off"></div>
-    <button class="btn blue" style="width:100%;justify-content:center" onclick="unlock()">Unlock demo</button>
-    <p style="margin:12px 0 0;font-size:11px">All records are synthetic. No live client data is stored in this demo.</p>
-  </div>
-</div>
+<div class="gate" id="gate"><div class="box">
+  <div class="mark" style="margin-bottom:12px">C</div>
+  <h2>Cardinal agency demo</h2>
+  <p>Synthetic agency data. No real policyholder information is present.</p>
+  <div class="field"><label>Access code</label><input id="gateCode" placeholder="Enter code" autocomplete="off"></div>
+  <button class="btn blue" style="width:100%;justify-content:center" onclick="unlock()">Open demo</button>
+</div></div>
+
 <div class="app">
   <aside class="side">
-    <div class="logo"><div class="mark">C</div><div><b>Cardinal OS</b><span>Agency system</span></div></div>
+    <div class="logo"><div class="mark">C</div><div><b>Cardinal</b><span>agency workspace</span></div></div>
     <nav class="navi" id="nav">
       <button data-v="dash" class="on"><span class="ic">▦</span><span>Dashboard</span></button>
       <button data-v="clients"><span class="ic">◉</span><span>Clients</span></button>
@@ -123,739 +153,884 @@ tbody tr:hover{background:#FAFBFD}
       <button data-v="security"><span class="ic">⛨</span><span>Security</span></button>
       <button data-v="brand"><span class="ic">◐</span><span>Projections</span></button>
     </nav>
-    <div class="sidefoot">Demo build · Nov 24, 2026<br>Synthetic data only</div>
+    <div class="sidefoot">Signed in as<br><b style="color:#fff">Jacobo M.</b> · owner<br>Gilbert office</div>
   </aside>
-  <div class="main">
-    <header class="top">
+  <main class="main">
+    <div class="top">
       <h1 id="ttl">Dashboard</h1><span class="sub" id="sub">Book of business at a glance</span>
       <div class="spacer"></div>
-      <div class="search"><span style="color:#8A96A6">⌕</span><input id="q" placeholder="Search clients, policies, carriers" oninput="quickSearch(this.value)"></div>
-      <select id="roleSel" onchange="setRole(this.value)" style="border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:12px;background:#fff">
-      <option value="owner">John · Owner</option>
-      <option value="Jacobo M.">Jacobo M. · Producer</option>
-      <option value="Dana R.">Dana R. · Producer</option>
-      <option value="Kayla B.">Kayla B. · CSR</option>
-    </select>
-    <a href="index.html" style="font-size:12px;color:#66707E;text-decoration:none;font-weight:600">Site</a>
-    <div class="avatar" id="avatar">JC</div>
-    </header>
-    <div id="roleBanner" style="display:none;background:#0D1622;color:#DCE4EE;padding:8px 20px;font-size:12px;display:none;align-items:center;gap:10px"></div>
+      <div class="search"><span style="color:var(--muted)">⌕</span><input id="q" placeholder="Search client, policy or phone" oninput="quickSearch(this.value)"></div>
+      <button class="btn sm ghost" onclick="toast('EZLynx sync started, 593 policies queued')">Sync EZLynx</button>
+      <div class="avatar">JM</div>
+    </div>
+
     <section class="view on" id="v-dash">
-      <div class="cards" id="kpis"></div>
+      <div class="cards" id="dashKpis"></div>
       <div class="cols">
         <div>
-          <div class="panel"><div class="head"><h2>Renewals at risk</h2><div class="spacer"></div><span class="chip a" id="riskChip">0 policies</span></div>
-            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Carrier</th><th>Renewal</th><th class="num">Premium</th><th></th></tr></thead><tbody id="riskBody"></tbody></table></div></div>
-          <div class="panel"><div class="head"><h2>Today's queue</h2><div class="spacer"></div><span class="chip n" id="taskChip">0 items</span></div>
-            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Reason</th><th>Owner</th><th></th></tr></thead><tbody id="queueBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Renewals at risk</h2><div class="spacer"></div><span class="chip a" id="riskCount"></span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Carrier</th><th>Line</th><th>Renews</th><th class="num">Premium</th><th>Action</th></tr></thead><tbody id="riskBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Today's queue</h2><div class="spacer"></div><span class="chip n" id="queueCount"></span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Why it is here</th><th>Owner</th><th></th></tr></thead><tbody id="queueBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Pipeline</h2><div class="spacer"></div><span class="chip n">this month</span></div>
+            <div class="body"><div class="bars" id="pipeBars"></div><div class="note">Quotes issued are the leading indicator. A quote that sits more than 72 hours without a touch loses about half its close rate.</div></div></div>
         </div>
         <div>
-          <div class="panel"><div class="head"><h2>Where the money goes</h2></div><div class="body"><div class="bars" id="spendBars"></div>
-            <div class="note" id="spendNote"></div></div></div>
-          <div class="panel"><div class="head"><h2>Leads by source</h2></div><div class="body"><div class="bars" id="leadBars"></div></div></div>
+          <div class="panel"><div class="head"><h2>Producers</h2><div class="spacer"></div><span class="chip n">MTD</span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Producer</th><th class="num">Policies</th><th class="num">Premium</th><th class="num">Goal</th></tr></thead><tbody id="prodBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Money in flight</h2></div><div class="body"><div class="bars" id="moneyBars"></div></div></div>
+          <div class="panel"><div class="head"><h2>Birthdays and reviews</h2><div class="spacer"></div><span class="chip n">next 14 days</span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Occasion</th><th>When</th><th></th></tr></thead><tbody id="bdayBody"></tbody></table></div></div>
         </div>
       </div>
     </section>
+
     <section class="view" id="v-clients">
-      <div class="panel"><div class="head"><h2>Clients</h2><div class="spacer"></div><span class="chip n" id="clientCount">0</span></div>
-        <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Policies</th><th>Carriers</th><th class="num">Premium</th><th>Renewal</th><th>Status</th><th></th></tr></thead><tbody id="clientBody"></tbody></table></div></div>
+      <div class="panel"><div class="head"><h2>Clients</h2><span class="chip n" id="clientCount"></span><div class="spacer"></div>
+        <div class="filters" id="clientFilters">
+          <button class="on" data-f="all">All</button><button data-f="renew">Renewing 60d</button><button data-f="due">Payment due</button><button data-f="comm">Commercial</button><button data-f="lapsed">Lapsed</button>
+        </div></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Location</th><th>Type</th><th class="num">Policies</th><th>Carriers</th><th class="num">Premium</th><th>Renews</th><th>Last touch</th><th>Owner</th><th></th></tr></thead><tbody id="clientBody"></tbody></table></div></div>
+      <div class="panel"><div class="head"><h2>Household and business gaps</h2><div class="spacer"></div><span class="chip a">cross-sell</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Has</th><th>Missing</th><th class="num">Estimated premium</th><th></th></tr></thead><tbody id="gapBody"></tbody></table></div></div>
     </section>
+
     <section class="view" id="v-quotes">
       <div class="cols">
-        <div class="panel"><div class="head"><h2>New quote</h2></div><div class="body">
-          <div class="field"><label>Client or prospect</label><input id="qName" placeholder="Name"></div>
-          <div class="field"><label>Line of business</label><select id="qLine"><option>Auto</option><option>Home</option><option>Umbrella</option><option>Commercial Auto</option><option>General Liability</option><option>Workers Comp</option></select></div>
-          <div class="field"><label>Garaging ZIP</label><input id="qZip" value="85234"></div>
-          <div class="field"><label>Drivers or locations</label><input id="qN" type="number" value="2" min="1" max="8"></div>
-          <button class="btn blue" onclick="runQuote()">Rate across markets</button>
-          <div class="note">Rating is simulated against each carrier's appetite rules for demo purposes. In production this opens the carrier portal link and returns the carrier-quoted number.</div>
-        </div></div>
-        <div class="panel"><div class="head"><h2>Market results</h2><div class="spacer"></div><span class="chip n" id="quoteChip">idle</span></div>
-          <div class="body" id="quoteResults"><div style="color:var(--muted);font-size:12.5px">Run a quote to see markets, premiums and bind options.</div></div></div>
+        <div class="panel" style="margin-top:0"><div class="head"><h2>New quote</h2><div class="spacer"></div><span class="chip n">12 markets</span></div>
+          <div class="body">
+            <div class="grid2">
+              <div class="field"><label>Client or prospect</label><input id="qName" value="Jordan Alvarez"></div>
+              <div class="field"><label>Line of business</label><select id="qLine"><option>Auto</option><option>Home</option><option>Umbrella</option><option>Commercial Auto</option><option>General Liability</option><option>Workers Comp</option><option>BOP</option><option>Renters</option></select></div>
+              <div class="field"><label>Garaging ZIP</label><input id="qZip" value="85142"></div>
+              <div class="field"><label>Drivers or locations</label><input id="qDrv" value="2"></div>
+            </div>
+            <button class="btn blue" onclick="runQuote()">Rate across markets</button>
+            <div class="note">Each market is quoted inside the carrier's own portal through the LNL link. The number that comes back is the carrier's number, not an estimate.</div>
+          </div></div>
+        <div class="panel" style="margin-top:0"><div class="head"><h2>Quote history</h2><div class="spacer"></div><span class="chip n" id="qHistCount"></span></div>
+          <div class="body" style="padding:0"><div class="scroll"><table><thead><tr><th>Client</th><th>Line</th><th>Carrier</th><th class="num">Premium</th><th>Status</th><th>Sent</th></tr></thead><tbody id="qHistBody"></tbody></table></div></div></div>
       </div>
-      <div class="panel"><div class="head"><h2>Quotes in play</h2><div class="spacer"></div><span class="chip n" id="recentChip">0</span></div>
-        <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Carrier</th><th>Line</th><th class="num">Premium</th><th>Issued</th><th>Status</th><th></th></tr></thead><tbody id="recentBody"></tbody></table></div></div>
+      <div class="panel"><div class="head"><h2>Market results</h2><div class="spacer"></div><span class="chip n" id="marketCount"></span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Market</th><th>Method</th><th>Appetite</th><th class="num">Annual</th><th class="num">Monthly</th><th></th></tr></thead><tbody id="marketBody"></tbody></table></div></div>
+      <div class="panel"><div class="head"><h2>Why quotes were lost</h2><div class="spacer"></div><span class="chip n">last 90 days</span></div>
+        <div class="body"><div class="bars" id="lossBars"></div></div></div>
     </section>
-      <div class="panel"><div class="head"><h2>Quote by carrier, in the carrier's own window</h2><div class="spacer"></div><span class="chip n">12 markets</span></div>
-        <div class="body" style="padding:0"><table><thead><tr><th>Carrier</th><th>Connection</th><th>How the quote is rated</th><th>Window</th></tr></thead><tbody id="cqBody"></tbody></table></div>
-        <div class="body" style="border-top:1px solid var(--line)"><div class="note" style="margin:0">For markets with no API, the carrier does the rating in its own interface. We open the window, you sign in, the quote is captured as a document, and it goes to the client from this record.</div></div></div>
-    </section>
+
     <section class="view" id="v-policies">
       <div class="cards" id="polKpis"></div>
-      <div class="panel"><div class="head"><h2>All policies</h2><div class="spacer"></div>
-        <select id="polFilter" onchange="renderPolicies()" style="border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-size:12px;background:#fff">
-          <option value="all">All</option><option value="30">Next 30 days</option><option value="60">Next 60 days</option><option value="90">Next 90 days</option><option value="lapse">Payment due</option></select></div>
-        <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Carrier</th><th>Policy</th><th>Line</th><th>Eff.</th><th>Renewal</th><th class="num">Premium</th><th>Status</th><th></th></tr></thead><tbody id="polBody"></tbody></table></div></div>
+      <div class="panel"><div class="head"><h2>Book of business</h2><span class="chip n" id="polCount"></span><div class="spacer"></div>
+        <div class="filters" id="polFilters">
+          <button class="on" data-f="all">All</button><button data-f="30">Next 30 days</button><button data-f="60">Next 60 days</button><button data-f="90">Next 90 days</button><button data-f="due">Payment due</button>
+        </div></div>
+        <div class="body" style="padding:0"><div class="scroll"><table><thead><tr><th>Client</th><th>Carrier</th><th>Policy</th><th>Line</th><th>Effective</th><th>Renewal</th><th class="num">Premium</th><th>Status</th><th>Documents</th></tr></thead><tbody id="polBody"></tbody></table></div></div></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Renewal pipeline</h2></div><div class="body"><div class="bars" id="renBars"></div></div></div>
+        <div class="panel"><div class="head"><h2>Commission by carrier</h2><div class="spacer"></div><span class="chip n">this month</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Carrier</th><th class="num">Policies</th><th class="num">Premium</th><th class="num">Rate</th><th class="num">Commission</th><th>Status</th></tr></thead><tbody id="commBody"></tbody></table></div></div>
+      </div>
     </section>
+
     <section class="view" id="v-tasks">
+      <div class="cards" id="taskKpis"></div>
       <div class="cols">
-        <div class="panel"><div class="head"><h2>Follow-up queue</h2><div class="spacer"></div><span class="chip n" id="taskCount">0</span></div>
-          <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Task</th><th>Due</th><th>Owner</th><th></th></tr></thead><tbody id="taskBody"></tbody></table></div></div>
         <div>
-          <div class="panel"><div class="head"><h2>Coverage while out</h2></div><div class="body">
-            <div class="field"><label>Who is out</label><select id="oooWho"></select></div>
-            <div class="field"><label>Covered by</label><select id="oooCover"></select></div>
-            <div class="field"><label>Until</label><input id="oooUntil" type="date" value="2026-12-05"></div>
-            <button class="btn blue" onclick="setCoverage()">Assign coverage</button>
-            <div id="oooState" style="margin-top:11px;font-size:12px;color:var(--muted)"></div>
-          </div></div>
-          <div class="panel"><div class="head"><h2>Activity log</h2></div><div class="body"><div id="log" style="font-size:11.5px;line-height:1.9;color:#4A5768"></div></div></div>
+          <div class="panel"><div class="head"><h2>Follow-up queue</h2><div class="spacer"></div><span class="chip n" id="taskCount"></span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Task</th><th>Due</th><th>Owner</th><th></th></tr></thead><tbody id="taskBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Lapse watch</h2><div class="spacer"></div><span class="chip r">payment risk</span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Policy</th><th class="num">Amount</th><th>Status</th><th></th></tr></thead><tbody id="lapseBody"></tbody></table></div></div>
+        </div>
+        <div>
+          <div class="panel"><div class="head"><h2>Coverage while out</h2><div class="spacer"></div><span class="chip n">out of office</span></div>
+            <div class="body">
+              <div class="field"><label>Who is out</label><select id="oooWho"><option>Jacobo M.</option><option>Dana R.</option><option>Steve L.</option><option>Kayla B.</option></select></div>
+              <div class="field"><label>Covered by</label><select id="oooBy"><option>Dana R.</option><option>Steve L.</option><option>Kayla B.</option><option>Jacobo M.</option></select></div>
+              <div class="field"><label>Until</label><input id="oooUntil" type="date" value="2026-12-02"></div>
+              <button class="btn blue sm" onclick="setCoverage()">Assign coverage</button>
+              <div class="note" id="covNote">No coverage set. Tasks assigned to someone who is out are held, not silently missed.</div>
+            </div></div>
+          <div class="panel"><div class="head"><h2>Activity log</h2><div class="spacer"></div><span class="chip n">today</span></div>
+            <div class="body"><div class="tl" id="actLog"></div></div></div>
         </div>
       </div>
     </section>
+
     <section class="view" id="v-campaigns">
-      <div class="panel"><div class="head"><h2>Automated sequences</h2><div class="spacer"></div><span class="chip g">running</span></div>
-        <div class="body" style="padding:0"><table><thead><tr><th>Sequence</th><th>Trigger</th><th>Steps</th><th class="num">Enrolled</th><th class="num">Sent 30d</th><th>Status</th><th></th></tr></thead><tbody id="campBody"></tbody></table></div></div>
-      <div class="cols" style="margin-top:14px">
-        <div class="panel"><div class="head"><h2>Sequence detail</h2><div class="spacer"></div><span class="chip n" id="campName">select one</span></div><div class="body" id="campDetail"><div style="color:var(--muted);font-size:12.5px">Pick a sequence to see its steps and copy.</div></div></div>
-        <div class="panel"><div class="head"><h2>Lifecycle triggers</h2></div><div class="body" id="lifecycle"></div></div>
+      <div class="cards" id="campKpis"></div>
+      <div class="panel"><div class="head"><h2>Automated sequences</h2><div class="spacer"></div><span class="chip g">all running</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Sequence</th><th>Trigger</th><th class="num">Steps</th><th class="num">Enrolled</th><th class="num">Sent 30d</th><th class="num">Reply rate</th><th class="num">Bound</th><th></th></tr></thead><tbody id="campBody"></tbody></table></div></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Sequence detail</h2><div class="spacer"></div><span class="chip n" id="campName"></span></div><div class="body" id="campDetail"></div></div>
+        <div class="panel"><div class="head"><h2>Message library</h2><div class="spacer"></div><span class="chip n">templates</span></div><div class="body" id="msgLib"></div></div>
       </div>
     </section>
+
     <section class="view" id="v-growth">
       <div class="cards" id="growthKpis"></div>
-      <div class="cols">
-        <div class="panel"><div class="head"><h2>Spend and return by channel</h2></div><div class="body" style="padding:0"><table><thead><tr><th>Channel</th><th class="num">Spend</th><th class="num">Leads</th><th class="num">CPL</th><th class="num">Quotes</th><th class="num">Bound</th><th class="num">Cost / policy</th></tr></thead><tbody id="chanBody"></tbody></table></div></div>
-        <div class="panel"><div class="head"><h2>Lead flow</h2></div><div class="body"><div class="bars" id="flowBars"></div>
-          <div class="note">Speed to first contact is the number that moves close rate. Anything over 5 minutes gets an alert.</div></div></div>
+      <div class="panel"><div class="head"><h2>Spend and return by channel</h2><div class="spacer"></div><span class="chip n">this month</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Channel</th><th class="num">Spend</th><th class="num">Leads</th><th class="num">CPL</th><th class="num">Quotes</th><th class="num">Bound</th><th class="num">Cost / policy</th><th class="num">ROAS</th></tr></thead><tbody id="chanBody"></tbody></table></div></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Lead to policy</h2></div><div class="body"><div class="bars" id="funnelBars"></div><div class="note" id="speedNote"></div></div></div>
+        <div class="panel"><div class="head"><h2>Leads by ZIP</h2></div><div class="body" style="padding:0"><table><thead><tr><th>ZIP</th><th>Area</th><th class="num">Leads</th><th class="num">Bound</th><th class="num">Close</th></tr></thead><tbody id="zipBody"></tbody></table></div></div>
       </div>
-      <div class="panel"><div class="head"><h2>Where leads come from, by ZIP</h2></div><div class="body"><div class="bars" id="zipBars"></div></div></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Search visibility</h2><div class="spacer"></div><span class="chip n">local pack</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Keyword</th><th class="num">Volume</th><th class="num">Rank</th><th class="num">Move</th></tr></thead><tbody id="kwBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Call tracking</h2><div class="spacer"></div><span class="chip n">today</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Caller</th><th>Source</th><th class="num">Length</th><th>Outcome</th></tr></thead><tbody id="callBody"></tbody></table></div></div>
+      </div>
     </section>
+
     <section class="view" id="v-sync">
-      <div class="cols">
-        <div class="panel"><div class="head"><h2>EZLynx connection</h2><div class="spacer"></div><span class="chip g">connected</span></div><div class="body">
-          <div class="pol"><div class="r1"><span class="car">EZLynx</span><span class="chip g">source of record</span></div>
-            <div class="meta">Policy, claims, eDocs and commission data arrive by download into EZLynx, which is where the agency already sits. Last sync 8:04am, 593 policies, 0 errors.</div>
-            <div class="acts"><button onclick="syncNow()">Pull now</button><button onclick="toast('Field mapping opened')">Field mapping</button><button onclick="toast('Export queued')">Export book</button></div></div>
-          <div class="pol"><div class="r1"><span class="car">Carrier portals</span><span class="chip a">12 markets</span></div>
-            <div class="meta">Where a carrier grants a partner API, we call it. Where it does not, the portal window handles the request. Credentials sealed in the vault, never in the browser.</div>
-            <div class="acts"><button onclick="toast('Vault opened')">Manage connections</button></div></div>
-          <div class="pol"><div class="r1"><span class="car">Website and lead forms</span><span class="chip g">live</span></div>
-            <div class="meta">Form fills, quote starts and calls land in the CRM within seconds, tagged with source and campaign.</div></div>
-          <div class="note">Three real paths, in order of reliability: download into EZLynx (most carriers), a carrier partner API where the agency is approved (Travelers and Progressive publish developer portals, Openly is partner only), and the carrier portal itself for everything else. Stored logins are not permission, and portals break when a carrier adds MFA.</div>
+      <div class="cards" id="syncKpis"></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>EZLynx connection</h2><div class="spacer"></div><span class="chip g">connected</span></div>
+          <div class="body">
+            <div class="kpi"><div class="k">Source of record</div><div class="v">EZLynx</div><div class="s">Policy, claims, eDocs and commission arrive by download. Cardinal reads it and owns everything above it.</div></div>
+            <div class="acts" style="margin-top:10px"><button onclick="syncNow()">Pull now</button><button onclick="toast('Field mapping opened')">Field mapping</button><button onclick="toast('Book export queued as CSV')">Export book</button></div>
+            <div class="tl" style="margin-top:14px" id="syncLog"></div>
+          </div></div>
+        <div class="panel"><div class="head"><h2>Carrier connections</h2><div class="spacer"></div><span class="chip n">12 markets</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Carrier</th><th>Path</th><th>Status</th><th class="num">Records</th><th>Last pull</th></tr></thead><tbody id="carrierBody"></tbody></table></div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Field mapping</h2><div class="spacer"></div><span class="chip n">EZLynx to Cardinal</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>EZLynx field</th><th>Cardinal field</th><th>Transform</th></tr></thead><tbody id="mapBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Needs review</h2><div class="spacer"></div><span class="chip a" id="confCount"></span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Record</th><th>Issue</th><th></th></tr></thead><tbody id="confBody"></tbody></table></div></div>
+      </div>
+      <div class="panel"><div class="head"><h2>Website and lead forms</h2><div class="spacer"></div><span class="chip g">live</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Form</th><th>Entries 30d</th><th>Into CRM</th><th>Campaign</th><th>Status</th></tr></thead><tbody id="formBody"></tbody></table></div></div>
+    </section>
+
+    <section class="view" id="v-security">
+      <div class="cards" id="secKpis"></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Controls in place</h2></div><div class="body" style="padding:0"><table><thead><tr><th>Control</th><th>What it does</th></tr></thead><tbody id="secBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Who can see what</h2><div class="spacer"></div><span class="chip n">roles</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Area</th><th class="num">Owner</th><th class="num">Producer</th><th class="num">CSR</th><th class="num">Read only</th></tr></thead><tbody id="roleBody"></tbody></table></div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Audit trail</h2><div class="spacer"></div><span class="chip n">last 10</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Record</th></tr></thead><tbody id="auditBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Vault and retention</h2></div><div class="body">
+          <div class="kpi"><div class="k">Carrier credentials held</div><div class="v">12</div><div class="s">Encrypted server side. The browser never receives a login.</div></div>
+          <div class="kpi" style="margin-top:9px"><div class="k">Documents encrypted at rest</div><div class="v">1,412</div><div class="s">AES-256, per-agency keys, SSN and licence fields masked.</div></div>
+          <div class="kpi" style="margin-top:9px"><div class="k">Retention</div><div class="v">7 years</div><div class="s">Then deleted. A departing agency exports its book and it is removed from Cardinal.</div></div>
         </div></div>
-        <div class="panel"><div class="head"><h2>Sync activity</h2></div><div class="body"><div id="syncLog" class="mono" style="line-height:1.9;color:#4A5768"></div></div></div>
       </div>
     </section>
+
     <section class="view" id="v-brand">
       <div class="cards" id="projKpis"></div>
-      <div class="panel"><div class="head"><h2>Three tiers, priced against the stack they replace</h2><div class="spacer"></div><span class="chip a">projection</span></div>
-        <div class="body" style="padding:0"><table><thead><tr><th>Tier</th><th>Who it is for</th><th>Included</th><th class="num">Startup</th><th class="num">Monthly</th><th class="num">Year one</th><th class="num">Saved</th></tr></thead><tbody id="tierBody"></tbody></table></div>
-        <div class="body" style="border-top:1px solid var(--line)"><div class="note" style="margin:0">EZLynx stays with the agency and is not part of this price. What is priced here is the layer on top: the download of the book into one record, and everything the agent uses all day. Benchmarks are reported rates for the tools this layer replaces: CRM at $79 per user, texting at about $50 per seat, reviews at $99, reporting and data feeds at $200 to $400. Per agency, not per user. Projections for the meeting, not published pricing.</div></div></div>
-      <div class="cols" style="margin-top:14px">
-        <div class="panel"><div class="head"><h2>What each tier includes</h2></div><div class="body" id="tierDetail"></div></div>
-        <div>
-          <div class="panel"><div class="head"><h2>Revenue projection</h2><div class="spacer"></div><span class="chip n">per month</span></div>
-            <div class="body" style="padding:0"><table><thead><tr><th>Agencies on board</th><th class="num">Mix</th><th class="num">MRR</th><th class="num">ARR</th></tr></thead><tbody id="mrrBody"></tbody></table></div></div>
-          <div class="panel"><div class="head"><h2>Cost to serve</h2></div><div class="body"><div class="bars" id="costBars"></div>
-            <div class="note" id="costNote"></div></div></div>
-        </div>
+      <div class="panel"><div class="head"><h2>Three tiers, priced against the stack they replace</h2><div class="spacer"></div><span class="chip n">projection</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Tier</th><th>Who it is for</th><th>Included</th><th class="num">Startup</th><th class="num">Monthly</th><th class="num">Year one</th><th class="num">Saved</th></tr></thead><tbody id="tierBody"></tbody></table></div></div>
+      <div class="panel"><div class="head"><h2>Tiers in detail</h2></div><div class="body" id="tierDetail"></div></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Monthly revenue by agency count</h2></div><div class="body" style="padding:0"><table><thead><tr><th>Agencies</th><th class="num">T1/T2/T3</th><th class="num">Monthly</th><th class="num">Annual</th></tr></thead><tbody id="mrrBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Cost to serve</h2></div><div class="body"><div class="bars" id="costBars"></div><div class="note" id="costNote"></div></div></div>
       </div>
     </section>
-    <section class="view" id="v-security">
-      <div class="panel"><div class="head"><h2>How this stays safe</h2><div class="spacer"></div><span class="chip a">demo</span></div><div class="body" id="secBody"></div></div>
-    </section>
-  </div>
+  </main>
 </div>
+
 <div class="drawer" id="drawer"><div class="dh" id="dh"></div><div class="db" id="db"></div></div>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
 <div class="toast" id="toast"></div>
 <script>
 const CODE='cardinal2026';
-const CAR=[['Travelers','api'],['Progressive','api'],['Openly','api'],['Safeco','download'],['Nationwide','download'],['Stillwater','download'],['Chubb','download'],['The Hartford','download'],['Foremost','portal'],['Mercury','portal'],['Bristol West','portal'],['GAINSCO','portal']];
-const LINES=['Auto','Home','Umbrella','Commercial Auto','General Liability','Workers Comp','BOP','Renters','Life'];
-const FIRST=['Jill','Marcus','Elena','Dwayne','Priya','Tom','Rosa','Caleb','Nina','Andre','Sofia','Grant','Yvonne','Hector','Lena','Owen','Tanya','Reggie'];
-const LAST=['Nakamura','Whitfield','Ortiz','Brennan','Raman','Delgado','Kowalski','Mercer','Haddad','Boateng','Salazar','Pierce','Okafor','Villanueva','Sorensen','Duffy','Ferraro','Lindqvist'];
-const STREET=['S Gilbert Rd','E Baseline Rd','N Val Vista Dr','E Williams Field Rd','S Higley Rd','E Guadalupe Rd','N Lindsay Rd','E Pecos Rd','S Power Rd','E Warner Rd'];
-const CITY=[['Gilbert','85234'],['Mesa','85205'],['Chandler','85225'],['Higley','85236'],['Queen Creek','85142'],['Scottsdale','85254'],['Tempe','85281'],['Apache Junction','85120']];
-const PROD=['Jacobo M.','Dana R.','Steve L.','Kayla B.'];
-function rnd(n){return Math.floor(Math.random()*n)}
-function pick(a){return a[rnd(a.length)]}
-function money(n){return '$'+n.toLocaleString('en-US',{maximumFractionDigits:0})}
-function d2(d){return d.toISOString().slice(0,10)}
-function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
 const TODAY=new Date('2026-11-24T12:00:00');
-let CLIENTS=[],POLICIES=[],TASKS=[],LOGS=[],OOO=null;
-function seed(){
-  const r=[[],[],[],[],[],[]];
-  for(let i=0;i<24;i++){
-    const f=FIRST[i%FIRST.length],l=LAST[(i*3)%LAST.length];
-    const c=pick(CITY);
-    const cl={id:'C'+(1001+i),name:f+' '+l,email:(f+'.'+l[0]+'@example.com').toLowerCase(),phone:'(480) 5'+String(10+i)+'-'+String(1000+i*7),street:(100+i*13)+' '+pick(STREET),city:c[0],zip:c[1],since:2019+rnd(6),owner:PROD[i%4],dob:(1+rnd(12))+'-'+(1+rnd(27)),policies:[],status:'active'};
-    CLIENTS.push(cl);
-  }
-}
-seed();
-(function buildPolicies(){
-  let n=1;
-  CLIENTS.forEach((c,i)=>{
-    const count=1+(i%3);
-    for(let k=0;k<count;k++){
-      const car=pick(CAR);
-      const line=LINES[(i+k)%LINES.length];
-      const base=line==='Auto'?1180:line==='Home'?1640:line==='Umbrella'?320:line==='Commercial Auto'?3480:line==='General Liability'?2250:line==='Workers Comp'?4100:line==='BOP'?1860:line==='Renters'?280:940;
-      const prem=base+rnd(9)*70;
-      const eff=addDays(TODAY,-(60+rnd(300)));
-      const ren=addDays(TODAY,(i%9===0?6+rnd(14):20+rnd(240)));
-      const payDue=rnd(7)===0;
-      const p={id:'P'+(4200+n),clientId:c.id,carrier:car[0],conn:car[1],policy:'AZ-'+car[0].slice(0,2).toUpperCase()+'-'+String(700000+n*37),line,eff:d2(eff),renewal:d2(ren),premium:prem,status:payDue?'payment due':'active',payDue,daysOut:Math.round((ren-TODAY)/86400000)};
-      POLICIES.push(p);c.policies.push(p.id);n++;
-    }
-  });
-})();
-const SPEND=[
- {ch:'Google Ads',spend:2400,leads:38,quotes:21,bound:9},
- {ch:'Meta',spend:1800,leads:44,quotes:17,bound:6},
- {ch:'Local Services',spend:1100,leads:19,quotes:12,bound:7},
- {ch:'Website / SEO',spend:900,leads:16,quotes:9,bound:4},
- {ch:'Referral',spend:300,leads:12,quotes:10,bound:6}
+const money=n=>'$'+Math.round(n).toLocaleString('en-US');
+const d2=d=>d.toISOString().slice(0,10);
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const daysOut=d=>Math.round((new Date(d)-TODAY)/86400000);
+const fmtDate=d=>new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+const CARRIERS=[
+ {n:'Travelers',m:'api',st:'connected',rec:112,last:'8:04am'},
+ {n:'Progressive',m:'api',st:'connected',rec:96,last:'8:04am'},
+ {n:'Openly',m:'api',st:'connected',rec:24,last:'8:03am'},
+ {n:'Safeco',m:'download',st:'connected',rec:78,last:'8:04am'},
+ {n:'Nationwide',m:'download',st:'connected',rec:64,last:'8:04am'},
+ {n:'Stillwater',m:'download',st:'connected',rec:31,last:'8:02am'},
+ {n:'Chubb',m:'download',st:'connected',rec:42,last:'8:04am'},
+ {n:'The Hartford',m:'download',st:'connected',rec:38,last:'8:01am'},
+ {n:'Foremost',m:'portal',st:'vault login',rec:27,last:'8:00am'},
+ {n:'Mercury',m:'portal',st:'vault login',rec:35,last:'7:58am'},
+ {n:'Bristol West',m:'portal',st:'vault login',rec:29,last:'7:58am'},
+ {n:'GAINSCO',m:'portal',st:'vault login',rec:17,last:'7:57am'}
 ];
+const LINES=['Auto','Home','Umbrella','Commercial Auto','General Liability','Workers Comp','BOP','Renters'];
+const FIRST=['Jill','Marcus','Elena','Dwayne','Priya','Tom','Rosa','Caleb','Nina','Andre','Sofia','Grant','Yvonne','Hector','Lena','Owen','Tanya','Reggie','Marisol','Ellis','Bianca','Curtis','Dana','Pablo'];
+const LAST=['Nakamura','Whitfield','Ortiz','Brennan','Raman','Delgado','Kowalski','Mercer','Haddad','Boateng','Salazar','Pierce','Okafor','Villanueva','Sorensen','Duffy','Ferraro','Lindqvist','Cardenas','Boone','Ibarra','Hale','Whitaker','Nunez'];
+const CITY=[['Gilbert','85234'],['Mesa','85205'],['Chandler','85225'],['Higley','85236'],['Queen Creek','85142'],['Scottsdale','85254'],['Tempe','85281'],['Apache Junction','85120']];
+const STREET=['S Gilbert Rd','E Baseline Rd','N Val Vista Dr','E Williams Field Rd','S Higley Rd','E Guadalupe Rd','N Lindsay Rd','E Pecos Rd','S Power Rd','E Warner Rd'];
+const PROD=['Jacobo M.','Dana R.','Steve L.','Kayla B.'];
+
+let CLIENTS=[],POLICIES=[],TASKS=[],CLAIMS=[],QUOTES=[],ACTLOG=[],SYNCLOG=[],COVERAGE=null,SELECTED_CLIENT=null,DRAWER_TAB='overview',CLIENT_FILTER='all',POL_FILTER='all',MARKETS=[],SELECTED_CAMP=0;
+
+const CLIENTS_SEED=[
+ ['Jill Nakamura','household','Tempe','85281',2019,'Jacobo M.',3,'renewing'],
+ ['Marcus Brennan','household','Mesa','85205',2020,'Dana R.',11,''],
+ ['Elena Kowalski','household','Mesa','85205',2018,'Steve L.',2,'renewing'],
+ ['Dwayne Boateng','household','Tempe','85281',2021,'Kayla B.',26,''],
+ ['Priya Okafor','household','Mesa','85205',2017,'Jacobo M.',1,'due'],
+ ['Tom Duffy','business','Gilbert','85234',2016,'Dana R.',6,'comm'],
+ ['Rosa Nakamura','household','Apache Junction','85120',2022,'Steve L.',19,''],
+ ['Caleb Brennan','household','Mesa','85205',2020,'Kayla B.',33,''],
+ ['Nina Kowalski','household','Tempe','85281',2019,'Jacobo M.',4,'due'],
+ ['Andre Boateng','household','Higley','85236',2023,'Dana R.',8,'renewing'],
+ ['Sofia Okafor','business','Chandler','85225',2015,'Steve L.',12,'comm'],
+ ['Grant Pierce','household','Queen Creek','85142',2021,'Kayla B.',21,''],
+ ['Yvonne Salazar','household','Scottsdale','85254',2018,'Jacobo M.',5,''],
+ ['Hector Villanueva','business','Mesa','85205',2014,'Dana R.',9,'comm'],
+ ['Lena Kowalski','household','Apache Junction','85120',2019,'Steve L.',14,'renewing'],
+ ['Owen Sorensen','household','Gilbert','85234',2022,'Kayla B.',28,''],
+ ['Tanya Ferraro','household','Chandler','85225',2020,'Jacobo M.',7,'due'],
+ ['Reggie Lindqvist','household','Tempe','85281',2023,'Dana R.',16,''],
+ ['Marisol Cardenas','business','Scottsdale','85254',2017,'Steve L.',10,'comm'],
+ ['Ellis Boone','household','Higley','85236',2021,'Kayla B.',24,''],
+ ['Bianca Ibarra','household','Queen Creek','85142',2022,'Jacobo M.',13,''],
+ ['Curtis Hale','household','Gilbert','85234',2019,'Dana R.',30,'lapsed'],
+ ['Dana Whitaker','household','Mesa','85205',2020,'Steve L.',18,''],
+ ['Pablo Nunez','business','Chandler','85225',2016,'Kayla B.',15,'comm']
+];
+CLIENTS_SEED.forEach((s,i)=>{
+  const [name,type,city,zip,since,owner,touch,tag]=s;
+  const f=name.split(' ')[0],l=name.split(' ')[1];
+  CLIENTS.push({id:'C'+(1001+i),name,type,city,zip,since,owner,touch,tag,
+    email:(f+'.'+l[0]+'@example.com').toLowerCase(),
+    phone:'(480) '+String(210+i*13).slice(0,3)+'-'+String(1000+i*37).slice(0,4),
+    street:(120+i*17)+' '+STREET[i%STREET.length],
+    dob:'0'+(1+i%9)+'-'+String(4+i*3%26).padStart(2,'0'),
+    contact:type==='business'?'Owner · '+f:'Policyholder'});
+});
+
+const POL_SEED=[
+ ['Auto','Safeco',1180],['Home','Safeco',1640],['Umbrella','Chubb',320],['Commercial Auto','Progressive',3480],
+ ['General Liability','The Hartford',2250],['Workers Comp','Travelers',4100],['BOP','Openly',1860],['Renters','Foremost',280]
+];
+let pn=0;
+CLIENTS.forEach((c,i)=>{
+  const count=c.type==='business'?2+(i%2):1+(i%2);
+  for(let k=0;k<count;k++){
+    const line=c.type==='business'?['Commercial Auto','General Liability','Workers Comp','BOP'][(i+k)%4]:['Auto','Home','Umbrella','Renters'][(i+k)%4];
+    const base=POL_SEED.find(p=>p[0]===line);
+    const carrier=c.type==='business'?['Progressive','The Hartford','Travelers','Openly'][(i+k)%4]:['Safeco','Mercury','Nationwide','Stillwater','Chubb','GAINSCO','Foremost','Bristol West'][(i+k)%8];
+    const prem=Math.round((base[2]*(0.82+((i*7+k*11)%30)/100))/10)*10;
+    const eff=addDays(TODAY,-(75+((i*23+k*41)%300)));
+    const near=(i+k)%9===0;
+    const ren=addDays(TODAY,near?(5+((i*3)%22)):40+((i*29+k*37)%250));
+    const due=c.tag==='due'&&k===0;
+    pn++;
+    POLICIES.push({id:'P'+(4200+pn),clientId:c.id,carrier,policy:'AZ-'+carrier.slice(0,2).toUpperCase()+'-'+String(700000+pn*37),line,
+      eff:d2(eff),renewal:d2(ren),daysOut:daysOut(ren),premium:prem,status:due?'payment due':'active',payDue:due,
+      commRate:carrier==='Travelers'||carrier==='Chubb'?0.12:carrier==='Progressive'?0.10:0.15,
+      docs:['Declarations page','ID card',line.includes('Commercial')||line==='BOP'?'Certificate of insurance':'Policy jacket']});
+  }
+});
+
+const CLAIM_SEED=[
+ ['C1005','Safeco','Auto','Collision · rear ended at signal','2026-11-08','Angela Ruiz',4800,1250,'open'],
+ ['C1003','Progressive','General Liability','Slip and fall, third party','2026-10-29','Dale Kim',12500,0,'open'],
+ ['C1009','GAINSCO','Auto','Windshield, comprehensive','2026-11-15','M. Ochoa',640,640,'closed'],
+ ['C1012','Mercury','Home','Water damage, supply line','2026-10-12','B. Sandoval',18700,9200,'open'],
+ ['C1007','Stillwater','Auto','Hail, comprehensive','2026-09-30','K. Doyle',3100,3100,'closed'],
+ ['C1015','Travelers','Workers Comp','Back strain, warehouse','2026-11-03','R. Mendez',7600,2100,'open'],
+ ['C1021','Foremost','Renters','Theft, electronics','2026-11-18','L. Park',2200,0,'open']
+];
+CLAIMS=CLAIM_SEED.map((c,i)=>({id:'CL'+(501+i),clientId:c[0],carrier:c[1],line:c[2],type:c[3],date:c[4],adjuster:c[5],reserve:c[6],paid:c[7],status:c[8]}));
+
+const TASK_SEED=[
+ ['C1001','Renewal 12 days out, premium up 14%','today','Jacobo M.','renewal','high'],
+ ['C1003','Quote sent 3 days ago, no reply','today','Steve L.','quote','high'],
+ ['C1005','Payment failed, card on file expired','today','Jacobo M.','payment','high'],
+ ['C1007','Auto only, bundle quote not offered','today','Steve L.','cross-sell','normal'],
+ ['C1009','Claim follow-up, adjuster has not called in 6 days','tomorrow','Jacobo M.','claim','high'],
+ ['C1011','New lead, first contact overdue 2h','tomorrow','Dana R.','lead','high'],
+ ['C1013','Annual review due, no contact in 14 months','tomorrow','Jacobo M.','review','normal'],
+ ['C1015','ID card requested by client, send today','this week','Steve L.','document','normal'],
+ ['C1017','Certificate holder updated, resend COI','this week','Kayla B.','document','normal'],
+ ['C1019','Birthday text, no pitch','this week','Dana R.','birthday','low'],
+ ['C1021','Renewal 26 days out, re-shop home','this week','Kayla B.','renewal','normal']
+];
+TASKS=TASK_SEED.map((t,i)=>({id:'T'+(300+i),clientId:t[0],reason:t[1],due:t[2],owner:t[3],type:t[4],pri:t[5],done:false}));
+
+QUOTES=[
+ ['C1024','Auto','Safeco',1240,'bound','Nov 21'],
+ ['C1019','Home','Travelers',1890,'sent','Nov 22'],
+ ['C1016','BOP','Openly',2140,'sent','Nov 20'],
+ ['C1013','Umbrella','Chubb',410,'lost','Nov 14'],
+ ['C1008','Auto','Progressive',1330,'bound','Nov 19'],
+ ['C1002','Home','Safeco',1720,'sent','Nov 23'],
+ ['C1022','Commercial Auto','Progressive',3910,'lost','Nov 11'],
+ ['C1010','Renters','Foremost',290,'bound','Nov 18']
+].map((q,i)=>({id:'Q'+(900+i),clientId:q[0],line:q[1],carrier:q[2],premium:q[3],status:q[4],sent:q[5]}));
+
 const CAMPS=[
- {name:'New lead nurture',trig:'Lead created, no quote in 24h',steps:5,enrolled:34,sent:186,status:'running',detail:['D0 · SMS · "Thanks for reaching out, here is what happens next"','D1 · Email · Carrier comparison explainer','D3 · Call task · producer assigned','D7 · Email · proof and reviews','D14 · SMS · last call, book a 10 minute call']},
- {name:'Quote follow-up',trig:'Quote issued, not bound in 48h',steps:4,enrolled:19,sent:112,status:'running',detail:['D0 · Email · quote summary PDF','D2 · SMS · any questions on the numbers','D5 · Call task · review coverage gaps','D9 · Email · rate change window closes']},
- {name:'Renewal save',trig:'Renewal 45 days out, premium up >10%',steps:4,enrolled:27,sent:98,status:'running',detail:['D-45 · Email · renewal summary','D-30 · Call task · re-shop and compare','D-14 · SMS · confirm no lapse','D-7 · Email · payment options']},
- {name:'Payment reminder',trig:'Balance due within 5 days',steps:3,enrolled:11,sent:41,status:'running',detail:['D-5 · SMS · amount and pay link','D-1 · SMS · reminder','D+1 · Call task · lapse risk, reinstate']},
- {name:'Birthday',trig:'Client date of birth',steps:1,enrolled:24,sent:24,status:'running',detail:['D0 · SMS · short personal note from the producer, no pitch']},
- {name:'Cross-sell gap',trig:'Auto only, no home policy',steps:3,enrolled:31,sent:87,status:'running',detail:['D0 · Email · bundle savings estimate','D4 · SMS · 2 minute bundle quote','D10 · Call task · producer follow-up']}
+ {name:'New lead nurture',trig:'Lead created, no quote in 24h',steps:5,enrolled:34,sent:186,reply:31,bound:9,
+  detail:['D0 · SMS · Thanks for reaching out, here is what happens next','D1 · Email · How carrier pricing actually differs','D3 · Call task · producer assigned, 10 minute call','D7 · Email · proof, reviews and a sample quote','D14 · SMS · last call, book a 10 minute call']},
+ {name:'Quote follow-up',trig:'Quote issued, not bound in 48h',steps:4,enrolled:19,sent:112,reply:24,bound:7,
+  detail:['D0 · Email · Quote summary with the numbers side by side','D2 · SMS · Any questions on the numbers','D5 · Call task · Review coverage gaps','D9 · Email · Rate window closes, lock it in']},
+ {name:'Renewal save',trig:'Renewal 45 days out, premium up over 10%',steps:4,enrolled:27,sent:98,reply:19,bound:11,
+  detail:['D-45 · Email · Renewal summary and what changed','D-30 · Call task · Re-shop and compare','D-14 · SMS · Confirm no lapse in coverage','D-7 · Email · Payment options and autopay']},
+ {name:'Payment reminder',trig:'Balance due within 5 days',steps:3,enrolled:11,sent:41,reply:8,bound:0,
+  detail:['D-5 · SMS · Amount due and secure pay link','D-1 · SMS · Reminder, coverage is at risk','D+1 · Call task · Lapse risk, reinstate options']},
+ {name:'Birthday',trig:'Client date of birth',steps:1,enrolled:24,sent:24,reply:6,bound:0,
+  detail:['D0 · SMS · Short personal note from the producer, no pitch']},
+ {name:'Cross-sell gap',trig:'Auto only, no home policy',steps:3,enrolled:31,sent:87,reply:14,bound:6,
+  detail:['D0 · Email · Bundle savings estimate','D4 · SMS · Two minute bundle quote','D10 · Call task · Producer follow-up']}
 ];
-(function buildTasks(){
-  const reasons=['Renewal 12 days out, premium up 14%','Quote sent 3 days ago, no reply','Payment failed, card on file expired','Auto only, bundle quote not offered','Claim follow-up, adjuster has not called','New lead, first contact overdue 2h','Annual review due','ID card requested, send today'];
-  for(let i=0;i<9;i++){
-    const c=CLIENTS[i*2%CLIENTS.length];
-    TASKS.push({id:'T'+(300+i),clientId:c.id,reason:reasons[i%reasons.length],owner:c.owner,due:i<4?'today':i<7?'tomorrow':'this week',done:false,pri:i<4?'high':'normal'});
-  }
-  LOGS.push({t:'08:04',m:'EZLynx sync completed, 593 policies, 0 errors'});
-  LOGS.push({t:'08:06',m:'Payment reminder sequence sent 4 texts'});
-  LOGS.push({t:'08:11',m:'Jacobo logged in from Gilbert office'});
-})();
-const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Rate across markets, bind without leaving'],policies:['Policies','Renewals, payments and documents'],tasks:['Tasks','Who does what, and who covers'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLintx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1900)}
+const CHANNELS=[
+ {ch:'Google Ads',spend:2400,leads:38,quotes:21,bound:9,prem:1490},
+ {ch:'Meta',spend:1800,leads:44,quotes:17,bound:6,prem:1180},
+ {ch:'Local Services',spend:1100,leads:19,quotes:12,bound:7,prem:1620},
+ {ch:'Website / SEO',spend:900,leads:16,quotes:9,bound:4,prem:1710},
+ {ch:'Referral',spend:300,leads:12,quotes:10,bound:6,prem:2040}
+];
+const ZIPS=[['85234','Gilbert',22,9],['85205','Mesa',17,5],['85225','Chandler',14,6],['85236','Higley',11,4],['85142','Queen Creek',9,4],['85254','Scottsdale',6,3]];
+const KEYWORDS=[
+ ['insurance agent gilbert az',1900,2,1],['home insurance mesa az',1300,4,-1],['commercial auto insurance phoenix',880,7,3],
+ ['cheap car insurance queen creek',720,5,2],['workers comp insurance arizona',640,9,0],['bundle home and auto gilbert',520,3,4],
+ ['small business insurance chandler',480,11,-2],['umbrella policy cost arizona',260,6,1]
+];
+const CALLS=[
+ ['Marisol Cardenas','Google Ads','4:12','quote requested'],
+ ['unknown','Local Services','1:38','voicemail, callback set'],
+ ['Ellis Boone','Website','6:04','renewal question'],
+ ['Hector Villanueva','Google Ads','3:27','certificate holder change'],
+ ['unknown','Meta','0:44','hung up'],
+ ['Bianca Ibarra','Referral','8:51','bundle quote booked'],
+ ['Tanya Ferraro','Local Services','2:09','payment arrangement'],
+ ['unknown','Google Ads','1:12','spam, blocked']
+];
+SYNCLOG=[
+ ['08:04','EZLynx download completed · 593 policies · 0 errors'],
+ ['08:04','Travelers API pull · 112 records reconciled'],
+ ['08:03','Progressive API pull · 96 records reconciled'],
+ ['08:02','Stillwater download · 31 records, 1 address conflict'],
+ ['07:58','Mercury portal session · 35 records, MFA approved by Jacobo'],
+ ['07:57','GAINSCO portal session · 17 records']
+];
+const MAPPING=[
+ ['Client.GivenName + Surname','client.name','trim, title case'],
+ ['Location.Address1','client.street','standardize suffix'],
+ ['Policy.EffectiveDate','policy.eff','ISO 8601'],
+ ['Policy.ExpirationDate','policy.renewal','ISO 8601'],
+ ['Policy.PremiumAmount','policy.premium','cents to dollars'],
+ ['Policy.CarrierName','policy.carrier','map to carrier id'],
+ ['Commission.CommissionAmount','commission.amount','monthly rollup'],
+ ['Driver.LicenseNumber','driver.license','encrypt at rest, mask in UI']
+];
+const CONFLICTS=[
+ ['Dwayne Boateng','Two addresses in EZLynx: S Gilbert Rd and E Baseline Rd','Resolve'],
+ ['Marcus Brennan','Vehicle added in portal, not yet in EZLynx','Queue sync'],
+ ['Sofia Okafor','FEIN on policy differs from entity record','Review'],
+ ['Nina Kowalski','Payment posted twice on Nov 18','Open claim']
+];
+const FORMS=[
+ ['Website quote request','64','Yes · 8 seconds','Google Ads · branded'],
+ ['Bundle savings calculator','31','Yes · tagged','Meta · bundle'],
+ ['Certificate request (business)','18','Yes · routed to CSR','Direct'],
+ ['Referral form (client share)','12','Yes · producer assigned','Referral']
+];
+const AUDIT=[
+ ['08:14','Jacobo M.','Viewed client record','Priya Okafor'],
+ ['08:11','Jacobo M.','Signed in · Gilbert office','—'],
+ ['08:04','system','EZLynx download','593 policies'],
+ ['08:02','system','Carrier portal session · Mercury','35 records'],
+ ['07:51','Dana R.','Exported renewal list (CSV)','27 policies'],
+ ['07:44','Steve L.','Generated ID card','Elena Kowalski'],
+ ['07:30','Kayla B.','Sent certificate of insurance','Hector Villanueva'],
+ ['07:12','Jacobo M.','Changed commission rate','Travelers'],
+ ['06:58','system','Backup completed','Daily · encrypted'],
+ ['06:40','Dana R.','Viewed claim record','Nina Kowalski']
+];
+ACTLOG=[
+ ['08:14','Jacobo M. viewed Priya Okafor · payment failed, card expired'],
+ ['08:11','Jacobo M. signed in from Gilbert office'],
+ ['08:06','Payment reminder sequence sent 4 texts'],
+ ['08:04','EZLynx sync completed, 593 policies, 0 errors'],
+ ['07:51','Dana R. exported the renewal list for the Monday call block'],
+ ['07:44','Steve L. generated an ID card for Elena Kowalski']
+];
+const PROD_GOALS=[['Jacobo M.',9,14200],['Dana R.',7,11800],['Steve L.',6,10400],['Kayla B.',5,8600]];
+const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Quoted in each carrier portal, sent from here'],policies:['Policies','Renewals, payments and documents'],tasks:['Tasks','Who does what, and who covers'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
+const byId=id=>CLIENTS.find(c=>c.id===id);
+const polsOf=id=>POLICIES.filter(p=>p.clientId===id);
+const premOf=id=>polsOf(id).reduce((s,p)=>s+p.premium,0);
+const carrsOf=id=>[...new Set(polsOf(id).map(p=>p.carrier))];
+const totalPrem=()=>POLICIES.reduce((s,p)=>s+p.premium,0);
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2100)}
+function log(m){ACTLOG.unshift([new Date().toTimeString().slice(0,5),m]);renderTasks()}
+
 function unlock(){
-  const v=document.getElementById('gateCode').value.trim().toLowerCase();
-  if(v===CODE){document.getElementById('gate').remove();}
-  else{toast('That code is not right');}
+  const v=(document.getElementById('gateCode').value||'').trim().toLowerCase();
+  if(v===CODE){document.getElementById('gate').remove();renderAll();}
+  else toast('That code is not right');
 }
-document.getElementById('gateCode').addEventListener('keydown',e=>{if(e.key==='Enter')unlock()});
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 function go(v){
   document.getElementById('drawer').classList.remove('open');
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   document.getElementById('ttl').textContent=NAV[v][0];
   document.getElementById('sub').textContent=NAV[v][1];
-  if(v==='policies')renderPolicies();
-  if(v==='brand')renderProjections();
-  if(v==='tasks')renderTasks();
-  if(v==='dash'||v==='clients')renderAll();
+  const R={dash:renderDash,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,tasks:renderTasks,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
+  if(R[v])R[v]();
 }
-function polsOf(id){return POLICIES.filter(p=>p.clientId===id)}
-function premOf(id){return polsOf(id).reduce((s,p)=>s+p.premium,0)}
-function byId(id){return CLIENTS.find(c=>c.id===id)}
+function quickSearch(v){
+  const q=(v||'').toLowerCase().trim();
+  if(!q)return;
+  const hit=CLIENTS.find(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q)||polsOf(c.id).some(p=>p.policy.toLowerCase().includes(q)));
+  if(hit){go('clients');openClient(hit.id);}
+}
+
+/* ---------- dashboard ---------- */
 function renderDash(){
-  const total=POLICIES.reduce((s,p)=>s+p.premium,0);
-  const soon=POLICIES.filter(p=>p.daysOut<=60).length;
-  const due=POLICIES.filter(p=>p.payDue).length;
-  const k=[['Book of business',money(total),POLICIES.length+' policies · '+CLIENTS.length+' clients','up'],['Renewals next 30 days',POLICIES.filter(p=>p.daysOut<=30).length,money(POLICIES.filter(p=>p.daysOut<=30).reduce((s,p)=>s+p.premium,0))+' in premium',''],['Payments due',due,due?'lapse risk if unpaid':'all current',due?'dn':'up'],['Open tasks',TASKS.filter(t=>!t.done).length,'4 due today','']];
-  document.getElementById('kpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
-  const risk=POLICIES.filter(p=>p.daysOut<=30).sort((a,b)=>a.daysOut-b.daysOut).slice(0,6);
-  document.getElementById('riskChip').textContent=risk.length+' policies';
-  document.getElementById('riskBody').innerHTML=risk.map(p=>{const c=byId(p.clientId);return `<tr><td><b>${c.name}</b></td><td>${p.carrier}</td><td><span class="chip ${p.daysOut<15?'r':'a'}">${p.daysOut} days</span></td><td class="num">${money(p.premium)}</td><td><button class="btn sm ghost" onclick="openClient('${c.id}')">Open</button></td></tr>`}).join('');
-  const q=TASKS.filter(t=>!t.done).slice(0,5);
-  document.getElementById('taskChip').textContent=q.length+' items';
-  document.getElementById('queueBody').innerHTML=q.map(t=>{const c=byId(t.clientId);return `<tr><td><b>${c.name}</b></td><td style="color:#4A5768">${t.reason}</td><td>${t.owner}</td><td><button class="btn sm ghost" onclick="openClient('${c.id}')">Open</button></td></tr>`}).join('');
-  const tot=SPEND.reduce((s,x)=>s+x.spend,0);
-  document.getElementById('spendBars').innerHTML=SPEND.map(x=>`<div class="bar"><span>${x.ch}</span><div class="track"><div class="fill" style="width:${Math.round(x.spend/tot*100)}%"></div></div><span class="n">${money(x.spend)}</span></div>`).join('');
-  const bound=SPEND.reduce((s,x)=>s+x.bound,0);
-  document.getElementById('spendNote').innerHTML=`<b>${money(tot)}</b> this month across five channels, <b>${bound} policies bound</b>, blended cost per policy <b>${money(Math.round(tot/bound))}</b>. Local Services is the cheapest booked policy at ${money(Math.round(1100/7))}.`;
-  const leads=SPEND.map(x=>[x.ch,x.leads]).sort((a,b)=>b[1]-a[1]);
-  document.getElementById('leadBars').innerHTML=leads.map(x=>`<div class="bar"><span>${x[0]}</span><div class="track"><div class="fill" style="width:${Math.round(x[1]/leads[0][1]*100)}%"></div></div><span class="n">${x[1]}</span></div>`).join('');
+  const renew=POLICIES.filter(p=>p.daysOut<=30).sort((a,b)=>a.daysOut-b.daysOut);
+  const due=POLICIES.filter(p=>p.payDue);
+  const open=TASKS.filter(t=>!t.done);
+  const k=[['Book of business',money(totalPrem()),POLICIES.length+' policies · '+CLIENTS.length+' clients',''],
+    ['Renewals next 30 days',renew.length,money(renew.reduce((s,p)=>s+p.premium,0))+' in premium',''],
+    ['Payments due',due.length,money(due.reduce((s,p)=>s+p.premium/12,0))+' monthly at risk','dn'],
+    ['Open tasks',open.length,open.filter(t=>t.due==='today').length+' due today','']];
+  document.getElementById('dashKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('riskCount').textContent=renew.length+' policies';
+  document.getElementById('riskBody').innerHTML=renew.slice(0,6).map(p=>{const c=byId(p.clientId);return `<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${c.city} ${c.zip}</div></td><td>${p.carrier}</td><td>${p.line}</td><td>${p.daysOut} days</td><td class="num">${money(p.premium)}</td><td><button class="btn sm ghost" onclick="openClient('${c.id}')">Open</button></td></tr>`}).join('');
+  const queue=TASKS.filter(t=>!t.done).slice(0,5);
+  document.getElementById('queueCount').textContent=queue.length+' items';
+  document.getElementById('queueBody').innerHTML=queue.map(t=>{const c=byId(t.clientId);return `<tr><td><b>${c.name}</b></td><td style="font-size:12px">${t.reason}</td><td>${t.owner}</td><td><button class="btn sm ghost" onclick="openClient('${c.id}')">Open</button></td></tr>`}).join('');
+  const pipe=[['Quotes issued',69],['Contacted',111],['Bound',32],['Renewals saved',11]];
+  document.getElementById('pipeBars').innerHTML=pipe.map(p=>`<div class="bar"><span>${p[0]}</span><div class="track"><div class="fill" style="width:${Math.round(p[1]/111*100)}%"></div></div><span class="n">${p[1]}</span></div>`).join('');
+  document.getElementById('prodBody').innerHTML=PROD_GOALS.map(g=>{
+    const ps=POLICIES.filter(p=>byId(p.clientId).owner===g[0]);
+    const prem=ps.reduce((s,p)=>s+p.premium,0);
+    return `<tr><td><b>${g[0]}</b></td><td class="num">${ps.length}</td><td class="num">${money(prem)}</td><td class="num"><span class="chip ${prem>=g[2]?'g':'a'}">${Math.round(prem/g[2]*100)}%</span></td></tr>`}).join('');
+  const m=[['Commission earned',money(4820)],['Renewal premium due',money(11920)],['Pending commission',money(2140)],['At risk of lapse',money(1180)]];
+  document.getElementById('moneyBars').innerHTML=m.map(x=>`<div class="bar"><span>${x[0]}</span><div class="track"><div class="fill" style="width:${Math.min(100,Math.round(parseInt(x[1].replace(/\D/g,''))/11920*100))}%"></div></div><span class="n">${x[1]}</span></div>`).join('');
+  const bd=CLIENTS.slice(0,5).map((c,i)=>({c,kind:i%2?'Annual review':'Birthday',when:fmtDate(addDays(TODAY,2+i*3))}));
+  document.getElementById('bdayBody').innerHTML=bd.map(b=>`<tr><td><b>${b.c.name}</b></td><td>${b.kind}</td><td>${b.when}</td><td><button class="btn sm ghost" onclick="toast('Message queued for ${b.c.name.split(' ')[0]}')">Send</button></td></tr>`).join('');
 }
+
+/* ---------- clients ---------- */
+function setClientFilter(f){CLIENT_FILTER=f;document.querySelectorAll('#clientFilters button').forEach(b=>b.classList.toggle('on',b.dataset.f===f));renderClients()}
 function renderClients(){
-  document.getElementById('clientCount').textContent=CLIENTS.length+' clients';
-  document.getElementById('clientBody').innerHTML=CLIENTS.map(c=>{
-    const ps=polsOf(c.id);
-    const next=ps.slice().sort((a,b)=>a.daysOut-b.daysOut)[0];
-    const cars=[...new Set(ps.map(p=>p.carrier))];
-    return `<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${c.city}, ${c.zip}</div></td>
-    <td>${ps.length}</td><td style="font-size:11.5px;color:#4A5768">${cars.join(', ')}</td>
-    <td class="num">${money(premOf(c.id))}</td>
-    <td>${next?`<span class="chip ${next.daysOut<20?'a':'n'}">${next.daysOut} days</span>`:'—'}</td>
-    <td><span class="chip ${ps.some(p=>p.payDue)?'r':'g'}">${ps.some(p=>p.payDue)?'payment due':'current'}</span></td>
+  let list=CLIENTS.slice();
+  if(CLIENT_FILTER==='renew')list=list.filter(c=>polsOf(c.id).some(p=>p.daysOut<=60));
+  if(CLIENT_FILTER==='due')list=list.filter(c=>polsOf(c.id).some(p=>p.payDue));
+  if(CLIENT_FILTER==='comm')list=list.filter(c=>c.type==='business');
+  if(CLIENT_FILTER==='lapsed')list=list.filter(c=>c.tag==='lapsed');
+  document.getElementById('clientCount').textContent=list.length+' of '+CLIENTS.length;
+  document.getElementById('clientBody').innerHTML=list.map(c=>{
+    const ps=polsOf(c.id),next=ps.slice().sort((a,b)=>a.daysOut-b.daysOut)[0];
+    return `<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${c.email}</div></td>
+    <td>${c.city} ${c.zip}</td><td><span class="chip ${c.type==='business'?'n':''}">${c.type}</span></td>
+    <td class="num">${ps.length}</td><td style="font-size:11.5px">${carrsOf(c.id).join(', ')}</td>
+    <td class="num">${money(premOf(c.id))}</td><td>${next?next.daysOut+' days':'—'}</td><td>${c.touch}d ago</td><td>${c.owner}</td>
     <td><button class="btn sm ghost" onclick="openClient('${c.id}')">Open</button></td></tr>`}).join('');
+  const gaps=[['Rosa Nakamura','Auto','Home, Umbrella',2100],['Caleb Brennan','Auto, Renters','Umbrella',410],['Grant Pierce','Home','Auto',1180],['Owen Sorensen','Auto','Renters, Life',290],['Tom Duffy','Commercial Auto, GL','Workers Comp',4100]];
+  document.getElementById('gapBody').innerHTML=gaps.map(g=>`<tr><td><b>${g[0]}</b></td><td>${g[1]}</td><td><span class="chip a">${g[2]}</span></td><td class="num">${money(g[3])}</td><td><button class="btn sm ghost" onclick="toast('Bundle quote started for ${g[0].split(' ')[0]}')">Quote it</button></td></tr>`).join('');
 }
+/* ---------- client drawer ---------- */
 function openClient(id){
-  const c=byId(id), ps=polsOf(id);
-  document.getElementById('dh').innerHTML=`<div class="big-av">${c.name.split(' ').map(x=>x[0]).join('')}</div>
-  <div style="flex:1"><div style="font-size:15px;font-weight:700">${c.name}</div>
-  <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${c.street} · ${c.city}, AZ ${c.zip}</div>
-  <div style="font-size:11.5px;color:var(--muted)">${c.phone} · ${c.email}</div></div>
-  <button class="btn sm ghost" onclick="closeDrawer()">Close</button>`;
-  const pols=ps.map(p=>`<div class="pol"><div class="r1"><span class="car">${p.carrier}</span><span class="chip ${p.payDue?'r':'g'}">${p.status}</span><span class="chip n">${p.conn}</span></div>
-  <div class="meta">${p.line} · ${p.policy}<br>Renews ${p.renewal} (${p.daysOut} days) · ${money(p.premium)}/yr</div>
-  <div class="acts"><button onclick="idCard('${p.id}')">ID card</button><button onclick="coi('${p.id}')">Certificate</button><button onclick="carrierLogin('${p.id}')" style="border-color:#1D5BD6;color:#1D5BD6;font-weight:700">${p.conn==='api'?'Pull (API)':p.conn==='download'?'Pull (download)':'Carrier login'}</button><button onclick="payNow('${p.id}')">Pay / autopay</button><button onclick="toast('Declarations page downloaded')">Dec page</button></div></div>`).join('');
-  document.getElementById('db').innerHTML=`
-  <div style="display:flex;gap:8px;margin-bottom:14px">
-    <button class="btn sm blue" onclick="openQuoteFor('${c.id}')">New quote</button>
-    <button class="btn sm ghost" onclick="addTask('${c.id}')">Add task</button>
-    <button class="btn sm ghost" onclick="toast('Email drafted to ${c.email}')">Email</button>
-    <button class="btn sm ghost" onclick="toast('Text queued')">Text</button>
-  </div>
-  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:7px">Policies · ${money(premOf(id))} annual premium</div>
-  ${pols}
-  ${mvpBlock(c)}
-  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 7px">Next actions</div>
-  <div class="pol" style="background:#fff"><div class="meta">Renewal call ${ps[0]?ps[0].daysOut:0} days out · annual review scheduled · birthday ${c.dob}</div>
-  <div class="acts"><button onclick="toast('Renewal task created')">Create renewal task</button><button onclick="toast('Review booked')">Book review</button></div></div>
-  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 7px">Timeline</div>
-  <div style="font-size:11.5px;line-height:1.95;color:#4A5768">
-  Today · Producer ${c.owner} opened record<br>
-  Nov 20 · Payment reminder sent, card updated<br>
-  Nov 12 · Renewal re-shop completed, ${ps.length} policy${ps.length>1?'ies':''} retained<br>
-  Client since ${c.since}</div>`;
+  SELECTED_CLIENT=id;DRAWER_TAB='overview';
   document.getElementById('drawer').classList.add('open');
+  renderDrawer();
 }
 function closeDrawer(){document.getElementById('drawer').classList.remove('open')}
-function idCard(pid){
-  const p=POLICIES.find(x=>x.id===pid), c=byId(p.clientId);
-  document.getElementById('sheet').innerHTML=`<h3>Auto ID card</h3><p class="p">${p.carrier} · ${p.policy}</p>
-  <div style="border:1px solid var(--line);border-radius:10px;padding:14px;background:#FBFCFF">
-    <div style="font-weight:800;font-size:13px;letter-spacing:.06em;color:var(--blue)">${p.carrier.toUpperCase()}</div>
-    <div style="font-size:11.5px;color:var(--muted);margin-bottom:9px">Arizona · ${p.line}</div>
-    <div style="font-size:12.5px;line-height:1.8"><b>${c.name}</b><br>${c.street}<br>${c.city}, AZ ${c.zip}<br>
-    Policy ${p.policy}<br>Effective ${p.eff} · Expires ${p.renewal}</div></div>
-  <div style="display:flex;gap:8px;margin-top:14px"><button class="btn blue" onclick="toast('ID card downloaded as PNG')">Download</button>
-  <button class="btn ghost" onclick="toast('Emailed to ${c.email}')">Email to client</button>
-  <button class="btn ghost" onclick="closeModal()">Close</button></div>`;
-  document.getElementById('modal').classList.add('open');
+function setDrawerTab(t){DRAWER_TAB=t;renderDrawer()}
+function renderDrawer(){
+  const c=byId(SELECTED_CLIENT);if(!c)return;
+  const ps=polsOf(c.id),cl=CLAIMS.filter(x=>x.clientId===c.id);
+  document.getElementById('dh').innerHTML=`
+    <div class="big-av">${c.name.split(' ').map(x=>x[0]).join('')}</div>
+    <div style="flex:1"><div style="font-weight:700;font-size:15px">${c.name}</div>
+    <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${c.type==='business'?'Business account':'Household'} · ${c.city} ${c.zip} · client since ${c.since}</div>
+    <div style="margin-top:6px"><span class="chip ${c.tag==='due'?'r':c.tag==='renewing'?'a':'g'}">${c.tag||'current'}</span> <span class="chip n">${c.owner}</span></div></div>
+    <button class="btn sm ghost" onclick="closeDrawer()">Close</button>`;
+  const tabs=[['overview','Overview'],['policies','Policies'],['docs','Documents'],['claims','Claims'],['activity','Activity']];
+  let body=`<div class="tabs">${tabs.map(t=>`<button class="${DRAWER_TAB===t[0]?'on':''}" onclick="setDrawerTab('${t[0]}')">${t[1]}</button>`).join('')}</div>`;
+  if(DRAWER_TAB==='overview'){
+    body+=`<div class="grid2">
+      <div class="kpi"><div class="k">Phone</div><div class="v" style="font-size:13px">${c.phone}</div><div class="s">mobile · text enabled</div></div>
+      <div class="kpi"><div class="k">Email</div><div class="v" style="font-size:13px">${c.email}</div><div class="s">consented to email</div></div>
+      <div class="kpi"><div class="k">Address</div><div class="v" style="font-size:13px">${c.street}</div><div class="s">${c.city}, AZ ${c.zip}</div></div>
+      <div class="kpi"><div class="k">Date of birth</div><div class="v" style="font-size:13px">${c.dob}</div><div class="s">birthday drip active</div></div>
+      <div class="kpi"><div class="k">Annual premium</div><div class="v">${money(premOf(c.id))}</div><div class="s">${ps.length} policies</div></div>
+      <div class="kpi"><div class="k">Last touch</div><div class="v">${c.touch}d ago</div><div class="s">owner ${c.owner}</div></div>
+    </div>
+    <div class="note" style="margin-top:12px"><b>Next best action:</b> ${ps.some(p=>p.payDue)?'collect payment before lapse risk turns into a cancellation.':'confirm renewal timing and offer the missing line while the book is open.'}</div>
+    <div class="acts" style="margin-top:10px">
+      <button onclick="logTouch('call')">Log call</button><button onclick="logTouch('text')">Send text</button>
+      <button onclick="logTouch('email')">Send email</button><button onclick="addTask('${c.id}')">Add task</button>
+      <button onclick="noteModal('${c.id}')">Add note</button></div>`;
+  }
+  if(DRAWER_TAB==='policies'){
+    body+=ps.map(p=>`<div class="pol"><div class="r1"><span class="car">${p.carrier}</span>
+      <span class="chip ${p.payDue?'r':'g'}">${p.status}</span><span class="pill">${p.line}</span></div>
+      <div class="meta">${p.policy} · effective ${p.eff} · renews ${p.renewal} (${p.daysOut} days)<br>
+      ${money(p.premium)} annual · ${money(p.premium/12)} monthly · commission ${Math.round(p.commRate*100)}%</div>
+      <div class="acts"><button onclick="docModal('id','${p.id}')">ID card</button>
+      <button onclick="docModal('coi','${p.id}')">Certificate</button>
+      <button onclick="docModal('dec','${p.id}')">Dec page</button>
+      <button onclick="payNow('${p.id}')">Take payment</button></div></div>`).join('')
+      ||'<div class="note">No policies on file.</div>';
+  }
+  if(DRAWER_TAB==='docs'){
+    body+=`<div class="panel" style="margin-top:0"><div class="head"><h2>Documents</h2><div class="spacer"></div><span class="chip n">${ps.length*3} files</span></div><div class="body">`;
+    ps.forEach(p=>{
+      body+=`<div class="docrow"><div class="ic">PDF</div><div style="flex:1"><b>${p.carrier} ${p.line}</b><div style="font-size:11px;color:var(--muted)">declarations page · generated ${p.eff}</div></div><button class="btn sm ghost" onclick="docModal('dec','${p.id}')">Open</button></div>`;
+      body+=`<div class="docrow"><div class="ic">ID</div><div style="flex:1"><b>${p.carrier} insurance card</b><div style="font-size:11px;color:var(--muted)">auto ID card · expires ${p.renewal}</div></div><button class="btn sm ghost" onclick="docModal('id','${p.id}')">Open</button></div>`;
+      if(p.line.includes('Commercial')||p.line==='BOP')body+=`<div class="docrow"><div class="ic">COI</div><div style="flex:1"><b>Certificate of insurance</b><div style="font-size:11px;color:var(--muted)">holder on file · ${p.policy}</div></div><button class="btn sm ghost" onclick="docModal('coi','${p.id}')">Open</button></div>`;
+    });
+    body+=`</div></div>`;
+  }
+  if(DRAWER_TAB==='claims'){
+    body+=cl.length?`<table><thead><tr><th>Carrier</th><th>Loss</th><th>Date</th><th class="num">Reserve</th><th class="num">Paid</th><th>Status</th></tr></thead><tbody>`+
+      cl.map(x=>`<tr><td>${x.carrier}</td><td>${x.type}<div style="font-size:11px;color:var(--muted)">adjuster ${x.adjuster}</div></td><td>${x.date}</td><td class="num">${money(x.reserve)}</td><td class="num">${money(x.paid)}</td><td><span class="chip ${x.status==='closed'?'g':'a'}">${x.status}</span></td></tr>`).join('')+`</tbody></table>`
+      :'<div class="note">No claims on this account. Clean loss history is worth mentioning at renewal.</div>';
+  }
+  if(DRAWER_TAB==='activity'){
+    body+=`<div class="tl">`+ACTLOG.slice(0,7).map(a=>`<div class="ev"><b>${a[1]}</b><div class="w">${a[0]} · logged</div></div>`).join('')+`</div>`;
+  }
+  document.getElementById('db').innerHTML=body;
 }
-function coi(pid){
-  const p=POLICIES.find(x=>x.id===pid), c=byId(p.clientId);
-  document.getElementById('sheet').innerHTML=`<h3>Certificate of insurance</h3><p class="p">Generated from ${p.carrier} policy data, ready to send to a lender, landlord or vendor.</p>
-  <div class="field"><label>Certificate holder</label><input value="Desert Ridge Property Management"></div>
-  <div class="field"><label>Additional insured</label><select><option>Yes, include</option><option>No</option></select></div>
-  <div style="font-size:12px;color:var(--muted);line-height:1.7;margin:8px 0">${c.name} · ${p.line} · ${p.carrier} · ${p.policy} · limits per policy schedule</div>
-  <div style="display:flex;gap:8px"><button class="btn blue" onclick="toast('Certificate generated and queued to send')">Generate certificate</button>
-  <button class="btn ghost" onclick="closeModal()">Close</button></div>`;
-  document.getElementById('modal').classList.add('open');
+function logTouch(kind){
+  const c=byId(SELECTED_CLIENT);
+  log(`${kind==='call'?'Call':kind==='text'?'Text':'Email'} logged with ${c.name}`);
+  toast(kind==='call'?'Call logged with outcome picker':kind==='text'?'Text queued to '+c.phone:'Email queued to '+c.email);
 }
 function payNow(pid){
   const p=POLICIES.find(x=>x.id===pid);
-  p.payDue=false;p.status='active';renderDash();renderPolicies();
-  toast('Payment link sent · '+money(p.premium/12)+' monthly');
-  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Payment link sent for '+p.policy});
+  p.payDue=false;p.status='active';
+  log('Payment collected on '+p.policy+' · '+money(p.premium/12));
+  toast('Payment of '+money(p.premium/12)+' collected on '+p.carrier);
+  renderDrawer();renderPolicies();renderDash();
 }
 function addTask(cid){
   const c=byId(cid);
-  TASKS.unshift({id:'T'+Math.floor(Math.random()*9999),clientId:cid,reason:'Manual follow-up added by producer',owner:c.owner,due:'today',done:false,pri:'normal'});
-  renderDash();renderTasks();toast('Task added for '+c.owner);
+  TASKS.push({id:'T'+Date.now(),clientId:cid,reason:'Manual follow-up requested by '+c.owner,due:'today',owner:c.owner,type:'manual',pri:'normal',done:false});
+  log('Task created for '+c.name);
+  toast('Task added to the queue');
 }
-function closeModal(){document.getElementById('modal').classList.remove('open')}
-function quickSearch(v){
-  if(!v||v.length<2)return;
-  const hit=CLIENTS.find(c=>c.name.toLowerCase().includes(v.toLowerCase()));
-  if(hit)openClient(hit.id);
-}
-function openQuoteFor(cid){
+function noteModal(cid){
   const c=byId(cid);
-  document.getElementById('qName').value=c.name;
-  go('quotes');closeDrawer();
-}
-function runQuote(){
-  const name=document.getElementById('qName').value||'Prospect';
-  const line=document.getElementById('qLine').value;
-  const n=parseInt(document.getElementById('qN').value||2,10);
-  document.getElementById('quoteChip').textContent='rating';
-  const base=line==='Auto'?1180:line==='Home'?1640:line==='Umbrella'?320:line==='Commercial Auto'?3480:line==='General Liability'?2250:line==='Workers Comp'?4100:line==='BOP'?1860:line==='Renters'?280:940;
-  const markets=CAR.filter(c=>c[0]!=='GAINSCO').slice(0,7).map(c=>{
-    const f=0.82+Math.random()*0.55;
-    return {car:c[0],conn:c[1],prem:Math.round(base*n/2*f)};
-  }).sort((a,b)=>a.prem-b.prem);
-  setTimeout(()=>{
-    document.getElementById('quoteChip').textContent=markets.length+' markets';
-    document.getElementById('quoteResults').innerHTML=markets.map((m,i)=>`
-      <div class="quote"><div><b>${m.car}</b><div style="font-size:11px;color:var(--muted)">${m.conn} · ${line} · ${n} ${line==='Home'?'locations':'drivers'}</div></div>
-      <div style="text-align:right"><b>${money(m.prem)}</b>/yr<div style="font-size:11px;color:var(--muted)">${money(Math.round(m.prem/12))}/mo</div></div>
-      <button class="btn sm ${i===0?'blue':'ghost'}" onclick="bind('${m.car}','${name.replace(/'/g,'')}',${m.prem},'${line}')">${i===0?'Bind':'Select'}</button></div>`).join('')
-      +`<div class="note">Best rate ${markets[0].car} at ${money(markets[0].prem)}, ${money(markets[0].prem-markets[markets.length-1].prem)} below the highest market. Quote valid 30 days.</div>`;
-  },420);
-}
-function bind(car,name,prem,line){
-  const c=CLIENTS.find(x=>x.name.toLowerCase()===name.toLowerCase());
-  if(c){
-    const p={id:'P'+Math.floor(Math.random()*9000+1000),clientId:c.id,carrier:car,conn:'api',policy:'AZ-'+car.slice(0,2).toUpperCase()+'-'+Math.floor(Math.random()*900000+100000),line,eff:d2(TODAY),renewal:d2(addDays(TODAY,365)),premium:prem,status:'active',payDue:false,daysOut:365};
-    POLICIES.push(p);c.policies.push(p.id);renderClients();renderDash();renderPolicies();
-  }
-  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Bound '+line+' with '+car+' at '+money(prem)});
-  toast('Bound with '+car+' · policy issued · ID card available');
-}
-function renderPolicies(){
-  const f=document.getElementById('polFilter').value;
-  let rows=POLICIES.slice();
-  if(f==='lapse')rows=rows.filter(p=>p.payDue);
-  else if(f!=='all')rows=rows.filter(p=>p.daysOut<=parseInt(f,10));
-  rows.sort((a,b)=>a.daysOut-b.daysOut);
-  document.getElementById('polBody').innerHTML=rows.slice(0,40).map(p=>{const c=byId(p.clientId);return `<tr>
-    <td><b>${c.name}</b></td><td>${p.carrier}</td><td class="mono">${p.policy}</td><td>${p.line}</td><td>${p.eff}</td>
-    <td>${p.renewal}</td><td class="num">${money(p.premium)}</td>
-    <td><span class="chip ${p.payDue?'r':'g'}">${p.status}</span></td>
-    <td><button class="btn sm ghost" onclick="openClient('${c.id}')">Open</button></td></tr>`}).join('');
-  const k=[['Total policies',POLICIES.length,'across '+new Set(POLICIES.map(p=>p.carrier)).size+' carriers',''],['Annual premium',money(POLICIES.reduce((s,p)=>s+p.premium,0)),'in force today','up'],['Renewing in 30 days',POLICIES.filter(p=>p.daysOut<=30).length,'needs a call this week',''],['Payment due',POLICIES.filter(p=>p.payDue).length,'lapse risk','dn']];
-  document.getElementById('polKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
-}
-function renderTasks(){
-  document.getElementById('taskCount').textContent=TASKS.filter(t=>!t.done).length+' open';
-  document.getElementById('taskBody').innerHTML=TASKS.filter(t=>!t.done).map(t=>{const c=byId(t.clientId);
-    return `<tr><td><b>${c.name}</b></td><td style="color:#4A5768">${t.reason}</td>
-    <td><span class="chip ${t.due==='today'?'r':'n'}">${t.due}</span></td><td>${t.owner}</td>
-    <td><button class="btn sm ghost" onclick="doneTask('${t.id}')">Done</button></td></tr>`}).join('')
-    ||'<tr><td colspan="5" style="color:var(--muted)">Queue clear.</td></tr>';
-  const who=document.getElementById('oooWho');
-  if(!who.options.length){PROD.forEach(p=>{who.add(new Option(p,p));document.getElementById('oooCover').add(new Option(p,p))})}
-  document.getElementById('oooState').innerHTML=OOO?`<b>${OOO.who}</b> is out until ${OOO.until}. Open items reassigned to <b>${OOO.cover}</b>.`: 'No coverage set.';
-  document.getElementById('log').innerHTML=LOGS.map(l=>`<div><span style="color:#9AA5B4">${l.t}</span> · ${l.m}</div>`).join('');
-}
-function doneTask(id){
-  const t=TASKS.find(x=>x.id===id);t.done=true;
-  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Task completed for '+byId(t.clientId).name});
-  renderTasks();renderDash();toast('Task closed');
-}
-function setCoverage(){
-  const who=document.getElementById('oooWho').value, cover=document.getElementById('oooCover').value, until=document.getElementById('oooUntil').value;
-  OOO={who,cover,until};
-  TASKS.filter(t=>!t.done&&t.owner===who).forEach(t=>t.owner=cover);
-  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:who+' marked out, book covered by '+cover});
-  renderTasks();toast(who+' covered by '+cover+' until '+until);
-}
-function renderCampaigns(){
-  document.getElementById('campBody').innerHTML=CAMPS.map((c,i)=>`<tr>
-    <td><b>${c.name}</b></td><td style="color:#4A5768">${c.trig}</td><td>${c.steps}</td>
-    <td class="num">${c.enrolled}</td><td class="num">${c.sent}</td>
-    <td><span class="chip g">${c.status}</span></td>
-    <td><button class="btn sm ghost" onclick="showCamp(${i})">View</button></td></tr>`).join('');
-  document.getElementById('lifecycle').innerHTML=['Lead created','Quote issued','Policy bound','Renewal 45 days out','Payment due','Birthday','Claim opened','Lapse risk']
-    .map(x=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #EEF1F6;font-size:12.5px"><span>${x}</span><span class="chip g">active</span></div>`).join('');
-}
-function showCamp(i){
-  const c=CAMPS[i];
-  document.getElementById('campName').textContent=c.name;
-  document.getElementById('campDetail').innerHTML=c.detail.map(s=>`<div style="padding:8px 0;border-bottom:1px solid #EEF1F6;font-size:12.5px">${s}</div>`).join('')
-   +`<div class="note">${c.enrolled} enrolled, ${c.sent} touches sent in 30 days. Replies route to the assigned producer as a task, not a dead inbox.</div>`;
-}
-function renderGrowth(){
-  const tot=SPEND.reduce((s,x)=>s+x.spend,0);
-  const leads=SPEND.reduce((s,x)=>s+x.leads,0);
-  const bound=SPEND.reduce((s,x)=>s+x.bound,0);
-  const k=[['Ad spend, month',money(tot),'five channels',''],['Leads captured',leads,'blended CPL '+money(Math.round(tot/leads)),'up'],['Quotes issued',SPEND.reduce((s,x)=>s+x.quotes,0),'quote rate '+Math.round(SPEND.reduce((s,x)=>s+x.quotes,0)/leads*100)+'%',''],['Policies bound',bound,'cost per policy '+money(Math.round(tot/bound)),'up']];
-  document.getElementById('growthKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
-  document.getElementById('chanBody').innerHTML=SPEND.map(x=>`<tr><td><b>${x.ch}</b></td><td class="num">${money(x.spend)}</td><td class="num">${x.leads}</td>
-    <td class="num">${money(Math.round(x.spend/x.leads))}</td><td class="num">${x.quotes}</td><td class="num">${x.bound}</td>
-    <td class="num">${money(Math.round(x.spend/x.bound))}</td></tr>`).join('');
-  const flow=[['Leads',leads],['Contacted',Math.round(leads*.86)],['Quoted',SPEND.reduce((s,x)=>s+x.quotes,0)],['Bound',bound]];
-  document.getElementById('flowBars').innerHTML=flow.map(f=>`<div class="bar"><span>${f[0]}</span><div class="track"><div class="fill" style="width:${Math.round(f[1]/leads*100)}%"></div></div><span class="n">${f[1]}</span></div>`).join('');
-  const zip=[['85234 Gilbert',22],['85205 Mesa',17],['85225 Chandler',14],['85236 Higley',11],['85142 Queen Creek',9],['85254 Scottsdale',6]];
-  document.getElementById('zipBars').innerHTML=zip.map(z=>`<div class="bar"><span>${z[0]}</span><div class="track"><div class="fill" style="width:${Math.round(z[1]/22*100)}%"></div></div><span class="n">${z[1]}</span></div>`).join('');
-}
-function syncNow(){
-  const el=document.getElementById('syncLog');
-  const steps=['Connecting to EZLynx…','Authenticating agency token…','Pulling 593 policies…','Mapping carrier fields…','Reconciling renewals…','Done. 0 errors, 4 new renewals flagged.'];
-  el.innerHTML='';
-  steps.forEach((s,i)=>setTimeout(()=>{el.innerHTML+=`<div><span style="color:#9AA5B4">${new Date().toTimeString().slice(0,5)}</span> ${s}</div>`;if(i===steps.length-1){LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Manual EZLynx pull completed'});toast('Sync complete · 593 policies');}},i*380));
-}
-function renderSecurity(){
-  const rows=[['Synthetic data','Every client, policy and premium in this demo is generated. No real policyholder data is present.'],
-  ['No credentials in the browser','Carrier credentials live in an encrypted server-side vault. The browser only ever receives data, never logins.'],
-  ['Tenant isolation','Each agency gets its own data partition. White-label deployments do not share records or indexes.'],
-  ['Role-based access','Owner, producer, CSR and read-only roles. Commission and producer performance are hidden from roles that should not see them.'],
-  ['Audit trail','Every record view, export, quote and bind is written to an immutable log with user, time and IP.'],
-  ['Encryption','TLS in transit, AES-256 at rest, field-level encryption on SSNs, dates of birth and driver licence numbers.'],
-  ['Data handling','PII retention rules, export controls, and a deletion path that satisfies state insurance privacy requirements.'],
-  ['Production path','SOC 2 aligned controls, penetration test before white-label launch, and carrier API agreements before automated pulls.']];
-  document.getElementById('secBody').innerHTML=rows.map(r=>`<div style="display:grid;grid-template-columns:200px 1fr;gap:14px;padding:10px 0;border-bottom:1px solid #EEF1F6"><b style="font-size:12.5px">${r[0]}</b><span style="font-size:12.5px;color:#4A5768;line-height:1.6">${r[1]}</span></div>`).join('')
-   +`<div class="note">This build is a simulation for the meeting. The security model above is what the production deployment implements, and it is the section to walk through with any agency that asks about white-labeling.</div>`;
-}
-function mvpBlock(c){
-  const i=parseInt(c.id.slice(1),10);
-  const veh=[['2019','FORD F-250 SUPER DUTY','1FT7W2BT'+i],['2018','CHEVROLET SUBURBAN','1GNSCJKC'+i],['2013','VOLKSWAGEN PASSAT','1VWCN7ZA'+i]];
-  const spouse=['Annika','Marcus','Elena','Priya'][i%4]+' '+c.name.split(' ')[1];
-  const kid=['Emma','Liam','Sofia'][i%3]+' '+c.name.split(' ')[1];
-  const carr=CAR[(i*5)%CAR.length][0];
-  const prior=['Root Insurance','Mercury','Progressive','Safeco'][i%4];
-  return `
-  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 7px">Household</div>
-  <table style="font-size:11.5px"><thead><tr><th>Name</th><th>DOB</th><th>Rel.</th><th>Contact</th></tr></thead><tbody>
-    <tr><td><b>${c.name}</b></td><td>${c.dob}/1992</td><td>Self</td><td>${c.phone}</td></tr>
-    <tr><td>${spouse}</td><td>04/07/1986</td><td>Spouse</td><td>(480) 508-7665</td></tr>
-    <tr><td>${kid}</td><td>09/02/2009</td><td>Daughter</td><td>—</td></tr>
-  </tbody></table>
-  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 7px">Residence</div>
-  <div style="font-size:11.5px;color:#4A5768;line-height:1.6">${c.street}, ${c.city}, AZ ${c.zip} · built 2004 · 3 bed · 2 bath · tile roof</div>
-  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 7px">Vehicles</div>
-  <table style="font-size:11.5px"><thead><tr><th>Year</th><th>Vehicle</th><th>VIN</th><th>Usage</th></tr></thead><tbody>
-    ${veh.map(v=>`<tr><td>${v[0]}</td><td>${v[1]}</td><td class="mono">${v[2]}</td><td>Commute</td></tr>`).join('')}
-  </tbody></table>
-  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 7px">Coverages</div>
-  <div style="font-size:11.5px;color:#4A5768;line-height:1.7">Bodily injury 50/100 · UM/UIM 50/100 · Property damage $100k · Comprehensive $1,000 · Collision $1,000 · Rental $30/day · Towing included</div>
-  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 7px">Prior carrier</div>
-  <div style="font-size:11.5px;color:#4A5768">${prior} · policy ${String(100000+i*137).slice(0,7)} · replaced at this renewal</div>
-  <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 7px">Quotes and policies</div>
-  <table style="font-size:11.5px"><thead><tr><th>Carrier</th><th>Policy</th><th>Renewal</th><th>Term</th><th class="num">Premium</th><th>Pay plan</th></tr></thead><tbody>
-    <tr><td><b>${carr}</b></td><td class="mono">${String(900000+i*37)}</td><td>${polsOf(c.id)[0]?polsOf(c.id)[0].renewal:'—'}</td><td>6 mo</td><td class="num">${polsOf(c.id)[0]?money(polsOf(c.id)[0].premium):'—'}</td><td>Monthly EFT</td></tr>
-    <tr><td>${prior}</td><td class="mono">${String(700000+i*53)}</td><td>01-29-2027</td><td>12 mo</td><td class="num">${money(2400+i*90)}</td><td>Paid in full</td></tr>
-  </tbody></table>
-  <div class="acts" style="margin-top:9px"><button onclick="toast('EZLynx record opened in a new tab')">Show EZLynx URL</button>
-  <button onclick="toast('Prior carrier comparison started')">Compare coverages</button></div>`;
-}
-
-let WQ=null;
-function renderCarrierQuote(){
-  document.getElementById('cqBody').innerHTML=CAR.map(c=>{
-    const how=c[1]==='api'?'Partner API, agency appointment required':c[1]==='download'?'Policy data by download into EZLynx, quote via portal or real time':'Rated inside the carrier portal';
-    return `<tr><td><b>${c[0]}</b></td><td><span class="chip ${c[1]==='api'?'g':c[1]==='download'?'a':'n'}">${c[1]}</span></td>
-    <td style="color:#4A5768">${how}</td>
-    <td><button class="btn sm ${c[1]==='portal'?'blue':'ghost'}" onclick="openCarrierWindow('${c[0]}','${c[1]}')">${c[1]==='portal'?'Open window':'Pull quote'}</button></td></tr>`}).join('');
-}
-function openCarrierWindow(carrier,conn){
-  const name=(document.getElementById('qName')||{}).value||'Prospect';
-  const line=document.getElementById('qLine')?document.getElementById('qLine').value:'Auto';
-  WQ={carrier,conn,line,client:name,premium:null,doc:null};
-  const domain=carrier.toLowerCase().replace(/[^a-z]/g,'')+'.com';
-  document.getElementById('sheet').innerHTML=`
-  <h3>${carrier} · quote window</h3>
-  <p class="p">${name} · ${line} · ${conn==='api'?'Partner API returns the quote directly':conn==='download'?'Downloaded from EZLynx, quoted in the carrier window':'You rate inside the carrier portal'}</p>
-  <div style="border:1px solid var(--line);border-radius:10px;overflow:hidden">
-    <div style="background:#EEF1F6;padding:7px 10px;display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5A6675">
-      <span style="display:flex;gap:3px"><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i><i style="width:8px;height:8px;border-radius:50%;background:#D9DEE7;display:block"></i></span>
-      <span class="mono" style="background:#fff;border:1px solid var(--line);border-radius:6px;padding:3px 8px;flex:1">https://${domain}/agent/quote</span>
-    </div>
-    <div style="padding:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <b style="font-size:12.5px">${carrier} agent portal</b>
-        <span class="chip ${conn==='portal'?'a':'g'}">${conn==='portal'?'signed in':'token auth'}</span>
-      </div>
-      <div class="meta" style="font-size:11.5px;color:var(--muted);line-height:1.7">Insured: ${name}<br>Line: ${line}<br>Agency credentials filled from the vault · MFA completed by you</div>
-      <div class="acts" style="margin-top:10px">
-        <button onclick="rateInWindow()">Rate this client</button>
-        <button onclick="toast('Existing policy pulled into the window')">Load current policy</button>
-      </div>
-      <div id="wqResult" style="margin-top:12px"></div>
-    </div>
-  </div>
-  <div class="note">The carrier's own interface, not a copy of it. Whatever the portal requires, the portal does, and we take the result out as a document.</div>
-  <div style="display:flex;gap:8px;margin-top:12px"><button class="btn ghost" onclick="closeModal()">Close</button></div>`;
+  document.getElementById('sheet').innerHTML=`<h3>Add note · ${c.name}</h3><div class="p">Notes are timestamped and stay with the record. Nothing here is sent to the client.</div>
+    <div class="field"><label>Note</label><input id="noteText" placeholder="What happened on this account"></div>
+    <button class="btn blue" onclick="saveNote('${cid}')">Save note</button>`;
   document.getElementById('modal').classList.add('open');
 }
+function saveNote(cid){
+  const v=(document.getElementById('noteText').value||'').trim();
+  const c=byId(cid);
+  closeModal();
+  if(!v){toast('Nothing to save');return}
+  log('Note on '+c.name+': '+v.slice(0,40));
+  toast('Note saved to '+c.name.split(' ')[0]+"'s record");
+}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
 
-function rateInWindow(){
-  const base=WQ.line==='Auto'?1180:WQ.line==='Home'?1640:WQ.line==='Commercial Auto'?3480:2250;
-  const prem=Math.round(base*(0.9+Math.random()*0.3));
-  WQ.premium=prem; WQ.doc=WQ.carrier.slice(0,3).toUpperCase()+'-QUOTE-'+Math.floor(Math.random()*900000+100000)+'.pdf';
-  document.getElementById('wqResult').innerHTML=`
-    <div class="pol" style="margin:0"><div class="r1"><span class="car">Quote returned</span><span class="chip g">${WQ.carrier}</span></div>
-      <div class="meta">Premium <b style="color:#0D1622">${money(prem)}/yr</b> · ${money(Math.round(prem/12))}/mo · 12 month term<br>Document: <span class="mono">${WQ.doc}</span></div>
-      <div class="acts"><button onclick="downloadWQ()">Download quote</button><button onclick="attachWQ()">Attach to client record</button></div></div>`;
-  toast('Rated in '+WQ.carrier+' · '+money(prem));
+/* ---------- documents ---------- */
+function docModal(kind,pid){
+  const p=POLICIES.find(x=>x.id===pid),c=byId(p.clientId);
+  let title='',inner='';
+  if(kind==='id'){
+    title='Insurance ID card';
+    inner=`<div style="border:1px solid var(--line);border-radius:12px;padding:16px;background:#FBFCFF">
+      <div style="display:flex;justify-content:space-between;align-items:center"><b>${p.carrier}</b><span class="chip g">active</span></div>
+      <div style="font-size:11px;color:var(--muted);margin:6px 0 10px">Auto insurance identification card · Arizona</div>
+      <div class="grid2" style="gap:8px">
+        <div><div style="font-size:10px;color:var(--muted)">NAMED INSURED</div><b>${c.name}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">POLICY NUMBER</div><b class="mono">${p.policy}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">EFFECTIVE</div><b>${p.eff}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">EXPIRES</div><b>${p.renewal}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">VEHICLE</div><b>2021 Toyota RAV4</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">COVERAGES</div><b>250/500/100 · comp/coll 500</b></div>
+      </div></div>`;
+  }
+  if(kind==='coi'){
+    title='Certificate of insurance';
+    inner=`<div style="border:1px solid var(--line);border-radius:12px;padding:16px;background:#FBFCFF">
+      <b>${p.carrier}</b><div style="font-size:11px;color:var(--muted);margin:6px 0 10px">ACORD 25 · certificate of liability insurance</div>
+      <div class="grid2" style="gap:8px">
+        <div><div style="font-size:10px;color:var(--muted)">INSURED</div><b>${c.name}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">HOLDER</div><b>${c.name.split(' ')[0]} Property Group</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">POLICY</div><b class="mono">${p.policy}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">LINE</div><b>${p.line}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">EACH OCCURRENCE</div><b>$1,000,000</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">AGGREGATE</div><b>$2,000,000</b></div>
+      </div></div>`;
+  }
+  if(kind==='dec'){
+    title='Declarations page';
+    inner=`<div style="border:1px solid var(--line);border-radius:12px;padding:16px;background:#FBFCFF">
+      <b>${p.carrier} · ${p.line} declarations</b>
+      <div style="font-size:11px;color:var(--muted);margin:6px 0 10px">Policy ${p.policy} · effective ${p.eff} to ${p.renewal}</div>
+      <table style="font-size:12px"><tbody>
+      <tr><td>Named insured</td><td class="num">${c.name}</td></tr>
+      <tr><td>Annual premium</td><td class="num">${money(p.premium)}</td></tr>
+      <tr><td>Monthly installment</td><td class="num">${money(p.premium/12)}</td></tr>
+      <tr><td>Commission to agency</td><td class="num">${money(p.premium*p.commRate)}</td></tr>
+      <tr><td>Forms in force</td><td class="num">4</td></tr></tbody></table></div>`;
+  }
+  document.getElementById('sheet').innerHTML=`<h3>${title}</h3><div class="p">${c.name} · ${p.carrier}</div>${inner}
+    <div class="acts" style="margin-top:12px"><button onclick="toast('${title} sent to ${c.email}')">Email to client</button>
+    <button onclick="toast('${title} texted to ${c.phone}')">Text to client</button>
+    <button onclick="closeModal()">Close</button></div>`;
+  document.getElementById('modal').classList.add('open');
 }
-function downloadWQ(){ toast(WQ.doc+' downloaded'); LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Quote document downloaded from '+WQ.carrier}) }
-function attachWQ(){
-  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Quote '+WQ.doc+' attached to '+WQ.client});
-  toast('Attached to the client record');
-  sendQuoteStep();
+/* ---------- quotes ---------- */
+function renderQuotes(){
+  document.getElementById('qHistCount').textContent=QUOTES.length+' quotes';
+  document.getElementById('qHistBody').innerHTML=QUOTES.slice().reverse().map(q=>{const c=byId(q.clientId);
+    return `<tr><td><b>${c.name}</b></td><td>${q.line}</td><td>${q.carrier}</td><td class="num">${money(q.premium)}</td>
+    <td><span class="chip ${q.status==='bound'?'g':q.status==='lost'?'r':'a'}">${q.status}</span></td><td>${q.sent}</td></tr>`}).join('');
+  const m=[['Safeco','download','Preferred · clean loss history',1240],
+    ['Travelers','api','Preferred · multi-policy discount',1310],
+    ['Progressive','api','Standard · one violation, 3 years',1440],
+    ['Openly','api','Preferred · newer roof required',1510],
+    ['Nationwide','download','Standard · prior lapse, acceptable',1580],
+    ['Chubb','download','Elite only · declined appetite',0],
+    ['Stillwater','download','Preferred · coastal exclusion',1660],
+    ['Mercury','portal','Standard · 2 vehicles, garaged',1620],
+    ['Bristol West','portal','Non-standard · prior cancellation',1890],
+    ['Foremost','portal','Manufactured home only · n/a',0],
+    ['GAINSCO','portal','Non-standard auto only',1740],
+    ['The Hartford','download','Commercial lines only · n/a',0]];
+  document.getElementById('marketCount').textContent=m.filter(x=>x[3]>0).length+' of 12 markets returned a number';
+  document.getElementById('marketBody').innerHTML=m.map(x=>x[3]>0?`<tr><td><b>${x[0]}</b></td><td><span class="chip ${x[1]==='api'?'g':x[1]==='download'?'n':'a'}">${x[1]}</span></td>
+    <td style="font-size:11.5px;color:var(--muted)">${x[2]}</td><td class="num"><b>${money(x[3])}</b></td><td class="num">${money(x[3]/12)}</td>
+    <td><button class="btn sm ${x[3]===Math.min(...m.filter(y=>y[3]>0).map(y=>y[3]))?'blue':'ghost'}" onclick="bindQuote('${x[0]}',${x[3]},'${x[1]}')">${x[3]===Math.min(...m.filter(y=>y[3]>0).map(y=>y[3]))?'Bind best':'Select'}</button></td></tr>`
+    :`<tr style="opacity:.55"><td><b>${x[0]}</b></td><td><span class="chip n">${x[1]}</span></td><td style="font-size:11.5px">${x[2]}</td><td class="num">—</td><td class="num">—</td><td></td></tr>`).join('');
+  const loss=[['Price, client found cheaper',38],['No response after 3 touches',26],['Coverage requirement not met',16],['Went with current carrier',12],['Payment or down payment issue',8]];
+  document.getElementById('lossBars').innerHTML=loss.map(x=>`<div class="bar"><span>${x[0]}</span><div class="track"><div class="fill" style="width:${x[1]*2.4}%"></div></div><span class="n">${x[1]}%</span></div>`).join('');
 }
-function sendQuoteStep(){
-  document.getElementById('sheet').innerHTML=`
-  <h3>Send the quote</h3><p class="p">${WQ.client} · ${WQ.carrier} · ${money(WQ.premium)}/yr · ${WQ.doc}</p>
-  <div class="field"><label>Send by</label><select id="sendBy"><option>Email</option><option>Text message</option><option>Both</option></select></div>
-  <div class="field"><label>Message</label><input id="sendNote" value="Here is your quote from ${WQ.carrier}. Happy to walk through the coverages."></div>
-  <div class="field"><label>Attach</label><input value="${WQ.doc}" readonly style="background:#F1F4F9;color:#5A6675"></div>
-  <div style="display:flex;gap:8px;margin-top:6px"><button class="btn blue" onclick="sendWQ()">Send from the CRM</button>
-  <button class="btn ghost" onclick="closeModal()">Cancel</button></div>
-  <div class="note">Sent from the client record, so the document, the message and the follow-up task all live in one place. Nothing is retyped into a portal and nothing is lost in an inbox.</div>`;
+function runQuote(){
+  const name=(document.getElementById('qName').value||'Prospect').trim();
+  const line=document.getElementById('qLine').value;
+  const zip=(document.getElementById('qZip').value||'85142').trim();
+  toast('Quoting '+name+' · '+line+' · '+zip+' across 12 markets');
+  QUOTES.push({id:'Q'+Date.now(),clientId:CLIENTS[0].id,line,carrier:'Safeco',premium:1240,status:'sent',sent:'today'});
+  renderQuotes();
+  log('Quote started for '+name+' · '+line);
 }
-function sendWQ(){
-  const by=document.getElementById('sendBy').value;
-  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Quote sent to '+WQ.client+' by '+by});
-  TASKS.unshift({id:'T'+Math.floor(Math.random()*9999),clientId:(CLIENTS.find(c=>c.name===WQ.client)||CLIENTS[0]).id,reason:'Quote '+WQ.doc+' sent, follow up in 2 days',owner:'Jacobo M.',due:'tomorrow',done:false,pri:'high'});
-  closeModal(); renderTasks(); renderDash();
-  toast('Quote sent by '+by+' · follow-up task created');
-  WQ=null;
+function bindQuote(carrier,prem,method){
+  if(!prem){toast('That market did not return a number');return}
+  const c=CLIENTS[0];
+  POLICIES.push({id:'P'+(9000+POLICIES.length),clientId:c.id,carrier,policy:'AZ-'+carrier.slice(0,2).toUpperCase()+'-'+String(700000+POLICIES.length*41),line:'Auto',
+    eff:d2(TODAY),renewal:d2(addDays(TODAY,365)),daysOut:365,premium:prem,status:'active',payDue:false,commRate:0.15,docs:['Declarations page','ID card']});
+  QUOTES.push({id:'Q'+Date.now(),clientId:c.id,line:'Auto',carrier,premium:prem,status:'bound',sent:'today'});
+  log('Bound '+carrier+' auto policy at '+money(prem));
+  toast('Bound with '+carrier+' at '+money(prem)+' · policy added to the book');
+  renderQuotes();renderPolicies();renderDash();
 }
 
+/* ---------- policies ---------- */
+function setPolFilter(f){POL_FILTER=f;document.querySelectorAll('#polFilters button').forEach(b=>b.classList.toggle('on',b.dataset.f===f));renderPolicies()}
+function renderPolicies(){
+  const k=[['Total policies',POLICIES.length,'across 12 carriers',''],['Annual premium',money(totalPrem()),'in force today',''],
+    ['Renewing in 30 days',POLICIES.filter(p=>p.daysOut<=30).length,'needs a call this week',''],
+    ['Payment due',POLICIES.filter(p=>p.payDue).length,'lapse risk','dn']];
+  document.getElementById('polKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  let list=POLICIES.slice().sort((a,b)=>a.daysOut-b.daysOut);
+  if(POL_FILTER==='30')list=list.filter(p=>p.daysOut<=30);
+  if(POL_FILTER==='60')list=list.filter(p=>p.daysOut<=60);
+  if(POL_FILTER==='90')list=list.filter(p=>p.daysOut<=90);
+  if(POL_FILTER==='due')list=list.filter(p=>p.payDue);
+  document.getElementById('polCount').textContent=list.length+' shown';
+  document.getElementById('polBody').innerHTML=list.map(p=>{const c=byId(p.clientId);
+    return `<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${c.city}</div></td><td>${p.carrier}</td>
+    <td class="mono">${p.policy}</td><td>${p.line}</td><td>${p.eff}</td><td>${p.renewal}<div style="font-size:11px;color:var(--muted)">${p.daysOut} days</div></td>
+    <td class="num">${money(p.premium)}</td><td><span class="chip ${p.payDue?'r':'g'}">${p.status}</span></td>
+    <td><button class="btn sm ghost" onclick="docModal('id','${p.id}')">ID</button> <button class="btn sm ghost" onclick="docModal('dec','${p.id}')">Dec</button>${(p.line.includes('Commercial')||p.line==='BOP')?` <button class="btn sm ghost" onclick="docModal('coi','${p.id}')">COI</button>`:''}</td></tr>`}).join('');
+  const buckets=[[0,30],[31,60],[61,90],[91,180],[181,365]];
+  document.getElementById('renBars').innerHTML=buckets.map(b=>{
+    const n=POLICIES.filter(p=>p.daysOut>=b[0]&&p.daysOut<=b[1]);
+    const prem=n.reduce((s,p)=>s+p.premium,0);
+    return `<div class="bar"><span>${b[0]} to ${b[1]} days</span><div class="track"><div class="fill" style="width:${Math.min(100,n.length*8)}%"></div></div><span class="n">${n.length}</span></div>`}).join('')
+    +`<div class="note">${money(POLICIES.filter(p=>p.daysOut<=90).reduce((s,p)=>s+p.premium,0))} of premium renews inside 90 days. Every one of those gets a re-shop before the carrier's own renewal notice lands.</div>`;
+  const byCar={};
+  POLICIES.forEach(p=>{byCar[p.carrier]=byCar[p.carrier]||{n:0,prem:0,rate:p.commRate};byCar[p.carrier].n++;byCar[p.carrier].prem+=p.premium});
+  document.getElementById('commBody').innerHTML=Object.entries(byCar).sort((a,b)=>b[1].prem-a[1].prem).slice(0,8).map(([k2,v])=>
+    `<tr><td>${k2}</td><td class="num">${v.n}</td><td class="num">${money(v.prem)}</td><td class="num">${Math.round(v.rate*100)}%</td>
+    <td class="num">${money(v.prem*v.rate)}</td><td><span class="chip ${k2==='Travelers'?'a':'g'}">${k2==='Travelers'?'pending':'paid'}</span></td></tr>`).join('');
+}
+/* ---------- tasks ---------- */
+function renderTasks(){
+  const open=TASKS.filter(t=>!t.done);
+  const k=[['Open tasks',open.length,'across 4 producers',''],['Due today',open.filter(t=>t.due==='today').length,'before 5pm','dn'],
+    ['Overdue',2,'first contact and a renewal','dn'],['Completed today',6,'calls, texts and documents','up']];
+  document.getElementById('taskKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('taskCount').textContent=open.length+' open';
+  document.getElementById('taskBody').innerHTML=open.map(t=>{const c=byId(t.clientId);
+    return `<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${t.type}</div></td>
+    <td style="font-size:12px">${t.reason}${t.pri==='high'?' <span class="pill">priority</span>':''}</td>
+    <td><span class="chip ${t.due==='today'?'r':'n'}">${t.due}</span></td><td>${t.owner}</td>
+    <td style="white-space:nowrap"><button class="btn sm ghost" onclick="doneTask('${t.id}')">Done</button>
+    <button class="btn sm ghost" onclick="snoozeTask('${t.id}')">Snooze</button>
+    <button class="btn sm ghost" onclick="reassign('${t.id}')">Reassign</button></td></tr>`}).join('')
+    ||'<tr><td colspan="5" style="color:var(--muted)">Queue is clear.</td></tr>';
+  const lapse=POLICIES.filter(p=>p.payDue);
+  document.getElementById('lapseBody').innerHTML=lapse.map(p=>{const c=byId(p.clientId);
+    return `<tr><td><b>${c.name}</b></td><td>${p.carrier} ${p.line}</td><td class="num">${money(p.premium/12)}</td>
+    <td><span class="chip r">card expired</span></td><td><button class="btn sm ghost" onclick="payNow('${p.id}')">Take payment</button></td></tr>`}).join('')
+    ||'<tr><td colspan="5" style="color:var(--muted)">No payments at risk.</td></tr>';
+  document.getElementById('covNote').textContent=COVERAGE?`${COVERAGE.who} is out until ${COVERAGE.until}. ${COVERAGE.by} receives those tasks and approvals route to them.`:'No coverage set. Tasks assigned to someone who is out are held, not silently missed.';
+  document.getElementById('actLog').innerHTML=ACTLOG.slice(0,8).map(a=>`<div class="ev"><b>${a[1]}</b><div class="w">${a[0]}</div></div>`).join('');
+}
+function doneTask(id){
+  const t=TASKS.find(x=>x.id===id);if(!t)return;
+  t.done=true;log('Completed: '+t.reason+' · '+byId(t.clientId).name);
+  toast('Task closed and logged');
+  renderTasks();
+}
+function snoozeTask(id){
+  const t=TASKS.find(x=>x.id===id);if(!t)return;
+  t.due=t.due==='today'?'tomorrow':'this week';
+  log('Snoozed: '+t.reason);
+  toast('Snoozed to '+t.due);
+  renderTasks();
+}
+function reassign(id){
+  const t=TASKS.find(x=>x.id===id);if(!t)return;
+  const i=PROD.indexOf(t.owner);
+  t.owner=PROD[(i+1)%PROD.length];
+  log('Reassigned to '+t.owner+': '+t.reason);
+  toast('Reassigned to '+t.owner);
+  renderTasks();
+}
+function setCoverage(){
+  COVERAGE={who:document.getElementById('oooWho').value,by:document.getElementById('oooBy').value,until:document.getElementById('oooUntil').value};
+  log('Coverage set: '+COVERAGE.who+' out, '+COVERAGE.by+' covering until '+COVERAGE.until);
+  toast(COVERAGE.by+' is covering for '+COVERAGE.who);
+  renderTasks();
+}
+
+/* ---------- campaigns ---------- */
+function renderCampaigns(){
+  const k=[['Sequences running',CAMPS.length,'all triggered automatically','up'],['People enrolled',CAMPS.reduce((s,c)=>s+c.enrolled,0),'across 6 sequences',''],
+    ['Touches sent 30d',CAMPS.reduce((s,c)=>s+c.sent,0),'text and email',''],['Policies from drips',CAMPS.reduce((s,c)=>s+c.bound,0),'attributed this month','up']];
+  document.getElementById('campKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('campBody').innerHTML=CAMPS.map((c,i)=>`<tr><td><b>${c.name}</b></td><td style="font-size:11.5px">${c.trig}</td>
+    <td class="num">${c.steps}</td><td class="num">${c.enrolled}</td><td class="num">${c.sent}</td>
+    <td class="num">${Math.round(c.reply/c.enrolled*100)}%</td><td class="num">${c.bound}</td>
+    <td><button class="btn sm ghost" onclick="showCamp(${i})">View</button></td></tr>`).join('');
+  showCamp(SELECTED_CAMP);
+}
+function showCamp(i){
+  SELECTED_CAMP=i;const c=CAMPS[i];
+  document.getElementById('campName').textContent=c.name;
+  document.getElementById('campDetail').innerHTML=
+    `<div class="kpi"><div class="k">Trigger</div><div class="v" style="font-size:13px">${c.trig}</div><div class="s">Runs whether or not anyone remembers it</div></div>
+     <div class="tl" style="margin-top:12px">${c.detail.map(s=>`<div class="ev"><b>${s}</b><div class="w">step in sequence</div></div>`).join('')}</div>
+     <div class="note">${c.enrolled} enrolled, ${c.sent} touches sent in 30 days, ${Math.round(c.reply/c.enrolled*100)}% replied, ${c.bound} bound. Replies route to the assigned producer as a task, not into a dead inbox.</div>`;
+  document.getElementById('msgLib').innerHTML=[['SMS · renewal',"Hi {first}, your {carrier} renewal lands {date}. I re-shopped it and I have two options before it auto-renews. Want me to send them over?"],
+    ['SMS · payment',"{first}, the {carrier} payment of {amount} did not go through. Coverage is at risk after {date}. Here is the secure link."],
+    ['Email · quote follow-up',"Subject: your numbers, side by side. {first}, attached is what each market came back with. The difference is mostly in the deductible and the roof age."],
+    ['SMS · birthday',"Happy birthday {first}. No pitch, just hoping the year treats you well. — {producer}"]]
+    .map(m=>`<div class="pol"><div class="r1"><span class="car">${m[0]}</span></div><div class="meta">${m[1]}</div>
+      <div class="acts"><button onclick="toast('Template copied')">Copy</button><button onclick="toast('Template opened in editor')">Edit</button></div></div>`).join('');
+}
+
+/* ---------- growth ---------- */
+function renderGrowth(){
+  const spend=CHANNELS.reduce((s,c)=>s+c.spend,0),leads=CHANNELS.reduce((s,c)=>s+c.leads,0),bound=CHANNELS.reduce((s,c)=>s+c.bound,0);
+  const revenue=CHANNELS.reduce((s,c)=>s+c.bound*c.prem,0);
+  const k=[['Ad spend, month',money(spend),'five channels',''],['Leads captured',leads,'blended CPL '+money(spend/leads),''],
+    ['Policies bound',bound,'cost per policy '+money(spend/bound),'up'],['Premium written',money(revenue),'ROAS '+(revenue/spend).toFixed(1)+'x','up']];
+  document.getElementById('growthKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('chanBody').innerHTML=CHANNELS.map(c=>`<tr><td><b>${c.ch}</b></td><td class="num">${money(c.spend)}</td><td class="num">${c.leads}</td>
+    <td class="num">${money(c.spend/c.leads)}</td><td class="num">${c.quotes}</td><td class="num">${c.bound}</td>
+    <td class="num">${money(c.spend/c.bound)}</td><td class="num"><span class="chip ${c.bound*c.prem/c.spend>4?'g':'a'}">${(c.bound*c.prem/c.spend).toFixed(1)}x</span></td></tr>`).join('');
+  const funnel=[['Leads',129],['Contacted',111],['Quoted',69],['Bound',32]];
+  document.getElementById('funnelBars').innerHTML=funnel.map(f=>`<div class="bar"><span>${f[0]}</span><div class="track"><div class="fill" style="width:${Math.round(f[1]/129*100)}%"></div></div><span class="n">${f[1]}</span></div>`).join('');
+  document.getElementById('speedNote').innerHTML='Median speed to first contact is <b>4 minutes 20 seconds</b>. Anything over 5 minutes alerts the producer and the owner. Lead to bound takes 11 days on average.';
+  document.getElementById('zipBody').innerHTML=ZIPS.map(z=>`<tr><td class="mono">${z[0]}</td><td>${z[1]}</td><td class="num">${z[2]}</td><td class="num">${z[3]}</td><td class="num">${Math.round(z[3]/z[2]*100)}%</td></tr>`).join('');
+  document.getElementById('kwBody').innerHTML=KEYWORDS.map(k2=>`<tr><td>${k2[0]}</td><td class="num">${k2[1].toLocaleString()}</td><td class="num">#${k2[2]}</td>
+    <td class="num"><span class="chip ${k2[3]>0?'g':k2[3]<0?'r':'n'}">${k2[3]>0?'+'+k2[3]:k2[3]<0?k2[3]:'—'}</span></td></tr>`).join('');
+  document.getElementById('callBody').innerHTML=CALLS.map(c=>`<tr><td>${c[0]}</td><td style="font-size:11.5px">${c[1]}</td><td class="num">${c[2]}</td><td style="font-size:11.5px">${c[3]}</td></tr>`).join('');
+}
+
+/* ---------- sync ---------- */
+function renderSync(){
+  const k=[['EZLynx status','Connected','last pull 8:04am','up'],['Policies reconciled',593,'0 errors',''],
+    ['Carrier connections',12,'8 download or API, 4 portal',''],['Needs review',CONFLICTS.length,'address and entity conflicts','dn']];
+  document.getElementById('syncKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('syncLog').innerHTML=SYNCLOG.map(s=>`<div class="ev"><b>${s[1]}</b><div class="w">${s[0]}</div></div>`).join('');
+  document.getElementById('carrierBody').innerHTML=CARRIERS.map(c=>`<tr><td><b>${c.n}</b></td>
+    <td><span class="chip ${c.m==='api'?'g':c.m==='download'?'n':'a'}">${c.m}</span></td><td style="font-size:11.5px">${c.st}</td>
+    <td class="num">${c.rec}</td><td>${c.last}</td></tr>`).join('');
+  document.getElementById('mapBody').innerHTML=MAPPING.map(m=>`<tr><td class="mono">${m[0]}</td><td class="mono">${m[1]}</td><td style="font-size:11.5px;color:var(--muted)">${m[2]}</td></tr>`).join('');
+  document.getElementById('confCount').textContent=CONFLICTS.length+' open';
+  document.getElementById('confBody').innerHTML=CONFLICTS.map(c=>`<tr><td><b>${c[0]}</b></td><td style="font-size:11.5px">${c[1]}</td>
+    <td><button class="btn sm ghost" onclick="toast('${c[2]} queued for ${c[0].split(' ')[0]}')">${c[2]}</button></td></tr>`).join('');
+  document.getElementById('formBody').innerHTML=FORMS.map(f=>`<tr><td><b>${f[0]}</b></td><td>${f[1]}</td><td style="font-size:11.5px">${f[2]}</td>
+    <td style="font-size:11.5px">${f[3]}</td><td><span class="chip g">live</span></td></tr>`).join('');
+}
+function syncNow(){
+  SYNCLOG.unshift([new Date().toTimeString().slice(0,5),'Manual pull requested · EZLynx download queued, 593 policies']);
+  log('Manual EZLynx sync requested');
+  toast('EZLynx pull queued · 593 policies');
+  renderSync();
+}
+
+/* ---------- security ---------- */
+function renderSecurity(){
+  const k=[['Synthetic data','100%','no real policyholder records',''],['Credentials in browser','0','vault holds all 12','up'],
+    ['Audit events today','214','every view, export and bind',''],['Roles enforced',4,'owner, producer, CSR, read only','']];
+  document.getElementById('secKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  const sec=[['Tenant isolation','Each agency gets its own partition. White-label deployments share no records or indexes.'],
+    ['No credentials in the browser','Carrier logins live in an encrypted server-side vault. The browser only receives data.'],
+    ['Role-based access','Owner, producer, CSR and read only. Commission and producer performance are hidden where they should be.'],
+    ['Audit trail','Every record view, export, quote and bind is written with user, time and IP.'],
+    ['Encryption','TLS in transit, AES-256 at rest, field level encryption on SSN, date of birth and licence numbers.'],
+    ['Documents','ID cards, certificates and dec pages are generated server side and never cached in the browser.'],
+    ['Data handling','Retention rules, export controls, and a deletion path on exit that satisfies state insurance requirements.'],
+    ['Backups','Daily encrypted, 35 day retention, quarterly restore test into a separate account.']];
+  document.getElementById('secBody').innerHTML=sec.map(s=>`<tr><td><b>${s[0]}</b></td><td style="font-size:12px;color:var(--ink2)">${s[1]}</td></tr>`).join('');
+  const roles=[['Client records','yes','assigned','all','read'],['Commission and producer pay','yes','no','no','no'],['Carrier credentials','yes','no','no','no'],
+    ['Export book','yes','no','no','no'],['Billing and projections','yes','no','no','no'],['Documents and certificates','yes','yes','yes','read']];
+  document.getElementById('roleBody').innerHTML=roles.map(r=>`<tr><td>${r[0]}</td>${r.slice(1).map(v=>`<td class="num"><span class="chip ${v==='yes'?'g':v==='no'?'r':'n'}">${v}</span></td>`).join('')}</tr>`).join('');
+  document.getElementById('auditBody').innerHTML=AUDIT.map(a=>`<tr><td class="mono">${a[0]}</td><td>${a[1]}</td><td style="font-size:11.5px">${a[2]}</td><td style="font-size:11.5px;color:var(--muted)">${a[3]}</td></tr>`).join('');
+}
+
+/* ---------- projections ---------- */
 const TIERS=[
  {n:'Tier 1 · Private agent or firm',who:'1 to 3 licensed agents, one location',fee:499,price:199,stack:278,inc:'One login, client records pulled from EZLynx, portal quoting, ID cards, certificates, renewals, drips, client portal under their brand'},
  {n:'Tier 2 · Multi-agent agency',who:'4 to 15 agents, producers and CSRs',fee:1500,price:649,stack:1080,inc:'Everything in tier 1, roles and permissions, out-of-office coverage, ad and lead reporting, nightly EZLynx sync'},
  {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',fee:5000,price:1900,stack:3174,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
 ];
 function renderProjections(){
-  const k=[['Tier 1 membership',money(499)+' + '+money(199)+'/mo','startup fee plus monthly',''],['Blended member',money(1249)+' + '+money(504)+'/mo','at a 60/30/10 mix','up'],['Breakeven','19 agencies','about 135 users',''],['Revenue at 50 agencies',money(37690)+'/mo','monthly plus startup fees','up']];
+  const k=[['Tier 1 membership',money(499)+' + '+money(199)+'/mo','startup fee plus monthly',''],['Blended member',money(1249)+' + '+money(504)+'/mo','at a 60/30/10 mix','up'],
+    ['Breakeven','19 agencies','about 135 users',''],['Revenue at 50 agencies',money(37690)+'/mo','monthly plus startup fees','up']];
   document.getElementById('projKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
-  document.getElementById('tierBody').innerHTML=TIERS.map(t=>{
-    const save=Math.round((1-t.price/t.stack)*100);
+  document.getElementById('tierBody').innerHTML=TIERS.map(t=>{const save=Math.round((1-t.price/t.stack)*100);
     return `<tr><td><b>${t.n}</b><div style="font-size:11px;color:var(--muted)">${t.who}</div></td>
-    <td style="font-size:11.5px;color:#4A5768">${t.inc}</td>
-    <td class="num">${money(t.fee)}</td><td class="num"><b>${money(t.price)}</b></td>
-    <td class="num">${money(t.fee+t.price*12)}</td>
-    <td class="num"><span class="chip g">${save}%</span></td></tr>`}).join('');
+    <td style="font-size:11.5px;color:#4A5768">${t.inc}</td><td class="num">${money(t.fee)}</td><td class="num"><b>${money(t.price)}</b></td>
+    <td class="num">${money(t.fee+t.price*12)}</td><td class="num"><span class="chip g">${save}%</span></td></tr>`}).join('');
   document.getElementById('tierDetail').innerHTML=TIERS.map(t=>`<div class="pol" style="background:#fff">
     <div class="r1"><span class="car">${t.n}</span><span class="chip n">${money(t.fee)} + ${money(t.price)}/mo</span></div>
-    <div class="meta">${t.inc}</div>
-    <div class="acts"><button onclick="toast('${t.n} selected for the proposal')">Use this tier</button></div></div>`).join('')
-    +`<div class="note">Priced per agency with unlimited seats. EZLynx remains in place for every agent. This is the layer that turns the downloaded book into one login, and adding a producer adds no cost.</div>`;
+    <div class="meta">${t.inc}</div><div class="acts"><button onclick="toast('${t.n} selected for the proposal')">Use this tier</button></div></div>`).join('')
+    +`<div class="note">Startup fee covers onboarding and setup. Monthly covers the platform. EZLynx remains in place for every agent and is not part of this price.</div>`;
   const mix=[[10,'60/30/10'],[25,'60/30/10'],[50,'55/35/10'],[100,'50/40/10']];
-  const blended=(a,b,c)=>a*199+b*649+c*1900;
   document.getElementById('mrrBody').innerHTML=mix.map(m=>{
-    const [a,b,c]=m[1].split('/').map(Number);
-    const n=m[0], t1=Math.round(n*a/100), t2=Math.round(n*b/100), t3=n-t1-t2;
-    const mrr=blended(t1,t2,t3);
+    const [a,b,c]=m[1].split('/').map(Number),n=m[0];
+    const t1=Math.round(n*a/100),t2=Math.round(n*b/100),t3=n-t1-t2;
+    const mrr=t1*199+t2*649+t3*1900;
     return `<tr><td><b>${n} agencies</b></td><td class="num" style="font-size:11.5px">${t1} / ${t2} / ${t3}</td>
-    <td class="num"><b>${money(mrr)}</b></td><td class="num">${money(mrr*12)}</td></tr>`}).join('');
+    <td class="num">${money(mrr)}</td><td class="num">${money(mrr*12)}</td></tr>`}).join('');
   const costs=[['Support and onboarding',3200],['Sales and marketing',2600],['Maintenance, 20 hours',1200],['Security and tooling',520]];
   const tot=costs.reduce((s,c)=>s+c[1],0);
   document.getElementById('costBars').innerHTML=costs.map(c=>`<div class="bar"><span>${c[0]}</span><div class="track"><div class="fill" style="width:${Math.round(c[1]/tot*100)}%"></div></div><span class="n">${money(c[1])}</span></div>`).join('');
   document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month fixed, against <b>${money(402)}</b> contribution per agency. Breakeven is <b>19 agencies</b>, about 135 users. The build is repaid by July 2027.`;
 }
 
-function renderRecentQuotes(){
-  const seed=[
-    {c:'Jill Nakamura',car:'Safeco',line:'Auto',prem:1840,days:2,st:'sent'},
-    {c:'Marcus Brennan',car:'Travelers',line:'Home',prem:2210,days:3,st:'sent'},
-    {c:'Priya Okafor',car:'Progressive',line:'Auto',prem:1560,days:5,st:'viewed'},
-    {c:'Tom Duffy',car:'Openly',line:'Home',prem:1980,days:6,st:'viewed'},
-    {c:'Rosa Kowalski',car:'Mercury',line:'Auto',prem:2120,days:8,st:'bound'}
-  ];
-  document.getElementById('recentChip').textContent=seed.length+' open';
-  document.getElementById('recentBody').innerHTML=seed.map(q=>{
-    const chip=q.st==='bound'?'g':q.st==='viewed'?'a':'n';
-    return `<tr><td><b>${q.c}</b></td><td>${q.car}</td><td>${q.line}</td><td class="num">${money(q.prem)}</td>
-    <td>${q.days} days ago</td><td><span class="chip ${chip}">${q.st}</span></td>
-    <td><button class="btn sm ghost" onclick="toast('Quote opened for ${q.c}')">Open</button></td></tr>`}).join('');
-}
-function seedSyncLog(){
-  const el=document.getElementById('syncLog');
-  el.innerHTML=[
-   ['07:58','Download received · 12 policy updates'],
-   ['08:04','EZLynx sync completed, 593 policies, 0 errors'],
-   ['08:06','Website form · 2 new leads tagged Google Ads'],
-   ['08:11','Carrier portal pull · Safeco · 1 policy'],
-   ['08:19','Commission file reconciled · November']
-  ].map(r=>`<div><span style="color:#9AA5B4">${r[0]}</span> ${r[1]}</div>`).join('');
-}
-
-let SESS={},QUOTES=[];
-function carrierLogin(pid){
-  const p=POLICIES.find(x=>x.id===pid), c=byId(p.clientId);
-  const isApi=p.conn==='api';
-  document.getElementById('sheet').innerHTML=`
-  <h3>${p.carrier} · ${isApi?'API pull':'portal session'}</h3>
-  <p class="p">${c.name} · ${p.line} · ${p.policy}</p>
-  ${isApi?`<div class="pol"><div class="r1"><span class="car">Connected by API</span><span class="chip g">live</span></div>
-    <div class="meta">Policy detail, declarations page and ID card are pulled directly. No login needed.</div></div>
-    <div style="display:flex;gap:8px;margin-top:12px"><button class="btn blue" onclick="pullPolicy('${p.id}')">Pull this client's policy</button>
-    <button class="btn ghost" onclick="closeModal()">Close</button></div>`:
-  `<div class="pol"><div class="r1"><span class="car">Step 1 · Credentials</span><span class="chip g">from vault</span></div>
-    <div class="meta">Agency login <span class="mono">cardinal&#64;agency…</span> · password <span class="mono">••••••••••</span><br>Filled by the LNL extension. The password never loads into the page and is never shown to the browser.</div></div>
-  <div class="pol"><div class="r1"><span class="car">Step 2 · Sign in</span><span class="chip ${SESS[p.carrier]?'g':'a'}">${SESS[p.carrier]?'session live':'awaiting you'}</span></div>
-    <div class="meta">${SESS[p.carrier]?'Portal session open in a separate window. You complete MFA, we never touch it.':'Opens the carrier portal in its own window with the agency login filled in. You complete MFA and any captcha.'}</div>
-    <div class="acts"><button onclick="openPortal('${p.id}')">${SESS[p.carrier]?'Bring portal forward':'Open carrier portal'}</button></div></div>
-  <div class="pol"><div class="r1"><span class="car">Step 3 · Pull the client</span><span class="chip n">one client</span></div>
-    <div class="meta">Pulls only ${c.name}'s record from ${p.carrier}, not the whole book. Fields are mapped into the standard structure on our side.</div>
-    <div class="acts"><button onclick="pullPolicy('${p.id}')" ${SESS[p.carrier]?'':'disabled style="opacity:.45"'}>Pull policy data</button></div></div>
-  <div class="pol"><div class="r1"><span class="car">Step 4 · Quote in the portal</span><span class="chip n">rating stays carrier-side</span></div>
-    <div class="meta">For markets with no API, rating happens in the portal. Start it here and the quote comes back into this record.</div>
-    <div class="acts"><button onclick="portalQuote('${p.id}')" ${SESS[p.carrier]?'':'disabled style="opacity:.45"'}>Start quote in portal</button></div></div>
-  <div class="note">Stored logins are not permission. Portal automation breaks when a carrier adds MFA, and some prohibit automated login outright. That is why the human completes sign-in and the system only reads what is on screen.</div>
-  <div style="display:flex;gap:8px;margin-top:12px"><button class="btn ghost" onclick="closeModal()">Close</button></div>`}`;
-  document.getElementById('modal').classList.add('open');
-}
-function openPortal(pid){
-  const p=POLICIES.find(x=>x.id===pid), c=byId(p.clientId);
-  SESS[p.carrier]=true;
-  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Portal session opened for '+p.carrier+' · '+c.name});
-  toast(p.carrier+' portal opened in a new window');
-  carrierLogin(pid);
-}
-function pullPolicy(pid){
-  const p=POLICIES.find(x=>x.id===pid), c=byId(p.clientId);
-  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Pulled '+p.policy+' from '+p.carrier});
-  document.getElementById('sheet').innerHTML=`<h3>${p.carrier} · pull result</h3>
-  <p class="p">${c.name} · ${p.policy}</p>
-  <div class="cols" style="grid-template-columns:1fr 1fr;gap:12px">
-    <div><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px">What the carrier returns</div>
-      <div class="mono" style="line-height:1.9;color:#4A5768">PolNbr: ${p.policy.replace(/-/g,'')}<br>EffDt: ${p.eff}<br>ExpDt: ${p.renewal}<br>AnnPrem: ${p.premium}<br>Insured: ${c.name.toUpperCase()}</div></div>
-    <div><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px">Mapped to our record</div>
-      <div class="mono" style="line-height:1.9;color:#1D5BD6">policy_number: ${p.policy}<br>effective: ${p.eff}<br>expires: ${p.renewal}<br>premium: ${p.premium}<br>insured: ${c.name}</div></div>
-  </div>
-  <div class="note">Same field, different name at every carrier. That mapping is the reason one record can hold twelve markets.</div>
-  <div style="display:flex;gap:8px;margin-top:12px"><button class="btn blue" onclick="closeModal();toast('Record updated with carrier data')">Apply to record</button>
-  <button class="btn ghost" onclick="closeModal()">Close</button></div>`;
-}
-
-function portalQuote(pid){
-  const p=POLICIES.find(x=>x.id===pid), c=byId(p.clientId);
-  const portalPrem=Math.round(p.premium*(0.93+Math.random()*0.16));
-  document.getElementById('sheet').innerHTML=`
-  <h3>${p.carrier} portal · quote</h3><p class="p">${c.name} · ${p.line} · rated inside ${p.carrier}, captured back into the CRM</p>
-  <div class="pol"><div class="r1"><span class="car">Portal rating complete</span><span class="chip g">${p.carrier}</span></div>
-    <div class="meta">Quoted premium <b style="color:#0D1622">${money(portalPrem)}/yr</b> · ${money(Math.round(portalPrem/12))}/mo · terms 12 months</div></div>
-  <div class="field"><label>Quoted premium from the portal</label><input id="capPrem" type="number" value="${portalPrem}"></div>
-  <div class="field"><label>Carrier quote number</label><input id="capRef" value="${p.carrier.slice(0,3).toUpperCase()}-${Math.floor(Math.random()*900000+100000)}"></div>
-  <div style="display:flex;gap:8px;margin-top:6px"><button class="btn blue" onclick="captureQuote('${p.id}')">Save quote to record</button>
-  <button class="btn ghost" onclick="closeModal()">Close</button></div>
-  <div class="note">The portal still does the rating for markets without API. What changes is where the result lives: one record, one timeline, one follow-up, instead of a number written on a sticky note.</div>`;
-}
-function captureQuote(pid){
-  const p=POLICIES.find(x=>x.id===pid), c=byId(p.clientId);
-  const prem=parseInt(document.getElementById('capPrem').value||p.premium,10);
-  const ref=document.getElementById('capRef').value;
-  QUOTES.push({client:c.id,carrier:p.carrier,line:p.line,premium:prem,ref,date:d2(TODAY)});
-  TASKS.unshift({id:'T'+Math.floor(Math.random()*9999),clientId:c.id,reason:'Quote '+ref+' at '+money(prem)+' sent, follow up in 2 days',owner:c.owner,due:'tomorrow',done:false,pri:'high'});
-  LOGS.unshift({t:new Date().toTimeString().slice(0,5),m:'Portal quote captured for '+c.name+' · '+p.carrier+' · '+money(prem)});
-  closeModal();renderTasks();renderDash();toast('Quote saved and a follow-up task created');
-}
-
-let ROLE={key:'owner',name:'John',title:'Owner'};
-function setRole(v){
-  ROLE = v==='owner' ? {key:'owner',name:'John',title:'Owner'} : {key:'staff',name:v,title:(v==='Kayla B.'?'CSR':'Producer')};
-  document.getElementById('avatar').textContent = v==='owner'?'JC':v.split(' ').map(x=>x[0]).join('');
-  document.querySelectorAll('#nav button').forEach(b=>{
-    const restricted = ['sync','security','brand'].includes(b.dataset.v);
-    b.style.display = (ROLE.key!=='owner' && restricted) ? 'none' : '';
-  });
-  if(ROLE.key!=='owner' && ['sync','security','brand'].includes(currentView())) go('dash');
-  renderAll(); renderBanner();
-  toast(ROLE.key==='owner'?'Viewing the whole agency':'Viewing as '+ROLE.name+' · '+ROLE.title);
-}
-function currentView(){const on=document.querySelector('.view.on');return on?on.id.replace('v-',''):'dash'}
-function renderBanner(){
-  const b=document.getElementById('roleBanner');
-  if(ROLE.key==='owner'){b.style.display='none';return}
-  const mine=CLIENTS.filter(c=>c.owner===ROLE.name);
-  const ids=new Set(mine.map(c=>c.id));
-  const prem=POLICIES.filter(p=>ids.has(p.clientId)).reduce((s,p)=>s+p.premium,0);
-  const open=TASKS.filter(t=>!t.done&&t.owner===ROLE.name).length;
-  b.style.display='flex';
-  b.innerHTML=`<b>${ROLE.name} · ${ROLE.title}</b><span style="color:#8FA0B5">|</span>
-   <span>${mine.length} clients · ${money(prem)} premium · ${open} open tasks</span>
-   <span style="flex:1"></span>
-   <span style="color:#8FA0B5">Sees only their own book. No agency totals, no commissions, no other producers.</span>`;
-}
-function withRole(fn){
-  if(ROLE.key==='owner'){fn();return}
-  const c=CLIENTS,p=POLICIES,t=TASKS;
-  const mine=CLIENTS.filter(x=>x.owner===ROLE.name);
-  const ids=new Set(mine.map(x=>x.id));
-  CLIENTS=mine; POLICIES=POLICIES.filter(x=>ids.has(x.clientId)); TASKS=TASKS.filter(x=>x.owner===ROLE.name);
-  try{fn()}finally{CLIENTS=c;POLICIES=p;TASKS=t}
-}
-function renderAll(){
-  withRole(()=>{
-    renderDash();renderClients();renderPolicies();renderTasks();
-    if(ROLE.key==='owner'){renderGrowth();renderCampaigns()}
-    else{document.getElementById('growthKpis').innerHTML='';document.getElementById('chanBody').innerHTML=
-      '<tr><td colspan="7" style="color:var(--muted);padding:16px">Ad spend and agency cost per policy are owner-only.</td></tr>';
-      document.getElementById('flowBars').innerHTML='';document.getElementById('zipBars').innerHTML='';
-      document.getElementById('campBody').innerHTML='<tr><td colspan="7" style="color:var(--muted);padding:16px">Sequences are managed by the owner. Your enrolled leads still appear in Tasks.</td></tr>'}
-  });
-}
-
-renderDash();renderClients();renderPolicies();renderTasks();renderCampaigns();renderGrowth();renderSecurity();renderBanner();renderCarrierQuote();renderProjections();renderRecentQuotes();seedSyncLog();showCamp(0);runQuote();
+/* ---------- boot ---------- */
+function renderAll(){renderDash();renderClients();renderQuotes();renderPolicies();renderTasks();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+document.querySelectorAll('#clientFilters button').forEach(b=>b.onclick=()=>setClientFilter(b.dataset.f));
+document.querySelectorAll('#polFilters button').forEach(b=>b.onclick=()=>setPolFilter(b.dataset.f));
 document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDrawer();}});
+document.getElementById('gateCode').addEventListener('keydown',e=>{if(e.key==='Enter')unlock()});
 </script></body></html>
