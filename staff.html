@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cardinal OS — Agency Operating System</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<style>
+:root{
+--ink:#0D1622;--ink2:#1B2735;--side:#0B1220;--line:#E3E7EE;--bg:#F5F7FA;
+--blue:#1D5BD6;--blue2:#3B7BF0;--red:#C33E47;--green:#12805C;--amber:#B8791A;
+--muted:#6B7787;--white:#fff;--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:13.5px;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:212px 1fr;height:100vh;overflow:hidden}
+.side{background:var(--side);color:#C9D3E0;display:flex;flex-direction:column;padding:18px 12px}
+.logo{display:flex;align-items:center;gap:9px;padding:0 8px 18px}
+.mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--blue2),#0B3C9E);display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px}
+.logo b{color:#fff;font-size:14px;letter-spacing:-.01em}
+.logo span{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#5D6B80;margin-top:1px}
+.navi{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+.navi button{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:12.5px;color:#A9B6C8;text-align:left;width:100%}
+.navi button:hover{background:#16202F;color:#fff}
+.navi button.on{background:#16263D;color:#fff;box-shadow:inset 2px 0 0 var(--blue2)}
+.navi .ic{width:15px;text-align:center;opacity:.85;font-size:12px}
+.sidefoot{margin-top:auto;font-size:10.5px;color:#5D6B80;line-height:1.5;padding:10px 8px 0;border-top:1px solid #1B2735}
+.main{display:flex;flex-direction:column;overflow:hidden}
+.top{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 20px;flex-shrink:0}
+.top h1{font-size:15.5px;letter-spacing:-.015em;font-weight:700}
+.top .sub{font-size:11.5px;color:var(--muted);margin-left:2px}
+.spacer{flex:1}
+.search{display:flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:250px}
+.search input{border:0;background:none;outline:none;width:100%;font-size:12.5px}
+.avatar{width:28px;height:28px;border-radius:50%;background:#E8EEF9;color:var(--blue);display:grid;place-items:center;font-weight:800;font-size:11px}
+.view{display:none;overflow-y:auto;padding:20px;flex:1}
+.view.on{display:block}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px 15px}
+.card .lab{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.card .val{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:5px;font-variant-numeric:tabular-nums}
+.card .delta{font-size:11px;margin-top:4px;color:var(--muted)}
+.card .delta.up{color:var(--green)}.card .delta.dn{color:var(--red)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);margin-top:14px;overflow:hidden}
+.panel .head{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line)}
+.panel .head h2{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.panel .head .spacer{flex:1}
+.panel .body{padding:14px 15px;overflow-x:auto}
+.cols{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;align-items:start}
+.cols>*,.grid2>*,.grid3>*,.panel{min-width:0}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 10px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid #EEF1F6;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#FAFBFD}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.chip{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 7px;border-radius:99px;background:#EDF2FB;color:var(--blue)}
+.chip.g{background:#E6F5EF;color:var(--green)}.chip.r{background:#FBEAEB;color:var(--red)}
+.chip.a{background:#FBF1DF;color:var(--amber)}.chip.n{background:#EEF1F6;color:#5A6675}
+.btn{background:var(--ink);color:#fff;border-radius:8px;padding:8px 13px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:#182636}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.blue{background:var(--blue)}.btn.blue:hover{background:#1A50BC}
+.btn.sm{padding:5px 9px;font-size:11.5px;border-radius:7px}
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar{display:grid;grid-template-columns:118px 1fr 62px;gap:9px;align-items:center;font-size:12px}
+.bar .track{height:8px;background:#EEF1F6;border-radius:99px;overflow:hidden}
+.bar .fill{height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue));border-radius:99px}
+.bar .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);font-size:11.5px}
+.drawer{position:fixed;top:0;right:0;height:100%;width:520px;background:#fff;border-left:1px solid var(--line);box-shadow:-20px 0 50px rgba(13,22,34,.14);transform:translateX(102%);transition:transform .22s ease;z-index:40;display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.drawer .dh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+.drawer .db{overflow-y:auto;padding:16px 18px;flex:1}
+.big-av{width:42px;height:42px;border-radius:50%;background:#E8EEF9;color:var(--blue);display:grid;place-items:center;font-weight:800;font-size:15px}
+.pol{background:#FBFCFF;border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:9px}
+.pol .r1{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.pol .car{font-weight:700;font-size:12.5px}
+.pol .meta{font-size:11.5px;color:var(--muted);line-height:1.55}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.acts button{font-size:11px;font-weight:600;border:1px solid var(--line);border-radius:7px;padding:4px 8px;background:#fff;color:var(--ink2)}
+.acts button:hover{border-color:var(--blue);color:var(--blue)}
+.modal{position:fixed;inset:0;background:rgba(13,22,34,.42);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+.modal.open{display:flex}
+.sheet{background:#fff;border-radius:16px;width:560px;max-height:88vh;overflow-y:auto;padding:22px}
+.sheet h3{font-size:16px;letter-spacing:-.01em;margin-bottom:4px}
+.sheet .p{font-size:12.5px;color:var(--muted);line-height:1.55;margin-bottom:14px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:11px;font-weight:700;margin-bottom:4px}
+.field input,.field select{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;background:#FBFCFF}
+.quote{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #EEF1F6;font-size:12.5px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:9px;font-size:12.5px;opacity:0;pointer-events:none;transition:.2s;z-index:80}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px}
+.note{background:#FBFCFF;border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:8px;padding:11px 13px;font-size:12px;line-height:1.6;color:var(--ink2);margin-top:12px}
+.gate{position:fixed;inset:0;background:var(--side);display:flex;align-items:center;justify-content:center;z-index:100}
+.gate .box{background:#fff;border-radius:16px;padding:28px;width:330px}
+.gate h2{font-size:18px;margin-bottom:5px;letter-spacing:-.01em}
+.gate p{font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+@media(max-width:1000px){.view{padding:14px}.top .search{width:150px}.cards{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}.drawer{width:100%}.app{grid-template-columns:64px 1fr}.logo b,.logo span,.navi button span:not(.ic),.sidefoot{display:none}}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.tabs button{font-size:12px;font-weight:600;color:var(--muted);padding:7px 10px;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--blue)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.filters button{font-size:11.5px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 10px;color:var(--ink2)}
+.filters button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kpi{background:#FBFCFF;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kpi .k{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.kpi .v{font-size:16px;font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:11px;color:var(--muted);margin-top:2px}
+.tl{border-left:2px solid var(--line);margin-left:5px;padding-left:14px}
+.tl .ev{position:relative;padding-bottom:13px;font-size:12px;line-height:1.5}
+.tl .ev:before{content:'';position:absolute;left:-20px;top:4px;width:7px;height:7px;border-radius:50%;background:var(--blue)}
+.tl .ev .w{color:var(--muted);font-size:11px;margin-top:1px}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#EEF1F6;color:#5A6675;margin-left:5px}
+.docrow{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #EEF1F6;font-size:12.5px}
+.docrow:last-child{border-bottom:0}
+.docrow .ic{width:26px;height:26px;border-radius:7px;background:#EDF2FB;color:var(--blue);display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0}
+.scroll{max-height:330px;overflow:auto}
+#v-clients table{min-width:940px}
+#v-policies table{min-width:900px}
+#v-quotes table{min-width:640px}
+#v-sync table{min-width:520px}
+#v-security table{min-width:480px}
+.view{overflow-x:hidden}
+.legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+@media(max-width:1000px){.grid2,.grid3{grid-template-columns:1fr}.tabs{overflow-x:auto}}
+.mailgrid{display:grid;grid-template-columns:220px 310px 1fr;border-top:1px solid var(--line)}
+@media(max-width:1100px){.mailgrid{grid-template-columns:1fr}}
+.mcol{border-right:1px solid var(--line);padding:10px;min-height:520px}
+.mcol:last-child{border-right:0}
+.folder{display:flex;justify-content:space-between;align-items:center;padding:7px 9px;border-radius:8px;font-size:12.5px;cursor:pointer;color:#3A4655}
+.folder:hover{background:var(--bg)}
+.folder.on{background:#EAF1FF;color:var(--blue);font-weight:700}
+.folder b{font-size:11px;font-weight:700;color:var(--muted)}
+.mbox{display:flex;gap:8px;align-items:center;padding:8px 9px;border-radius:8px;font-size:12px;color:#3A4655}
+.mbox .dot{width:7px;height:7px;border-radius:99px;background:var(--green);flex:none}
+.thread{padding:9px 10px;border-radius:9px;cursor:pointer;border-left:3px solid transparent}
+.thread:hover{background:var(--bg)}
+.thread.on{background:#EAF1FF;border-left-color:var(--blue)}
+.thread .t1{display:flex;justify-content:space-between;gap:8px;font-size:12.5px}
+.thread .t1 b{font-weight:700}
+.thread .t2{font-size:12.5px;color:var(--ink);margin-top:2px}
+.thread .t3{font-size:11.5px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.udot{width:7px;height:7px;border-radius:99px;background:var(--blue);display:inline-block;margin-right:5px}
+.mailread{padding:4px 14px 14px}
+.mailread h3{font-size:15px;margin:6px 0 4px}
+.mbody{font-size:13px;line-height:1.62;color:#243040;margin:10px 0}
+.mbody p{margin:0 0 9px}
+.att{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:5px 9px;margin:0 6px 6px 0;cursor:pointer}
+.att:hover{border-color:var(--blue);color:var(--blue)}
+.replybox{border:1px solid var(--line);border-radius:10px;padding:9px;margin-top:8px}
+.replybox textarea{width:100%;border:0;outline:0;font-family:inherit;font-size:13px;resize:vertical;min-height:64px}
+.presence{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.pchip{display:flex;align-items:center;gap:7px;font-size:12px;background:var(--white);border:1px solid var(--line);border-radius:99px;padding:4px 11px 4px 5px}
+.pchip .av{width:22px;height:22px;border-radius:99px;background:#DCE6F7;color:var(--blue);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.pchip i{width:7px;height:7px;border-radius:99px;display:inline-block}
+.chatgrid{display:grid;grid-template-columns:250px 1fr 290px;border-top:1px solid var(--line);min-height:560px}
+@media(max-width:1100px){.chatgrid{grid-template-columns:1fr}}
+.msgs{padding:12px 14px;max-height:430px;overflow-y:auto}
+.msg{display:flex;gap:9px;margin-bottom:12px}
+.msg .av{width:28px;height:28px;border-radius:99px;background:#DCE6F7;color:var(--blue);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none}
+.msg .who{font-size:12px;font-weight:800}
+.msg .tm{font-size:10.5px;color:var(--muted);font-weight:500;margin-left:6px}
+.msg .tx{font-size:13px;line-height:1.55;color:#243040;margin-top:2px}
+.msg.sys .tx{color:var(--muted);font-style:italic}
+.call{position:fixed;inset:0;background:rgba(8,14,24,.92);z-index:80;display:none;padding:26px;color:#fff}
+.call.on{display:flex;flex-direction:column;gap:14px}
+.tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:0}
+@media(max-width:900px){.tiles{grid-template-columns:1fr}}
+.tile{background:#16202F;border:1px solid #22304a;border-radius:14px;position:relative;display:flex;align-items:center;justify-content:center;min-height:150px}
+.tile .bigav{width:64px;height:64px;border-radius:99px;background:#22304a;color:#cfe0ff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.tile .nm{position:absolute;left:10px;bottom:9px;font-size:12px;background:rgba(0,0,0,.45);padding:3px 8px;border-radius:6px}
+.tile .st{position:absolute;right:10px;top:9px;font-size:11px;color:#9fb2cc}
+.callbar{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.cbtn{background:#1B2739;border:1px solid #2A3A55;color:#e8eefb;border-radius:99px;padding:9px 15px;font-size:12.5px;font-weight:600;cursor:pointer}
+.cbtn:hover{background:#22304a}
+.cbtn.off{background:#3a2028;border-color:#5d2f3a;color:#ffc9d1}
+.cbtn.end{background:var(--red);border-color:var(--red)}
+</style></head><body>
+<div class="gate" id="gate"><div class="box">
+  <div class="mark" style="margin-bottom:12px">C</div>
+  <h2>Cardinal · Andrew Whitehead</h2>
+  <p>Producer workspace. Sign in with your own access code. Synthetic agency data, no real policyholder information.</p>
+  <div class="field"><label>Your access code</label><input id="gateCode" placeholder="Enter your code" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()"></div>
+  <button class="btn blue" style="width:100%;justify-content:center" onclick="unlock()">Sign in</button>
+</div></div>
+
+<div class="app">
+  <aside class="side">
+    <div class="logo"><div class="mark">C</div><div><b>Cardinal</b><span>producer workspace</span></div></div>
+    <nav class="navi" id="nav">
+      <button data-v="dash" class="on"><span class="ic">▦</span><span>Dashboard</span></button>
+      <button data-v="clients"><span class="ic">◉</span><span>Clients</span></button>
+      <button data-v="quotes"><span class="ic">✎</span><span>Quotes</span></button>
+      <button data-v="policies"><span class="ic">▤</span><span>Policies</span></button>
+      <button data-v="tasks"><span class="ic">✓</span><span>Tasks</span></button>
+      <button data-v="email"><span class="ic">✉</span><span>Email</span></button>
+      <button data-v="messages"><span class="ic">◍</span><span>Messages</span></button>
+      <button data-v="sync"><span class="ic">⇄</span><span>Data sync</span></button>
+    </nav>
+    <div class="sidefoot">Signed in as<br><b style="color:#fff">Andrew Whitehead</b> · producer<br>Gilbert office · <span style="color:#8FB4FF;cursor:pointer" onclick="signOut()">sign out</span></div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <h1 id="ttl">Dashboard</h1><span class="sub" id="sub">Book of business at a glance</span>
+      <div class="spacer"></div>
+      <div class="search"><span style="color:var(--muted)">⌕</span><input id="q" placeholder="Search client, policy or phone" oninput="quickSearch(this.value)"></div>
+      <button class="btn sm ghost" onclick="toast('EZLynx sync started, 593 policies queued')">Sync EZLynx</button>
+      <div class="avatar" title="Andrew Whitehead">AW</div>
+    </div>
+
+    <section class="view on" id="v-dash">
+      <div class="cards" id="dashKpis"></div>
+      <div class="note" id="scopeNote" style="background:#FFF8E8;border-color:#F0DFB8;color:#6B5320;margin-bottom:12px">
+        <b>Your view.</b> Everything on the book, every client and policy, plus your own calls, texts, emails and follow-ups. Ad spend, campaign cost allocation and campaign closure rates are not part of this login.
+      </div>
+      <div class="cards" id="myKpis"></div>
+      <div class="cols">
+        <div>
+          <div class="panel"><div class="head"><h2>My outbound today</h2><div class="spacer"></div><span class="chip n" id="outCount"></span>
+            <button class="btn blue sm" onclick="logTouchModal()">Log a touch</button></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Time</th><th>Channel</th><th>Client</th><th>What went out</th><th>Response</th></tr></thead><tbody id="outBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>New leads assigned to me</h2><div class="spacer"></div><span class="chip g" id="leadCount"></span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Lead</th><th>Source</th><th>Line of interest</th><th>In</th><th>Status</th><th></th></tr></thead><tbody id="leadBody"></tbody></table></div></div>
+        </div>
+        <div>
+          <div class="panel"><div class="head"><h2>My follow-ups</h2><div class="spacer"></div><span class="chip n" id="myTaskCount"></span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Why</th><th>Due</th><th></th></tr></thead><tbody id="myTaskBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>My numbers</h2><div class="spacer"></div><span class="chip n">MTD</span></div><div class="body"><div class="bars" id="myBars"></div>
+            <div class="note" id="myNote"></div></div></div>
+        </div>
+      </div>
+      <div class="cols">
+        <div>
+          <div class="panel"><div class="head"><h2>Renewals at risk</h2><div class="spacer"></div><span class="chip a" id="riskCount"></span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Carrier</th><th>Line</th><th>Renews</th><th class="num">Premium</th><th>Action</th></tr></thead><tbody id="riskBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Today's queue</h2><div class="spacer"></div><span class="chip n" id="queueCount"></span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Why it is here</th><th>Owner</th><th></th></tr></thead><tbody id="queueBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Pipeline</h2><div class="spacer"></div><span class="chip n">this month</span></div>
+            <div class="body"><div class="bars" id="pipeBars"></div><div class="note">Quotes issued are the leading indicator. A quote that sits more than 72 hours without a touch loses about half its close rate.</div></div></div>
+        </div>
+        <div>
+          <div class="panel"><div class="head"><h2>Producers</h2><div class="spacer"></div><span class="chip n">MTD</span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Producer</th><th class="num">Policies</th><th class="num">Premium</th><th class="num">Goal</th></tr></thead><tbody id="prodBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Money in flight</h2></div><div class="body"><div class="bars" id="moneyBars"></div></div></div>
+          <div class="panel"><div class="head"><h2>Birthdays and reviews</h2><div class="spacer"></div><span class="chip n">next 14 days</span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Occasion</th><th>When</th><th></th></tr></thead><tbody id="bdayBody"></tbody></table></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="v-clients">
+      <div class="panel"><div class="head"><h2>Clients</h2><span class="chip n" id="clientCount"></span><div class="spacer"></div>
+        <div class="filters" id="clientFilters">
+          <button class="on" data-f="all">All</button><button data-f="renew">Renewing 60d</button><button data-f="due">Payment due</button><button data-f="comm">Commercial</button><button data-f="lapsed">Lapsed</button>
+        </div></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Location</th><th>Type</th><th class="num">Policies</th><th>Carriers</th><th class="num">Premium</th><th>Renews</th><th>Last touch</th><th>Owner</th><th></th></tr></thead><tbody id="clientBody"></tbody></table></div></div>
+      <div class="panel"><div class="head"><h2>Household and business gaps</h2><div class="spacer"></div><span class="chip a">cross-sell</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Has</th><th>Missing</th><th class="num">Estimated premium</th><th></th></tr></thead><tbody id="gapBody"></tbody></table></div></div>
+    </section>
+
+    <section class="view" id="v-quotes">
+      <div class="cols">
+        <div class="panel" style="margin-top:0"><div class="head"><h2>New quote</h2><div class="spacer"></div><span class="chip n">12 markets</span></div>
+          <div class="body">
+            <div class="grid2">
+              <div class="field"><label>Client or prospect</label><input id="qName" value="Jordan Alvarez" list="clientList"><datalist id="clientList"></datalist></div>
+              <div class="field"><label>Line of business</label><select id="qLine"><option>Auto</option><option>Home</option><option>Umbrella</option><option>Commercial Auto</option><option>General Liability</option><option>Workers Comp</option><option>BOP</option><option>Renters</option></select></div>
+              <div class="field"><label>Garaging ZIP</label><input id="qZip" value="85142"></div>
+              <div class="field"><label>Drivers or locations</label><input id="qDrv" value="2"></div>
+            </div>
+            <button class="btn blue" onclick="runQuote()">Rate across markets</button>
+            <div class="note">Each market is quoted inside the carrier's own portal through the LNL link. The number that comes back is the carrier's number, not an estimate.</div>
+          </div></div>
+        <div class="panel" style="margin-top:0"><div class="head"><h2>Quote history</h2><div class="spacer"></div><span class="chip n" id="qHistCount"></span></div>
+          <div class="body" style="padding:0"><div class="scroll"><table><thead><tr><th>Client</th><th>Line</th><th>Carrier</th><th class="num">Premium</th><th>Status</th><th>Sent</th><th></th></tr></thead><tbody id="qHistBody"></tbody></table></div></div></div>
+      </div>
+      <div class="panel"><div class="head"><h2>Market results</h2><div class="spacer"></div><span class="chip n" id="marketCount"></span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Market</th><th>Method</th><th>Appetite</th><th class="num">Annual</th><th class="num">Monthly</th><th></th></tr></thead><tbody id="marketBody"></tbody></table></div></div>
+      <div class="panel"><div class="head"><h2>Why quotes were lost</h2><div class="spacer"></div><span class="chip n">last 90 days</span></div>
+        <div class="body"><div class="bars" id="lossBars"></div></div></div>
+    </section>
+
+    <section class="view" id="v-policies">
+      <div class="cards" id="polKpis"></div>
+      <div class="panel"><div class="head"><h2>Book of business</h2><span class="chip n" id="polCount"></span><div class="spacer"></div>
+        <div class="filters" id="polFilters">
+          <button class="on" data-f="all">All</button><button data-f="30">Next 30 days</button><button data-f="60">Next 60 days</button><button data-f="90">Next 90 days</button><button data-f="due">Payment due</button>
+        </div></div>
+        <div class="body" style="padding:0"><div class="scroll"><table><thead><tr><th>Client</th><th>Carrier</th><th>Policy</th><th>Line</th><th>Effective</th><th>Renewal</th><th class="num">Premium</th><th>Status</th><th>Documents</th></tr></thead><tbody id="polBody"></tbody></table></div></div></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Renewal pipeline</h2></div><div class="body"><div class="bars" id="renBars"></div></div></div>
+        <div class="panel"><div class="head"><h2>Commission by carrier</h2><div class="spacer"></div><span class="chip n">this month</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Carrier</th><th class="num">Policies</th><th class="num">Premium</th><th class="num">Rate</th><th class="num">Commission</th><th>Status</th></tr></thead><tbody id="commBody"></tbody></table></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-tasks">
+      <div class="cards" id="taskKpis"></div>
+      <div class="cols">
+        <div>
+          <div class="panel"><div class="head"><h2>Follow-up queue</h2><div class="spacer"></div><span class="chip n" id="taskCount"></span><button class="btn sm blue" onclick="taskModal()">New task</button></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Task</th><th>Due</th><th>Owner</th><th></th></tr></thead><tbody id="taskBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Lapse watch</h2><div class="spacer"></div><span class="chip r">payment risk</span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Policy</th><th class="num">Amount</th><th>Status</th><th></th></tr></thead><tbody id="lapseBody"></tbody></table></div></div>
+        </div>
+        <div>
+          <div class="panel"><div class="head"><h2>Coverage while out</h2><div class="spacer"></div><span class="chip n">out of office</span></div>
+            <div class="body">
+              <div class="field"><label>Who is out</label><select id="oooWho"><option>Jacobo M.</option><option>Dana R.</option><option>Steve L.</option><option>Kayla B.</option></select></div>
+              <div class="field"><label>Covered by</label><select id="oooBy"><option>Dana R.</option><option>Steve L.</option><option>Kayla B.</option><option>Jacobo M.</option></select></div>
+              <div class="field"><label>Until</label><input id="oooUntil" type="date" value="2026-12-02"></div>
+              <button class="btn blue sm" onclick="setCoverage()">Assign coverage</button>
+              <div class="note" id="covNote">No coverage set. Tasks assigned to someone who is out are held, not silently missed.</div>
+            </div></div>
+          <div class="panel"><div class="head"><h2>Activity log</h2><div class="spacer"></div><span class="chip n">today</span></div>
+            <div class="body"><div class="tl" id="actLog"></div></div></div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="view" id="v-email">
+      <div class="cards" id="mailKpis"></div>
+      <div class="panel"><div class="head"><h2>Inbox</h2><div class="spacer"></div>
+        <div class="filters" id="mailFilters"><button class="on" onclick="mailFilter('all',this)">All</button><button onclick="mailFilter('unread',this)">Unread</button><button onclick="mailFilter('renewals',this)">Renewals</button><button onclick="mailFilter('carrier',this)">Carrier</button><button onclick="mailFilter('claims',this)">Service</button></div>
+        <button class="btn blue sm" onclick="composeMail()">Compose</button></div>
+        <div class="body" style="padding:0">
+          <div style="display:flex;gap:10px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap">
+            <input id="mailSearch" class="search" placeholder="Search sender, subject or tag" oninput="mailList()" style="max-width:340px">
+            <span style="font-size:11.5px;color:var(--muted)">Every thread matched to a client record by sender, automatically</span>
+          </div>
+          <div class="mailgrid">
+            <div class="mcol">
+              <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:6px">Folders</div>
+              <div id="mailFolders"></div>
+              <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:14px 0 6px">Connected mailboxes</div>
+              <div id="mailBoxes"></div>
+              <div class="note" style="margin-top:10px">Replies go out from the mailbox the message arrived in, so the thread stays in one place for the client.</div>
+            </div>
+            <div class="mcol" style="padding:6px"><div id="mailThreads"></div></div>
+            <div class="mcol" style="padding:0"><div class="mailread" id="mailRead"></div></div>
+          </div>
+        </div></div>
+    </section>
+
+    <section class="view" id="v-messages">
+      <div class="panel"><div class="head"><h2>Team presence</h2><div class="spacer"></div><span class="chip g">5 online</span>
+        <button class="btn blue sm" onclick="startCall('Team huddle')">Start video call</button></div>
+        <div class="body"><div class="presence" id="presence"></div></div></div>
+      <div class="panel" style="padding:0"><div class="chatgrid">
+        <div class="mcol" style="padding:8px">
+          <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:6px">Channels</div>
+          <div id="chanList"></div>
+          <div class="note" style="margin-top:10px">Channels are internal only. Nothing here reaches a client, and every call posts its recap back to the channel it started in.</div>
+        </div>
+        <div class="mcol" style="padding:0;display:flex;flex-direction:column">
+          <div style="padding:11px 14px;border-bottom:1px solid var(--line)"><b id="chanTitle"></b><div style="font-size:11.5px;color:var(--muted)" id="chanSub"></div></div>
+          <div class="msgs" id="msgs" style="flex:1"></div>
+          <div style="padding:9px 12px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center">
+            <input id="chatInput" class="search" placeholder="Message the team, Enter to send" onkeydown="if(event.key==='Enter')sendChat()" style="flex:1;max-width:none">
+            <button class="btn ghost sm" onclick="toast('Attach a policy, ID card or document from the client record')">Attach</button>
+            <button class="btn blue sm" onclick="sendChat()">Send</button>
+          </div>
+        </div>
+        <div class="mcol">
+          <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:6px">Upcoming</div>
+          <div id="meetList"></div>
+          <div class="note" id="callRecap" style="margin-top:10px"></div>
+          <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:14px 0 6px">Video rooms</div>
+          <div class="note">Opens in the browser, no download. Screen share, participants and a running timer, recording off by default. Leaving drops a recap into the channel.</div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="view" id="v-campaigns">
+      <div class="cards" id="campKpis"></div>
+      <div class="panel"><div class="head"><h2>Automated sequences</h2><div class="spacer"></div><span class="chip g">all running</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Sequence</th><th>Trigger</th><th class="num">Steps</th><th class="num">Enrolled</th><th class="num">Sent 30d</th><th class="num">Reply rate</th><th class="num">Bound</th><th></th></tr></thead><tbody id="campBody"></tbody></table></div></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Sequence detail</h2><div class="spacer"></div><span class="chip n" id="campName"></span></div><div class="body" id="campDetail"></div></div>
+        <div class="panel"><div class="head"><h2>Message library</h2><div class="spacer"></div><span class="chip n">templates</span></div><div class="body" id="msgLib"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-growth">
+      <div class="cards" id="growthKpis"></div>
+      <div class="panel"><div class="head"><h2>Spend and return by channel</h2><div class="spacer"></div><div class="filters" id="rangeFilters"><button class="on" data-r="m">This month</button><button data-r="q">Quarter</button><button data-r="y">Year</button></div></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Channel</th><th class="num">Spend</th><th class="num">Leads</th><th class="num">CPL</th><th class="num">Quotes</th><th class="num">Bound</th><th class="num">Cost / policy</th><th class="num">ROAS</th></tr></thead><tbody id="chanBody"></tbody></table></div></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Lead to policy</h2></div><div class="body"><div class="bars" id="funnelBars"></div><div class="note" id="speedNote"></div></div></div>
+        <div class="panel"><div class="head"><h2>Leads by ZIP</h2></div><div class="body" style="padding:0"><table><thead><tr><th>ZIP</th><th>Area</th><th class="num">Leads</th><th class="num">Bound</th><th class="num">Close</th></tr></thead><tbody id="zipBody"></tbody></table></div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Search visibility</h2><div class="spacer"></div><span class="chip n">local pack</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Keyword</th><th class="num">Volume</th><th class="num">Rank</th><th class="num">Move</th></tr></thead><tbody id="kwBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Call tracking</h2><div class="spacer"></div><span class="chip n">today</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Caller</th><th>Source</th><th class="num">Length</th><th>Outcome</th></tr></thead><tbody id="callBody"></tbody></table></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-sync">
+      <div class="cards" id="syncKpis"></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>EZLynx connection</h2><div class="spacer"></div><span class="chip g">connected</span></div>
+          <div class="body">
+            <div class="kpi"><div class="k">Source of record</div><div class="v">EZLynx</div><div class="s">Policy, claims, eDocs and commission arrive by download. Cardinal reads it and owns everything above it.</div></div>
+            <div class="acts" style="margin-top:10px"><button onclick="syncNow()">Pull now</button><button onclick="toast('Field mapping opened')">Field mapping</button><button onclick="toast('Book export queued as CSV')">Export book</button></div>
+            <div class="tl" style="margin-top:14px" id="syncLog"></div>
+          </div></div>
+        <div class="panel"><div class="head"><h2>Carrier connections</h2><div class="spacer"></div><span class="chip n">12 markets</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Carrier</th><th>Path</th><th>Status</th><th class="num">Records</th><th>Last pull</th></tr></thead><tbody id="carrierBody"></tbody></table></div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Field mapping</h2><div class="spacer"></div><span class="chip n">EZLynx to Cardinal</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>EZLynx field</th><th>Cardinal field</th><th>Transform</th></tr></thead><tbody id="mapBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Needs review</h2><div class="spacer"></div><span class="chip a" id="confCount"></span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Record</th><th>Issue</th><th></th></tr></thead><tbody id="confBody"></tbody></table></div></div>
+      </div>
+      <div class="panel"><div class="head"><h2>Website and lead forms</h2><div class="spacer"></div><span class="chip g">live</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Form</th><th>Entries 30d</th><th>Into CRM</th><th>Campaign</th><th>Status</th></tr></thead><tbody id="formBody"></tbody></table></div></div>
+    </section>
+
+    <section class="view" id="v-security">
+      <div class="cards" id="secKpis"></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Controls in place</h2></div><div class="body" style="padding:0"><table><thead><tr><th>Control</th><th>What it does</th></tr></thead><tbody id="secBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Who can see what</h2><div class="spacer"></div><span class="chip n">roles</span></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Area</th><th class="num">Owner</th><th class="num">Producer</th><th class="num">CSR</th><th class="num">Read only</th></tr></thead><tbody id="roleBody"></tbody></table></div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Audit trail</h2><div class="spacer"></div><button class="btn sm ghost" onclick="exportAudit()">Export CSV</button></div>
+          <div class="body" style="padding:0"><table><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Record</th></tr></thead><tbody id="auditBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Vault and retention</h2></div><div class="body">
+          <div class="kpi"><div class="k">Carrier credentials held</div><div class="v">12</div><div class="s">Encrypted server side. The browser never receives a login.</div></div>
+          <div class="kpi" style="margin-top:9px"><div class="k">Documents encrypted at rest</div><div class="v">1,412</div><div class="s">AES-256, per-agency keys, SSN and licence fields masked.</div></div>
+          <div class="kpi" style="margin-top:9px"><div class="k">Retention</div><div class="v">7 years</div><div class="s">Then deleted. A departing agency exports its book and it is removed from Cardinal.</div></div>
+        </div></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-brand">
+      <div class="cards" id="projKpis"></div>
+      <div class="panel"><div class="head"><h2>Three tiers, priced against the stack they replace</h2><div class="spacer"></div><span class="chip n">projection</span></div>
+        <div class="body" style="padding:0"><table><thead><tr><th>Tier</th><th>Who it is for</th><th>Included</th><th class="num">Monthly</th><th class="num">Year one</th><th class="num">Saved</th></tr></thead><tbody id="tierBody"></tbody></table></div></div>
+      <div class="panel"><div class="head"><h2>Tiers in detail</h2></div><div class="body" id="tierDetail"></div></div>
+      <div class="panel"><div class="head"><h2>Projection calculator</h2><div class="spacer"></div><span class="chip n">adjust any number</span></div>
+        <div class="body">
+          <div class="grid3">
+            <div class="field"><label>Tier 1 monthly, dollars</label><input id="pT1" type="number" value="599" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 1 agencies</label><input id="pN1" type="number" value="28" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 2 monthly, dollars</label><input id="pT2" type="number" value="1299" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 2 agencies</label><input id="pN2" type="number" value="17" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 3 monthly, dollars</label><input id="pT3" type="number" value="2499" oninput="calcProj()"></div>
+            <div class="field"><label>Tier 3 agencies</label><input id="pN3" type="number" value="5" oninput="calcProj()"></div>
+            <div class="field"><label>Support and onboarding, monthly</label><input id="pC1" type="number" value="3200" oninput="calcProj()"></div>
+            <div class="field"><label>Sales and marketing, monthly</label><input id="pC2" type="number" value="2600" oninput="calcProj()"></div>
+            <div class="field"><label>Maintenance hours at $60</label><input id="pC3" type="number" value="20" oninput="calcProj()"></div>
+            <div class="field"><label>Security and tooling, monthly</label><input id="pC4" type="number" value="520" oninput="calcProj()"></div>
+            <div class="field"><label>Variable cost per agency</label><input id="pV" type="number" value="100" oninput="calcProj()"></div>
+            <div class="field"><label>Build cost to repay</label><input id="pBuild" type="number" value="66000" oninput="calcProj()"></div>
+          </div>
+          <div class="cards" id="calcOut" style="margin-top:6px"></div>
+          <div class="note" id="calcNote"></div>
+          <div style="margin-top:12px"><table><thead><tr><th>Agencies</th><th class="num">Mix T1/T2/T3</th><th class="num">MRR</th><th class="num">ARR</th><th class="num">Monthly profit</th><th class="num">Payback</th></tr></thead><tbody id="calcRows"></tbody></table></div>
+        </div></div>
+      <div class="panel"><div class="head"><h2>First 90 days: 50 to 300 users</h2><div class="spacer"></div><span class="chip n">launch complete Jan 31, 2027</span></div>
+        <div class="body">
+          <table><thead><tr><th>End of April 2027</th><th class="num">Low</th><th class="num">Base</th><th class="num">High</th></tr></thead><tbody>
+            <tr><td>Users</td><td class="num">50</td><td class="num">175</td><td class="num">300</td></tr>
+            <tr><td>Agencies at 6 seats each</td><td class="num">8</td><td class="num">29</td><td class="num">50</td></tr>
+            <tr><td>MRR</td><td class="num">$5,493</td><td class="num">$18,184</td><td class="num"><b>$30,875</b></td></tr>
+            <tr><td>Startup fees collected</td><td class="num">$13,146</td><td class="num">$43,584</td><td class="num">$74,022</td></tr>
+            <tr><td>Monthly profit, recurring</td><td class="num">-$2,827</td><td class="num">$7,764</td><td class="num">$18,355</td></tr>
+          </tbody></table>
+          <table style="margin-top:12px"><thead><tr><th>Month, high case</th><th class="num">Users</th><th class="num">Agencies</th><th class="num">Revenue</th><th class="num">Net</th><th class="num">Cumulative</th></tr></thead><tbody>
+            <tr><td>February 2027</td><td class="num">50</td><td class="num">8</td><td class="num">$8,792</td><td class="num">-$4,028</td><td class="num">-$4,028</td></tr>
+            <tr><td>March 2027</td><td class="num">175</td><td class="num">29</td><td class="num">$30,071</td><td class="num">$15,151</td><td class="num">$11,123</td></tr>
+            <tr><td>April 2027</td><td class="num">300</td><td class="num">50</td><td class="num">$51,350</td><td class="num">$34,330</td><td class="num">$45,453</td></tr>
+          </tbody></table>
+          <div class="note">Monthly pricing only, no startup fees. The $27,600 of cash is back in April 2027 and the full $66,000 build is repaid in May 2027. The $25,000 to $30,000 band needs 25 to 29 agencies, which is 150 to 175 seats. Cost includes one onboarding specialist at $4,500 a month, so profit at 50 agencies is $34,330.</div>
+        </div></div>
+      <div class="grid2">
+        <div class="panel"><div class="head"><h2>Monthly revenue by agency count</h2></div><div class="body" style="padding:0"><table><thead><tr><th>Agencies</th><th class="num">T1/T2/T3</th><th class="num">Monthly</th><th class="num">Annual</th></tr></thead><tbody id="mrrBody"></tbody></table></div></div>
+        <div class="panel"><div class="head"><h2>Cost to serve</h2></div><div class="body"><div class="bars" id="costBars"></div><div class="note" id="costNote"></div></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="drawer" id="drawer"><div class="dh" id="dh"></div><div class="db" id="db"></div></div>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div class="call" id="call">
+  <div style="display:flex;align-items:center;gap:11px">
+    <div class="mark">C</div>
+    <div><b id="callTitle" style="font-size:14px"></b><div style="font-size:11.5px;color:#9fb2cc" id="callSub"></div></div>
+    <div style="flex:1"></div>
+    <div style="font-size:12.5px;color:#cfe0ff;font-variant-numeric:tabular-nums" id="callTimer">00:00</div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+  <div class="callbar">
+    <button class="cbtn" id="btnMute" onclick="callToggle('mute')">Mute</button>
+    <button class="cbtn" id="btnCam" onclick="callToggle('cam')">Camera on</button>
+    <button class="cbtn" id="btnShare" onclick="callToggle('share')">Share screen</button>
+    <button class="cbtn" onclick="callToggle('people')">Participants</button>
+    <button class="cbtn end" onclick="endCall()">Leave</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const CODE='andrew2026';
+const TODAY=new Date('2026-11-24T12:00:00');
+const money=n=>'$'+Math.round(n).toLocaleString('en-US');
+const d2=d=>d.toISOString().slice(0,10);
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const daysOut=d=>Math.round((new Date(d)-TODAY)/86400000);
+const fmtDate=d=>new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+const CARRIERS=[
+ {n:'Travelers',m:'api',st:'connected',rec:112,last:'8:04am'},
+ {n:'Progressive',m:'api',st:'connected',rec:96,last:'8:04am'},
+ {n:'Openly',m:'api',st:'connected',rec:24,last:'8:03am'},
+ {n:'Safeco',m:'download',st:'connected',rec:78,last:'8:04am'},
+ {n:'Nationwide',m:'download',st:'connected',rec:64,last:'8:04am'},
+ {n:'Stillwater',m:'download',st:'connected',rec:31,last:'8:02am'},
+ {n:'Chubb',m:'download',st:'connected',rec:42,last:'8:04am'},
+ {n:'The Hartford',m:'download',st:'connected',rec:38,last:'8:01am'},
+ {n:'Foremost',m:'portal',st:'vault login',rec:27,last:'8:00am'},
+ {n:'Mercury',m:'portal',st:'vault login',rec:35,last:'7:58am'},
+ {n:'Bristol West',m:'portal',st:'vault login',rec:29,last:'7:58am'},
+ {n:'GAINSCO',m:'portal',st:'vault login',rec:17,last:'7:57am'}
+];
+const LINES=['Auto','Home','Umbrella','Commercial Auto','General Liability','Workers Comp','BOP','Renters'];
+const FIRST=['Jill','Marcus','Elena','Dwayne','Priya','Tom','Rosa','Caleb','Nina','Andre','Sofia','Grant','Yvonne','Hector','Lena','Owen','Tanya','Reggie','Marisol','Ellis','Bianca','Curtis','Dana','Pablo'];
+const LAST=['Nakamura','Whitfield','Ortiz','Brennan','Raman','Delgado','Kowalski','Mercer','Haddad','Boateng','Salazar','Pierce','Okafor','Villanueva','Sorensen','Duffy','Ferraro','Lindqvist','Cardenas','Boone','Ibarra','Hale','Whitaker','Nunez'];
+const CITY=[['Gilbert','85234'],['Mesa','85205'],['Chandler','85225'],['Higley','85236'],['Queen Creek','85142'],['Scottsdale','85254'],['Tempe','85281'],['Apache Junction','85120']];
+const STREET=['S Gilbert Rd','E Baseline Rd','N Val Vista Dr','E Williams Field Rd','S Higley Rd','E Guadalupe Rd','N Lindsay Rd','E Pecos Rd','S Power Rd','E Warner Rd'];
+const PROD=['Jacobo M.','Dana R.','Steve L.','Kayla B.'];
+
+let CLIENTS=[],POLICIES=[],TASKS=[],CLAIMS=[],QUOTES=[],ACTLOG=[],SYNCLOG=[],COVERAGE=null,SELECTED_CLIENT=null,DRAWER_TAB='overview',CLIENT_FILTER='all',POL_FILTER='all',MARKETS=[],SELECTED_CAMP=0;
+
+const CLIENTS_SEED=[
+ ['Jill Nakamura','household','Tempe','85281',2019,'Jacobo M.',3,'renewing'],
+ ['Marcus Brennan','household','Mesa','85205',2020,'Dana R.',11,''],
+ ['Elena Kowalski','household','Mesa','85205',2018,'Steve L.',2,'renewing'],
+ ['Dwayne Boateng','household','Tempe','85281',2021,'Kayla B.',26,''],
+ ['Priya Okafor','household','Mesa','85205',2017,'Jacobo M.',1,'due'],
+ ['Tom Duffy','business','Gilbert','85234',2016,'Dana R.',6,'comm'],
+ ['Rosa Nakamura','household','Apache Junction','85120',2022,'Steve L.',19,''],
+ ['Caleb Brennan','household','Mesa','85205',2020,'Kayla B.',33,''],
+ ['Nina Kowalski','household','Tempe','85281',2019,'Jacobo M.',4,'due'],
+ ['Andre Boateng','household','Higley','85236',2023,'Dana R.',8,'renewing'],
+ ['Sofia Okafor','business','Chandler','85225',2015,'Steve L.',12,'comm'],
+ ['Grant Pierce','household','Queen Creek','85142',2021,'Kayla B.',21,''],
+ ['Yvonne Salazar','household','Scottsdale','85254',2018,'Jacobo M.',5,''],
+ ['Hector Villanueva','business','Mesa','85205',2014,'Dana R.',9,'comm'],
+ ['Lena Kowalski','household','Apache Junction','85120',2019,'Steve L.',14,'renewing'],
+ ['Owen Sorensen','household','Gilbert','85234',2022,'Kayla B.',28,''],
+ ['Tanya Ferraro','household','Chandler','85225',2020,'Jacobo M.',7,'due'],
+ ['Reggie Lindqvist','household','Tempe','85281',2023,'Dana R.',16,''],
+ ['Marisol Cardenas','business','Scottsdale','85254',2017,'Steve L.',10,'comm'],
+ ['Ellis Boone','household','Higley','85236',2021,'Kayla B.',24,''],
+ ['Bianca Ibarra','household','Queen Creek','85142',2022,'Jacobo M.',13,''],
+ ['Curtis Hale','household','Gilbert','85234',2019,'Dana R.',30,'lapsed'],
+ ['Dana Whitaker','household','Mesa','85205',2020,'Steve L.',18,''],
+ ['Pablo Nunez','business','Chandler','85225',2016,'Kayla B.',15,'comm']
+];
+CLIENTS_SEED.forEach((s,i)=>{
+  const [name,type,city,zip,since,owner,touch,tag]=s;
+  const f=name.split(' ')[0],l=name.split(' ')[1];
+  CLIENTS.push({id:'C'+(1001+i),name,type,city,zip,since,owner,touch,tag,
+    email:(f+'.'+l[0]+'@example.com').toLowerCase(),
+    phone:'(480) '+String(210+i*13).slice(0,3)+'-'+String(1000+i*37).slice(0,4),
+    street:(120+i*17)+' '+STREET[i%STREET.length],
+    dob:'0'+(1+i%9)+'-'+String(4+i*3%26).padStart(2,'0'),
+    contact:type==='business'?'Owner · '+f:'Policyholder'});
+});
+
+const POL_SEED=[
+ ['Auto','Safeco',1180],['Home','Safeco',1640],['Umbrella','Chubb',320],['Commercial Auto','Progressive',3480],
+ ['General Liability','The Hartford',2250],['Workers Comp','Travelers',4100],['BOP','Openly',1860],['Renters','Foremost',280]
+];
+let pn=0;
+CLIENTS.forEach((c,i)=>{
+  const count=c.type==='business'?2+(i%2):1+(i%2);
+  for(let k=0;k<count;k++){
+    const line=c.type==='business'?['Commercial Auto','General Liability','Workers Comp','BOP'][(i+k)%4]:['Auto','Home','Umbrella','Renters'][(i+k)%4];
+    const base=POL_SEED.find(p=>p[0]===line);
+    const carrier=c.type==='business'?['Progressive','The Hartford','Travelers','Openly'][(i+k)%4]:['Safeco','Mercury','Nationwide','Stillwater','Chubb','GAINSCO','Foremost','Bristol West'][(i+k)%8];
+    const prem=Math.round((base[2]*(0.82+((i*7+k*11)%30)/100))/10)*10;
+    const eff=addDays(TODAY,-(75+((i*23+k*41)%300)));
+    const near=(i+k)%9===0;
+    const ren=addDays(TODAY,near?(5+((i*3)%22)):40+((i*29+k*37)%250));
+    const due=c.tag==='due'&&k===0;
+    pn++;
+    POLICIES.push({id:'P'+(4200+pn),clientId:c.id,carrier,policy:'AZ-'+carrier.slice(0,2).toUpperCase()+'-'+String(700000+pn*37),line,
+      eff:d2(eff),renewal:d2(ren),daysOut:daysOut(ren),premium:prem,status:due?'payment due':'active',payDue:due,
+      commRate:carrier==='Travelers'||carrier==='Chubb'?0.12:carrier==='Progressive'?0.10:0.15,
+      docs:['Declarations page','ID card',line.includes('Commercial')||line==='BOP'?'Certificate of insurance':'Policy jacket']});
+  }
+});
+
+const CLAIM_SEED=[
+ ['C1005','Safeco','Auto','Collision · rear ended at signal','2026-11-08','Angela Ruiz',4800,1250,'open'],
+ ['C1003','Progressive','General Liability','Slip and fall, third party','2026-10-29','Dale Kim',12500,0,'open'],
+ ['C1009','GAINSCO','Auto','Windshield, comprehensive','2026-11-15','M. Ochoa',640,640,'closed'],
+ ['C1012','Mercury','Home','Water damage, supply line','2026-10-12','B. Sandoval',18700,9200,'open'],
+ ['C1007','Stillwater','Auto','Hail, comprehensive','2026-09-30','K. Doyle',3100,3100,'closed'],
+ ['C1015','Travelers','Workers Comp','Back strain, warehouse','2026-11-03','R. Mendez',7600,2100,'open'],
+ ['C1021','Foremost','Renters','Theft, electronics','2026-11-18','L. Park',2200,0,'open']
+];
+CLAIMS=CLAIM_SEED.map((c,i)=>({id:'CL'+(501+i),clientId:c[0],carrier:c[1],line:c[2],type:c[3],date:c[4],adjuster:c[5],reserve:c[6],paid:c[7],status:c[8]}));
+
+const TASK_SEED=[
+ ['C1001','Renewal 12 days out, premium up 14%','today','Jacobo M.','renewal','high'],
+ ['C1003','Quote sent 3 days ago, no reply','today','Steve L.','quote','high'],
+ ['C1005','Payment failed, card on file expired','today','Jacobo M.','payment','high'],
+ ['C1007','Auto only, bundle quote not offered','today','Steve L.','cross-sell','normal'],
+ ['C1009','Claim follow-up, adjuster has not called in 6 days','tomorrow','Jacobo M.','claim','high'],
+ ['C1011','New lead, first contact overdue 2h','tomorrow','Dana R.','lead','high'],
+ ['C1013','Annual review due, no contact in 14 months','tomorrow','Jacobo M.','review','normal'],
+ ['C1015','ID card requested by client, send today','this week','Steve L.','document','normal'],
+ ['C1017','Certificate holder updated, resend COI','this week','Kayla B.','document','normal'],
+ ['C1019','Birthday text, no pitch','this week','Dana R.','birthday','low'],
+ ['C1021','Renewal 26 days out, re-shop home','this week','Kayla B.','renewal','normal']
+];
+TASKS=TASK_SEED.map((t,i)=>({id:'T'+(300+i),clientId:t[0],reason:t[1],due:t[2],owner:t[3],type:t[4],pri:t[5],done:false}));
+
+QUOTES=[
+ ['C1024','Auto','Safeco',1240,'bound','Nov 21'],
+ ['C1019','Home','Travelers',1890,'sent','Nov 22'],
+ ['C1016','BOP','Openly',2140,'sent','Nov 20'],
+ ['C1013','Umbrella','Chubb',410,'lost','Nov 14'],
+ ['C1008','Auto','Progressive',1330,'bound','Nov 19'],
+ ['C1002','Home','Safeco',1720,'sent','Nov 23'],
+ ['C1022','Commercial Auto','Progressive',3910,'lost','Nov 11'],
+ ['C1010','Renters','Foremost',290,'bound','Nov 18']
+].map((q,i)=>({id:'Q'+(900+i),clientId:q[0],line:q[1],carrier:q[2],premium:q[3],status:q[4],sent:q[5]}));
+
+const CAMPS=[
+ {name:'New lead nurture',trig:'Lead created, no quote in 24h',steps:5,enrolled:34,sent:186,reply:31,bound:9,
+  detail:['D0 · SMS · Thanks for reaching out, here is what happens next','D1 · Email · How carrier pricing actually differs','D3 · Call task · producer assigned, 10 minute call','D7 · Email · proof, reviews and a sample quote','D14 · SMS · last call, book a 10 minute call']},
+ {name:'Quote follow-up',trig:'Quote issued, not bound in 48h',steps:4,enrolled:19,sent:112,reply:24,bound:7,
+  detail:['D0 · Email · Quote summary with the numbers side by side','D2 · SMS · Any questions on the numbers','D5 · Call task · Review coverage gaps','D9 · Email · Rate window closes, lock it in']},
+ {name:'Renewal save',trig:'Renewal 45 days out, premium up over 10%',steps:4,enrolled:27,sent:98,reply:19,bound:11,
+  detail:['D-45 · Email · Renewal summary and what changed','D-30 · Call task · Re-shop and compare','D-14 · SMS · Confirm no lapse in coverage','D-7 · Email · Payment options and autopay']},
+ {name:'Payment reminder',trig:'Balance due within 5 days',steps:3,enrolled:11,sent:41,reply:8,bound:0,
+  detail:['D-5 · SMS · Amount due and secure pay link','D-1 · SMS · Reminder, coverage is at risk','D+1 · Call task · Lapse risk, reinstate options']},
+ {name:'Birthday',trig:'Client date of birth',steps:1,enrolled:24,sent:24,reply:6,bound:0,
+  detail:['D0 · SMS · Short personal note from the producer, no pitch']},
+ {name:'Cross-sell gap',trig:'Auto only, no home policy',steps:3,enrolled:31,sent:87,reply:14,bound:6,
+  detail:['D0 · Email · Bundle savings estimate','D4 · SMS · Two minute bundle quote','D10 · Call task · Producer follow-up']}
+];
+const CHANNELS=[
+ {ch:'Google Ads',spend:2400,leads:38,quotes:21,bound:9,prem:1490},
+ {ch:'Meta',spend:1800,leads:44,quotes:17,bound:6,prem:1180},
+ {ch:'Local Services',spend:1100,leads:19,quotes:12,bound:7,prem:1620},
+ {ch:'Website / SEO',spend:900,leads:16,quotes:9,bound:4,prem:1710},
+ {ch:'Referral',spend:300,leads:12,quotes:10,bound:6,prem:2040}
+];
+const ZIPS=[['85234','Gilbert',22,9],['85205','Mesa',17,5],['85225','Chandler',14,6],['85236','Higley',11,4],['85142','Queen Creek',9,4],['85254','Scottsdale',6,3]];
+const KEYWORDS=[
+ ['insurance agent gilbert az',1900,2,1],['home insurance mesa az',1300,4,-1],['commercial auto insurance phoenix',880,7,3],
+ ['cheap car insurance queen creek',720,5,2],['workers comp insurance arizona',640,9,0],['bundle home and auto gilbert',520,3,4],
+ ['small business insurance chandler',480,11,-2],['umbrella policy cost arizona',260,6,1]
+];
+const CALLS=[
+ ['Marisol Cardenas','Google Ads','4:12','quote requested'],
+ ['unknown','Local Services','1:38','voicemail, callback set'],
+ ['Ellis Boone','Website','6:04','renewal question'],
+ ['Hector Villanueva','Google Ads','3:27','certificate holder change'],
+ ['unknown','Meta','0:44','hung up'],
+ ['Bianca Ibarra','Referral','8:51','bundle quote booked'],
+ ['Tanya Ferraro','Local Services','2:09','payment arrangement'],
+ ['unknown','Google Ads','1:12','spam, blocked']
+];
+SYNCLOG=[
+ ['08:04','EZLynx download completed · 593 policies · 0 errors'],
+ ['08:04','Travelers API pull · 112 records reconciled'],
+ ['08:03','Progressive API pull · 96 records reconciled'],
+ ['08:02','Stillwater download · 31 records, 1 address conflict'],
+ ['07:58','Mercury portal session · 35 records, MFA approved by Jacobo'],
+ ['07:57','GAINSCO portal session · 17 records']
+];
+const MAPPING=[
+ ['Client.GivenName + Surname','client.name','trim, title case'],
+ ['Location.Address1','client.street','standardize suffix'],
+ ['Policy.EffectiveDate','policy.eff','ISO 8601'],
+ ['Policy.ExpirationDate','policy.renewal','ISO 8601'],
+ ['Policy.PremiumAmount','policy.premium','cents to dollars'],
+ ['Policy.CarrierName','policy.carrier','map to carrier id'],
+ ['Commission.CommissionAmount','commission.amount','monthly rollup'],
+ ['Driver.LicenseNumber','driver.license','encrypt at rest, mask in UI']
+];
+const CONFLICTS=[
+ ['Dwayne Boateng','Two addresses in EZLynx: S Gilbert Rd and E Baseline Rd','Resolve'],
+ ['Marcus Brennan','Vehicle added in portal, not yet in EZLynx','Queue sync'],
+ ['Sofia Okafor','FEIN on policy differs from entity record','Review'],
+ ['Nina Kowalski','Payment posted twice on Nov 18','Open claim']
+];
+const FORMS=[
+ ['Website quote request','64','Yes · 8 seconds','Google Ads · branded'],
+ ['Bundle savings calculator','31','Yes · tagged','Meta · bundle'],
+ ['Certificate request (business)','18','Yes · routed to CSR','Direct'],
+ ['Referral form (client share)','12','Yes · producer assigned','Referral']
+];
+const AUDIT=[
+ ['08:14','Jacobo M.','Viewed client record','Priya Okafor'],
+ ['08:11','Jacobo M.','Signed in · Gilbert office','—'],
+ ['08:04','system','EZLynx download','593 policies'],
+ ['08:02','system','Carrier portal session · Mercury','35 records'],
+ ['07:51','Dana R.','Exported renewal list (CSV)','27 policies'],
+ ['07:44','Steve L.','Generated ID card','Elena Kowalski'],
+ ['07:30','Kayla B.','Sent certificate of insurance','Hector Villanueva'],
+ ['07:12','Jacobo M.','Changed commission rate','Travelers'],
+ ['06:58','system','Backup completed','Daily · encrypted'],
+ ['06:40','Dana R.','Viewed claim record','Nina Kowalski']
+];
+ACTLOG=[
+ ['08:14','Jacobo M. viewed Priya Okafor · payment failed, card expired'],
+ ['08:11','Jacobo M. signed in from Gilbert office'],
+ ['08:06','Payment reminder sequence sent 4 texts'],
+ ['08:04','EZLynx sync completed, 593 policies, 0 errors'],
+ ['07:51','Dana R. exported the renewal list for the Monday call block'],
+ ['07:44','Steve L. generated an ID card for Elena Kowalski']
+];
+const PROD_GOALS=[['Jacobo M.',9,14200],['Dana R.',7,11800],['Steve L.',6,10400],['Kayla B.',5,8600]];
+
+/* ---- producer book: Andrew Whitehead ---- */
+CLIENTS.forEach((c,i)=>{ if([0,4,8,12,16,20].includes(i)) c.owner='Andrew W.'; });
+TASKS.unshift(
+ {id:'T901',clientId:'C1001',reason:'Renewal review call, premium up 14%',due:'today',owner:'Andrew W.',type:'renewal',pri:'high',done:false},
+ {id:'T902',clientId:'C1005',reason:'Payment failed, card expired, call before lapse',due:'today',owner:'Andrew W.',type:'payment',pri:'high',done:false},
+ {id:'T903',clientId:'C1009',reason:'Certificate for the Gilbert job, send today',due:'today',owner:'Andrew W.',type:'service',pri:'high',done:false},
+ {id:'T904',clientId:'C1013',reason:'Umbrella quote follow-up, board meets Thursday',due:'tomorrow',owner:'Andrew W.',type:'quote',pri:'high',done:false},
+ {id:'T905',clientId:'C1017',reason:'Add teen driver, need license and course certificate',due:'tomorrow',owner:'Andrew W.',type:'endorsement',pri:'med',done:false},
+ {id:'T906',clientId:'C1021',reason:'Cross-sell review, business owners policy missing',due:'this week',owner:'Andrew W.',type:'cross-sell',pri:'med',done:false}
+);
+const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Quoted in each carrier portal, sent from here'],policies:['Policies','Renewals, payments and documents'],tasks:['Tasks','Who does what, and who covers'],email:['Email','Every client, carrier and portal thread in one inbox'],messages:['Messages','Team chat, huddles and video in one room'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
+const byId=id=>CLIENTS.find(c=>c.id===id);
+const polsOf=id=>POLICIES.filter(p=>p.clientId===id);
+const premOf=id=>polsOf(id).reduce((s,p)=>s+p.premium,0);
+const carrsOf=id=>[...new Set(polsOf(id).map(p=>p.carrier))];
+const totalPrem=()=>POLICIES.reduce((s,p)=>s+p.premium,0);
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2100)}
+function log(m){ACTLOG.unshift([new Date().toTimeString().slice(0,5),m]);renderTasks()}
+
+function unlock(){
+  const v=(document.getElementById('gateCode').value||'').trim().toLowerCase();
+  if(v===CODE){document.getElementById('gate').remove();renderAll();}
+  else toast('That code is not right');
+}
+function goBase(v){
+  document.getElementById('drawer').classList.remove('open');
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
+  document.getElementById('ttl').textContent=NAV[v][0];
+  document.getElementById('sub').textContent=NAV[v][1];
+  const R={dash:renderDash,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,tasks:renderTasks,email:renderEmail,messages:renderMessages,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
+  if(R[v])R[v]();
+}
+function quickSearch(v){
+  const q=(v||'').toLowerCase().trim();
+  if(!q)return;
+  const hit=CLIENTS.find(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q)||polsOf(c.id).some(p=>p.policy.toLowerCase().includes(q)));
+  if(hit){go('clients');openClient(hit.id);}
+}
+
+/* ---------- dashboard ---------- */
+function renderDashBase(){
+  const renew=POLICIES.filter(p=>p.daysOut<=30).sort((a,b)=>a.daysOut-b.daysOut);
+  const due=POLICIES.filter(p=>p.payDue);
+  const open=TASKS.filter(t=>!t.done);
+  const k=[['Book of business',money(totalPrem()),POLICIES.length+' policies · '+CLIENTS.length+' clients',''],
+    ['Renewals next 30 days',renew.length,money(renew.reduce((s,p)=>s+p.premium,0))+' in premium',''],
+    ['Payments due',due.length,money(due.reduce((s,p)=>s+p.premium/12,0))+' monthly at risk','dn'],
+    ['Open tasks',open.length,open.filter(t=>t.due==='today').length+' due today','']];
+  document.getElementById('dashKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('riskCount').textContent=renew.length+' policies';
+  document.getElementById('riskBody').innerHTML=renew.slice(0,6).map(p=>{const c=byId(p.clientId);return `<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${c.city} ${c.zip}</div></td><td>${p.carrier}</td><td>${p.line}</td><td>${p.daysOut} days</td><td class="num">${money(p.premium)}</td><td><button class="btn sm ghost" onclick="openClient('${c.id}')">Open</button></td></tr>`}).join('');
+  const queue=TASKS.filter(t=>!t.done).slice(0,5);
+  document.getElementById('queueCount').textContent=queue.length+' items';
+  document.getElementById('queueBody').innerHTML=queue.map(t=>{const c=byId(t.clientId);return `<tr><td><b>${c.name}</b></td><td style="font-size:12px">${t.reason}</td><td>${t.owner}</td><td><button class="btn sm ghost" onclick="openClient('${c.id}')">Open</button></td></tr>`}).join('');
+  const pipe=[['Quotes issued',69],['Contacted',111],['Bound',32],['Renewals saved',11]];
+  document.getElementById('pipeBars').innerHTML=pipe.map(p=>`<div class="bar"><span>${p[0]}</span><div class="track"><div class="fill" style="width:${Math.round(p[1]/111*100)}%"></div></div><span class="n">${p[1]}</span></div>`).join('');
+  document.getElementById('prodBody').innerHTML=PROD_GOALS.map(g=>{
+    const ps=POLICIES.filter(p=>byId(p.clientId).owner===g[0]);
+    const prem=ps.reduce((s,p)=>s+p.premium,0);
+    return `<tr><td><b>${g[0]}</b></td><td class="num">${ps.length}</td><td class="num">${money(prem)}</td><td class="num"><span class="chip ${prem>=g[2]?'g':'a'}">${Math.round(prem/g[2]*100)}%</span></td></tr>`}).join('');
+  const m=[['Commission earned',money(4820)],['Renewal premium due',money(11920)],['Pending commission',money(2140)],['At risk of lapse',money(1180)]];
+  document.getElementById('moneyBars').innerHTML=m.map(x=>`<div class="bar"><span>${x[0]}</span><div class="track"><div class="fill" style="width:${Math.min(100,Math.round(parseInt(x[1].replace(/\D/g,''))/11920*100))}%"></div></div><span class="n">${x[1]}</span></div>`).join('');
+  const bd=CLIENTS.slice(0,5).map((c,i)=>({c,kind:i%2?'Annual review':'Birthday',when:fmtDate(addDays(TODAY,2+i*3))}));
+  document.getElementById('bdayBody').innerHTML=bd.map(b=>`<tr><td><b>${b.c.name}</b></td><td>${b.kind}</td><td>${b.when}</td><td><button class="btn sm ghost" onclick="toast('Message queued for ${b.c.name.split(' ')[0]}')">Send</button></td></tr>`).join('');
+}
+
+/* ---------- clients ---------- */
+function setClientFilter(f){CLIENT_FILTER=f;document.querySelectorAll('#clientFilters button').forEach(b=>b.classList.toggle('on',b.dataset.f===f));renderClients()}
+function renderClients(){
+  let list=CLIENTS.slice();
+  if(CLIENT_FILTER==='renew')list=list.filter(c=>polsOf(c.id).some(p=>p.daysOut<=60));
+  if(CLIENT_FILTER==='due')list=list.filter(c=>polsOf(c.id).some(p=>p.payDue));
+  if(CLIENT_FILTER==='comm')list=list.filter(c=>c.type==='business');
+  if(CLIENT_FILTER==='lapsed')list=list.filter(c=>c.tag==='lapsed');
+  document.getElementById('clientCount').textContent=list.length+' of '+CLIENTS.length;
+  document.getElementById('clientBody').innerHTML=list.map(c=>{
+    const ps=polsOf(c.id),next=ps.slice().sort((a,b)=>a.daysOut-b.daysOut)[0];
+    return `<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${c.email}</div></td>
+    <td>${c.city} ${c.zip}</td><td><span class="chip ${c.type==='business'?'n':''}">${c.type}</span></td>
+    <td class="num">${ps.length}</td><td style="font-size:11.5px">${carrsOf(c.id).join(', ')}</td>
+    <td class="num">${money(premOf(c.id))}</td><td>${next?next.daysOut+' days':'—'}</td><td>${c.touch}d ago</td><td>${c.owner}</td>
+    <td><button class="btn sm ghost" onclick="openClient('${c.id}')">Open</button></td></tr>`}).join('');
+  const gaps=[['Rosa Nakamura','Auto','Home, Umbrella',2100],['Caleb Brennan','Auto, Renters','Umbrella',410],['Grant Pierce','Home','Auto',1180],['Owen Sorensen','Auto','Renters, Life',290],['Tom Duffy','Commercial Auto, GL','Workers Comp',4100]];
+  document.getElementById('gapBody').innerHTML=gaps.map(g=>`<tr><td><b>${g[0]}</b></td><td>${g[1]}</td><td><span class="chip a">${g[2]}</span></td><td class="num">${money(g[3])}</td><td><button class="btn sm ghost" onclick="toast('Bundle quote started for ${g[0].split(' ')[0]}')">Quote it</button></td></tr>`).join('');
+}
+/* ---------- client drawer ---------- */
+function openClient(id){
+  SELECTED_CLIENT=id;DRAWER_TAB='overview';
+  document.getElementById('drawer').classList.add('open');
+  renderDrawer();
+}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open')}
+function setDrawerTab(t){DRAWER_TAB=t;renderDrawer()}
+function renderDrawer(){
+  const c=byId(SELECTED_CLIENT);if(!c)return;
+  const ps=polsOf(c.id),cl=CLAIMS.filter(x=>x.clientId===c.id);
+  document.getElementById('dh').innerHTML=`
+    <div class="big-av">${c.name.split(' ').map(x=>x[0]).join('')}</div>
+    <div style="flex:1"><div style="font-weight:700;font-size:15px">${c.name}</div>
+    <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${c.type==='business'?'Business account':'Household'} · ${c.city} ${c.zip} · client since ${c.since}</div>
+    <div style="margin-top:6px"><span class="chip ${c.tag==='due'?'r':c.tag==='renewing'?'a':'g'}">${c.tag||'current'}</span> <span class="chip n">${c.owner}</span></div></div>
+    <button class="btn sm ghost" onclick="closeDrawer()">Close</button>`;
+  const tabs=[['overview','Overview'],['policies','Policies'],['docs','Documents'],['claims','Claims'],['activity','Activity']];
+  let body=`<div class="tabs">${tabs.map(t=>`<button class="${DRAWER_TAB===t[0]?'on':''}" onclick="setDrawerTab('${t[0]}')">${t[1]}</button>`).join('')}</div>`;
+  if(DRAWER_TAB==='overview'){
+    body+=`<div class="grid2">
+      <div class="kpi"><div class="k">Phone</div><div class="v" style="font-size:13px">${c.phone}</div><div class="s">mobile · text enabled</div></div>
+      <div class="kpi"><div class="k">Email</div><div class="v" style="font-size:13px">${c.email}</div><div class="s">consented to email</div></div>
+      <div class="kpi"><div class="k">Address</div><div class="v" style="font-size:13px">${c.street}</div><div class="s">${c.city}, AZ ${c.zip}</div></div>
+      <div class="kpi"><div class="k">Date of birth</div><div class="v" style="font-size:13px">${c.dob}</div><div class="s">birthday drip active</div></div>
+      <div class="kpi"><div class="k">Annual premium</div><div class="v">${money(premOf(c.id))}</div><div class="s">${ps.length} policies</div></div>
+      <div class="kpi"><div class="k">Last touch</div><div class="v">${c.touch}d ago</div><div class="s">owner ${c.owner}</div></div>
+    </div>
+    <div class="note" style="margin-top:12px"><b>Next best action:</b> ${ps.some(p=>p.payDue)?'collect payment before lapse risk turns into a cancellation.':'confirm renewal timing and offer the missing line while the book is open.'}</div>
+    <div class="acts" style="margin-top:10px">
+      <button onclick="logTouch('call')">Log call</button><button onclick="logTouch('text')">Send text</button>
+      <button onclick="logTouch('email')">Send email</button><button onclick="addTask('${c.id}')">Add task</button>
+      <button onclick="noteModal('${c.id}')">Add note</button></div>`;
+  }
+  if(DRAWER_TAB==='policies'){
+    body+=ps.map(p=>`<div class="pol"><div class="r1"><span class="car">${p.carrier}</span>
+      <span class="chip ${p.payDue?'r':'g'}">${p.status}</span><span class="pill">${p.line}</span></div>
+      <div class="meta">${p.policy} · effective ${p.eff} · renews ${p.renewal} (${p.daysOut} days)<br>
+      ${money(p.premium)} annual · ${money(p.premium/12)} monthly · commission ${Math.round(p.commRate*100)}%</div>
+      <div class="acts"><button onclick="docModal('id','${p.id}')">ID card</button>
+      <button onclick="docModal('coi','${p.id}')">Certificate</button>
+      <button onclick="docModal('dec','${p.id}')">Dec page</button>
+      <button onclick="payNow('${p.id}')">Take payment</button></div></div>`).join('')
+      ||'<div class="note">No policies on file.</div>';
+  }
+  if(DRAWER_TAB==='docs'){
+    body+=`<div class="panel" style="margin-top:0"><div class="head"><h2>Documents</h2><div class="spacer"></div><span class="chip n">${ps.length*3} files</span></div><div class="body">`;
+    ps.forEach(p=>{
+      body+=`<div class="docrow"><div class="ic">PDF</div><div style="flex:1"><b>${p.carrier} ${p.line}</b><div style="font-size:11px;color:var(--muted)">declarations page · generated ${p.eff}</div></div><button class="btn sm ghost" onclick="docModal('dec','${p.id}')">Open</button></div>`;
+      body+=`<div class="docrow"><div class="ic">ID</div><div style="flex:1"><b>${p.carrier} insurance card</b><div style="font-size:11px;color:var(--muted)">auto ID card · expires ${p.renewal}</div></div><button class="btn sm ghost" onclick="docModal('id','${p.id}')">Open</button></div>`;
+      if(p.line.includes('Commercial')||p.line==='BOP')body+=`<div class="docrow"><div class="ic">COI</div><div style="flex:1"><b>Certificate of insurance</b><div style="font-size:11px;color:var(--muted)">holder on file · ${p.policy}</div></div><button class="btn sm ghost" onclick="docModal('coi','${p.id}')">Open</button></div>`;
+    });
+    body+=`</div></div>`;
+  }
+  if(DRAWER_TAB==='claims'){
+    body+=cl.length?`<table><thead><tr><th>Carrier</th><th>Loss</th><th>Date</th><th class="num">Reserve</th><th class="num">Paid</th><th>Status</th></tr></thead><tbody>`+
+      cl.map(x=>`<tr><td>${x.carrier}</td><td>${x.type}<div style="font-size:11px;color:var(--muted)">adjuster ${x.adjuster}</div></td><td>${x.date}</td><td class="num">${money(x.reserve)}</td><td class="num">${money(x.paid)}</td><td><span class="chip ${x.status==='closed'?'g':'a'}">${x.status}</span></td></tr>`).join('')+`</tbody></table>`
+      :'<div class="note">No claims on this account. Clean loss history is worth mentioning at renewal.</div>';
+  }
+  if(DRAWER_TAB==='activity'){
+    body+=`<div class="tl">`+ACTLOG.slice(0,7).map(a=>`<div class="ev"><b>${a[1]}</b><div class="w">${a[0]} · logged</div></div>`).join('')+`</div>`;
+  }
+  document.getElementById('db').innerHTML=body;
+}
+function logTouch(kind){
+  const c=byId(SELECTED_CLIENT);
+  log(`${kind==='call'?'Call':kind==='text'?'Text':'Email'} logged with ${c.name}`);
+  toast(kind==='call'?'Call logged with outcome picker':kind==='text'?'Text queued to '+c.phone:'Email queued to '+c.email);
+}
+function payNow(pid){
+  const p=POLICIES.find(x=>x.id===pid);
+  p.payDue=false;p.status='active';
+  log('Payment collected on '+p.policy+' · '+money(p.premium/12));
+  toast('Payment of '+money(p.premium/12)+' collected on '+p.carrier);
+  renderDrawer();renderPolicies();renderDash();
+}
+function addTask(cid){
+  const c=byId(cid);
+  TASKS.push({id:'T'+Date.now(),clientId:cid,reason:'Manual follow-up requested by '+c.owner,due:'today',owner:c.owner,type:'manual',pri:'normal',done:false});
+  log('Task created for '+c.name);
+  toast('Task added to the queue');
+}
+function noteModal(cid){
+  const c=byId(cid);
+  document.getElementById('sheet').innerHTML=`<h3>Add note · ${c.name}</h3><div class="p">Notes are timestamped and stay with the record. Nothing here is sent to the client.</div>
+    <div class="field"><label>Note</label><input id="noteText" placeholder="What happened on this account"></div>
+    <button class="btn blue" onclick="saveNote('${cid}')">Save note</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+function saveNote(cid){
+  const v=(document.getElementById('noteText').value||'').trim();
+  const c=byId(cid);
+  closeModal();
+  if(!v){toast('Nothing to save');return}
+  log('Note on '+c.name+': '+v.slice(0,40));
+  toast('Note saved to '+c.name.split(' ')[0]+"'s record");
+}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+
+/* ---------- documents ---------- */
+function docModal(kind,pid){
+  const p=POLICIES.find(x=>x.id===pid),c=byId(p.clientId);
+  let title='',inner='';
+  if(kind==='id'){
+    title='Insurance ID card';
+    inner=`<div style="border:1px solid var(--line);border-radius:12px;padding:16px;background:#FBFCFF">
+      <div style="display:flex;justify-content:space-between;align-items:center"><b>${p.carrier}</b><span class="chip g">active</span></div>
+      <div style="font-size:11px;color:var(--muted);margin:6px 0 10px">Auto insurance identification card · Arizona</div>
+      <div class="grid2" style="gap:8px">
+        <div><div style="font-size:10px;color:var(--muted)">NAMED INSURED</div><b>${c.name}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">POLICY NUMBER</div><b class="mono">${p.policy}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">EFFECTIVE</div><b>${p.eff}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">EXPIRES</div><b>${p.renewal}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">VEHICLE</div><b>2021 Toyota RAV4</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">COVERAGES</div><b>250/500/100 · comp/coll 500</b></div>
+      </div></div>`;
+  }
+  if(kind==='coi'){
+    title='Certificate of insurance';
+    inner=`<div style="border:1px solid var(--line);border-radius:12px;padding:16px;background:#FBFCFF">
+      <b>${p.carrier}</b><div style="font-size:11px;color:var(--muted);margin:6px 0 10px">ACORD 25 · certificate of liability insurance</div>
+      <div class="grid2" style="gap:8px">
+        <div><div style="font-size:10px;color:var(--muted)">INSURED</div><b>${c.name}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">HOLDER</div><b>${c.name.split(' ')[0]} Property Group</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">POLICY</div><b class="mono">${p.policy}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">LINE</div><b>${p.line}</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">EACH OCCURRENCE</div><b>$1,000,000</b></div>
+        <div><div style="font-size:10px;color:var(--muted)">AGGREGATE</div><b>$2,000,000</b></div>
+      </div></div>`;
+  }
+  if(kind==='dec'){
+    title='Declarations page';
+    inner=`<div style="border:1px solid var(--line);border-radius:12px;padding:16px;background:#FBFCFF">
+      <b>${p.carrier} · ${p.line} declarations</b>
+      <div style="font-size:11px;color:var(--muted);margin:6px 0 10px">Policy ${p.policy} · effective ${p.eff} to ${p.renewal}</div>
+      <table style="font-size:12px"><tbody>
+      <tr><td>Named insured</td><td class="num">${c.name}</td></tr>
+      <tr><td>Annual premium</td><td class="num">${money(p.premium)}</td></tr>
+      <tr><td>Monthly installment</td><td class="num">${money(p.premium/12)}</td></tr>
+      <tr><td>Commission to agency</td><td class="num">${money(p.premium*p.commRate)}</td></tr>
+      <tr><td>Forms in force</td><td class="num">4</td></tr></tbody></table></div>`;
+  }
+  document.getElementById('sheet').innerHTML=`<h3>${title}</h3><div class="p">${c.name} · ${p.carrier}</div>${inner}
+    <div class="acts" style="margin-top:12px"><button onclick="toast('${title} sent to ${c.email}')">Email to client</button>
+    <button onclick="toast('${title} texted to ${c.phone}')">Text to client</button>
+    <button onclick="closeModal()">Close</button></div>`;
+  document.getElementById('modal').classList.add('open');
+}
+/* ---------- quotes ---------- */
+function renderQuotes(){
+  document.getElementById('qHistCount').textContent=QUOTES.length+' quotes';
+  document.getElementById('qHistBody').innerHTML=QUOTES.slice().reverse().map(q=>{const c=byId(q.clientId);
+    return `<tr><td><b>${c.name}</b></td><td>${q.line}</td><td>${q.carrier}</td><td class="num">${money(q.premium)}</td>
+    <td><span class="chip ${q.status==='bound'?'g':q.status==='lost'?'r':'a'}">${q.status}</span></td><td>${q.sent}</td></tr>`}).join('');
+  const m=[['Safeco','download','Preferred · clean loss history',1240],
+    ['Travelers','api','Preferred · multi-policy discount',1310],
+    ['Progressive','api','Standard · one violation, 3 years',1440],
+    ['Openly','api','Preferred · newer roof required',1510],
+    ['Nationwide','download','Standard · prior lapse, acceptable',1580],
+    ['Chubb','download','Elite only · declined appetite',0],
+    ['Stillwater','download','Preferred · coastal exclusion',1660],
+    ['Mercury','portal','Standard · 2 vehicles, garaged',1620],
+    ['Bristol West','portal','Non-standard · prior cancellation',1890],
+    ['Foremost','portal','Manufactured home only · n/a',0],
+    ['GAINSCO','portal','Non-standard auto only',1740],
+    ['The Hartford','download','Commercial lines only · n/a',0]];
+  document.getElementById('marketCount').textContent=m.filter(x=>x[3]>0).length+' of 12 markets returned a number';
+  document.getElementById('marketBody').innerHTML=m.map(x=>x[3]>0?`<tr><td><b>${x[0]}</b></td><td><span class="chip ${x[1]==='api'?'g':x[1]==='download'?'n':'a'}">${x[1]}</span></td>
+    <td style="font-size:11.5px;color:var(--muted)">${x[2]}</td><td class="num"><b>${money(x[3])}</b></td><td class="num">${money(x[3]/12)}</td>
+    <td><button class="btn sm ${x[3]===Math.min(...m.filter(y=>y[3]>0).map(y=>y[3]))?'blue':'ghost'}" onclick="bindQuote('${x[0]}',${x[3]},'${x[1]}')">${x[3]===Math.min(...m.filter(y=>y[3]>0).map(y=>y[3]))?'Bind best':'Select'}</button></td></tr>`
+    :`<tr style="opacity:.55"><td><b>${x[0]}</b></td><td><span class="chip n">${x[1]}</span></td><td style="font-size:11.5px">${x[2]}</td><td class="num">—</td><td class="num">—</td><td></td></tr>`).join('');
+  const loss=[['Price, client found cheaper',38],['No response after 3 touches',26],['Coverage requirement not met',16],['Went with current carrier',12],['Payment or down payment issue',8]];
+  document.getElementById('lossBars').innerHTML=loss.map(x=>`<div class="bar"><span>${x[0]}</span><div class="track"><div class="fill" style="width:${x[1]*2.4}%"></div></div><span class="n">${x[1]}%</span></div>`).join('');
+}
+function runQuote(){
+  const name=(document.getElementById('qName').value||'Prospect').trim();
+  const line=document.getElementById('qLine').value;
+  const zip=(document.getElementById('qZip').value||'85142').trim();
+  toast('Quoting '+name+' · '+line+' · '+zip+' across 12 markets');
+  QUOTES.push({id:'Q'+Date.now(),clientId:CLIENTS[0].id,line,carrier:'Safeco',premium:1240,status:'sent',sent:'today'});
+  renderQuotes();
+  log('Quote started for '+name+' · '+line);
+}
+function bindQuote(carrier,prem,method){
+  if(!prem){toast('That market did not return a number');return}
+  const c=CLIENTS[0];
+  POLICIES.push({id:'P'+(9000+POLICIES.length),clientId:c.id,carrier,policy:'AZ-'+carrier.slice(0,2).toUpperCase()+'-'+String(700000+POLICIES.length*41),line:'Auto',
+    eff:d2(TODAY),renewal:d2(addDays(TODAY,365)),daysOut:365,premium:prem,status:'active',payDue:false,commRate:0.15,docs:['Declarations page','ID card']});
+  QUOTES.push({id:'Q'+Date.now(),clientId:c.id,line:'Auto',carrier,premium:prem,status:'bound',sent:'today'});
+  log('Bound '+carrier+' auto policy at '+money(prem));
+  toast('Bound with '+carrier+' at '+money(prem)+' · policy added to the book');
+  renderQuotes();renderPolicies();renderDash();
+}
+
+/* ---------- policies ---------- */
+function setPolFilter(f){POL_FILTER=f;document.querySelectorAll('#polFilters button').forEach(b=>b.classList.toggle('on',b.dataset.f===f));renderPolicies()}
+function renderPolicies(){
+  const k=[['Total policies',POLICIES.length,'across 12 carriers',''],['Annual premium',money(totalPrem()),'in force today',''],
+    ['Renewing in 30 days',POLICIES.filter(p=>p.daysOut<=30).length,'needs a call this week',''],
+    ['Payment due',POLICIES.filter(p=>p.payDue).length,'lapse risk','dn']];
+  document.getElementById('polKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  let list=POLICIES.slice().sort((a,b)=>a.daysOut-b.daysOut);
+  if(POL_FILTER==='30')list=list.filter(p=>p.daysOut<=30);
+  if(POL_FILTER==='60')list=list.filter(p=>p.daysOut<=60);
+  if(POL_FILTER==='90')list=list.filter(p=>p.daysOut<=90);
+  if(POL_FILTER==='due')list=list.filter(p=>p.payDue);
+  document.getElementById('polCount').textContent=list.length+' shown';
+  document.getElementById('polBody').innerHTML=list.map(p=>{const c=byId(p.clientId);
+    return `<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${c.city}</div></td><td>${p.carrier}</td>
+    <td class="mono">${p.policy}</td><td>${p.line}</td><td>${p.eff}</td><td>${p.renewal}<div style="font-size:11px;color:var(--muted)">${p.daysOut} days</div></td>
+    <td class="num">${money(p.premium)}</td><td><span class="chip ${p.payDue?'r':'g'}">${p.status}</span></td>
+    <td><button class="btn sm ghost" onclick="docModal('id','${p.id}')">ID</button> <button class="btn sm ghost" onclick="docModal('dec','${p.id}')">Dec</button>${(p.line.includes('Commercial')||p.line==='BOP')?` <button class="btn sm ghost" onclick="docModal('coi','${p.id}')">COI</button>`:''}</td></tr>`}).join('');
+  const buckets=[[0,30],[31,60],[61,90],[91,180],[181,365]];
+  document.getElementById('renBars').innerHTML=buckets.map(b=>{
+    const n=POLICIES.filter(p=>p.daysOut>=b[0]&&p.daysOut<=b[1]);
+    const prem=n.reduce((s,p)=>s+p.premium,0);
+    return `<div class="bar"><span>${b[0]} to ${b[1]} days</span><div class="track"><div class="fill" style="width:${Math.min(100,n.length*8)}%"></div></div><span class="n">${n.length}</span></div>`}).join('')
+    +`<div class="note">${money(POLICIES.filter(p=>p.daysOut<=90).reduce((s,p)=>s+p.premium,0))} of premium renews inside 90 days. Every one of those gets a re-shop before the carrier's own renewal notice lands.</div>`;
+  const byCar={};
+  POLICIES.forEach(p=>{byCar[p.carrier]=byCar[p.carrier]||{n:0,prem:0,rate:p.commRate};byCar[p.carrier].n++;byCar[p.carrier].prem+=p.premium});
+  document.getElementById('commBody').innerHTML=Object.entries(byCar).sort((a,b)=>b[1].prem-a[1].prem).slice(0,8).map(([k2,v])=>
+    `<tr><td>${k2}</td><td class="num">${v.n}</td><td class="num">${money(v.prem)}</td><td class="num">${Math.round(v.rate*100)}%</td>
+    <td class="num">${money(v.prem*v.rate)}</td><td><span class="chip ${k2==='Travelers'?'a':'g'}">${k2==='Travelers'?'pending':'paid'}</span></td></tr>`).join('');
+}
+/* ---------- tasks ---------- */
+function renderTasks(){
+  const open=TASKS.filter(t=>!t.done);
+  const k=[['Open tasks',open.length,'across 4 producers',''],['Due today',open.filter(t=>t.due==='today').length,'before 5pm','dn'],
+    ['Overdue',2,'first contact and a renewal','dn'],['Completed today',6,'calls, texts and documents','up']];
+  document.getElementById('taskKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('taskCount').textContent=open.length+' open';
+  document.getElementById('taskBody').innerHTML=open.map(t=>{const c=byId(t.clientId);
+    return `<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${t.type}</div></td>
+    <td style="font-size:12px">${t.reason}${t.pri==='high'?' <span class="pill">priority</span>':''}</td>
+    <td><span class="chip ${t.due==='today'?'r':'n'}">${t.due}</span></td><td>${t.owner}</td>
+    <td style="white-space:nowrap"><button class="btn sm ghost" onclick="doneTask('${t.id}')">Done</button>
+    <button class="btn sm ghost" onclick="snoozeTask('${t.id}')">Snooze</button>
+    <button class="btn sm ghost" onclick="reassign('${t.id}')">Reassign</button></td></tr>`}).join('')
+    ||'<tr><td colspan="5" style="color:var(--muted)">Queue is clear.</td></tr>';
+  const lapse=POLICIES.filter(p=>p.payDue);
+  document.getElementById('lapseBody').innerHTML=lapse.map(p=>{const c=byId(p.clientId);
+    return `<tr><td><b>${c.name}</b></td><td>${p.carrier} ${p.line}</td><td class="num">${money(p.premium/12)}</td>
+    <td><span class="chip r">card expired</span></td><td><button class="btn sm ghost" onclick="payNow('${p.id}')">Take payment</button></td></tr>`}).join('')
+    ||'<tr><td colspan="5" style="color:var(--muted)">No payments at risk.</td></tr>';
+  document.getElementById('covNote').textContent=COVERAGE?`${COVERAGE.who} is out until ${COVERAGE.until}. ${COVERAGE.by} receives those tasks and approvals route to them.`:'No coverage set. Tasks assigned to someone who is out are held, not silently missed.';
+  document.getElementById('actLog').innerHTML=ACTLOG.slice(0,8).map(a=>`<div class="ev"><b>${a[1]}</b><div class="w">${a[0]}</div></div>`).join('');
+}
+function doneTask(id){
+  const t=TASKS.find(x=>x.id===id);if(!t)return;
+  t.done=true;log('Completed: '+t.reason+' · '+byId(t.clientId).name);
+  toast('Task closed and logged');
+  renderTasks();
+}
+function snoozeTask(id){
+  const t=TASKS.find(x=>x.id===id);if(!t)return;
+  t.due=t.due==='today'?'tomorrow':'this week';
+  log('Snoozed: '+t.reason);
+  toast('Snoozed to '+t.due);
+  renderTasks();
+}
+function reassign(id){
+  const t=TASKS.find(x=>x.id===id);if(!t)return;
+  const i=PROD.indexOf(t.owner);
+  t.owner=PROD[(i+1)%PROD.length];
+  log('Reassigned to '+t.owner+': '+t.reason);
+  toast('Reassigned to '+t.owner);
+  renderTasks();
+}
+function setCoverage(){
+  COVERAGE={who:document.getElementById('oooWho').value,by:document.getElementById('oooBy').value,until:document.getElementById('oooUntil').value};
+  log('Coverage set: '+COVERAGE.who+' out, '+COVERAGE.by+' covering until '+COVERAGE.until);
+  toast(COVERAGE.by+' is covering for '+COVERAGE.who);
+  renderTasks();
+}
+
+/* ---------- campaigns ---------- */
+function renderCampaigns(){
+  const k=[['Sequences running',CAMPS.length,'all triggered automatically','up'],['People enrolled',CAMPS.reduce((s,c)=>s+c.enrolled,0),'across 6 sequences',''],
+    ['Touches sent 30d',CAMPS.reduce((s,c)=>s+c.sent,0),'text and email',''],['Policies from drips',CAMPS.reduce((s,c)=>s+c.bound,0),'attributed this month','up']];
+  document.getElementById('campKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('campBody').innerHTML=CAMPS.map((c,i)=>`<tr><td><b>${c.name}</b></td><td style="font-size:11.5px">${c.trig}</td>
+    <td class="num">${c.steps}</td><td class="num">${c.enrolled}</td><td class="num">${c.sent}</td>
+    <td class="num">${Math.round(c.reply/c.enrolled*100)}%</td><td class="num">${c.bound}</td>
+    <td><button class="btn sm ghost" onclick="showCamp(${i})">View</button></td></tr>`).join('');
+  showCamp(SELECTED_CAMP);
+}
+function showCamp(i){
+  SELECTED_CAMP=i;const c=CAMPS[i];
+  document.getElementById('campName').textContent=c.name;
+  document.getElementById('campDetail').innerHTML=
+    `<div class="kpi"><div class="k">Trigger</div><div class="v" style="font-size:13px">${c.trig}</div><div class="s">Runs whether or not anyone remembers it</div></div>
+     <div class="tl" style="margin-top:12px">${c.detail.map(s=>`<div class="ev"><b>${s}</b><div class="w">step in sequence</div></div>`).join('')}</div>
+     <div class="note">${c.enrolled} enrolled, ${c.sent} touches sent in 30 days, ${Math.round(c.reply/c.enrolled*100)}% replied, ${c.bound} bound. Replies route to the assigned producer as a task, not into a dead inbox.</div>`;
+  document.getElementById('msgLib').innerHTML=[['SMS · renewal',"Hi {first}, your {carrier} renewal lands {date}. I re-shopped it and I have two options before it auto-renews. Want me to send them over?"],
+    ['SMS · payment',"{first}, the {carrier} payment of {amount} did not go through. Coverage is at risk after {date}. Here is the secure link."],
+    ['Email · quote follow-up',"Subject: your numbers, side by side. {first}, attached is what each market came back with. The difference is mostly in the deductible and the roof age."],
+    ['SMS · birthday',"Happy birthday {first}. No pitch, just hoping the year treats you well. — {producer}"]]
+    .map(m=>`<div class="pol"><div class="r1"><span class="car">${m[0]}</span></div><div class="meta">${m[1]}</div>
+      <div class="acts"><button onclick="toast('Template copied')">Copy</button><button onclick="toast('Template opened in editor')">Edit</button></div></div>`).join('');
+}
+
+/* ---------- growth ---------- */
+function renderGrowth(){
+  const spend=CHANNELS.reduce((s,c)=>s+c.spend,0),leads=CHANNELS.reduce((s,c)=>s+c.leads,0),bound=CHANNELS.reduce((s,c)=>s+c.bound,0);
+  const revenue=CHANNELS.reduce((s,c)=>s+c.bound*c.prem,0);
+  const k=[['Ad spend, month',money(spend),'five channels',''],['Leads captured',leads,'blended CPL '+money(spend/leads),''],
+    ['Policies bound',bound,'cost per policy '+money(spend/bound),'up'],['Premium written',money(revenue),'ROAS '+(revenue/spend).toFixed(1)+'x','up']];
+  document.getElementById('growthKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('chanBody').innerHTML=CHANNELS.map(c=>`<tr><td><b>${c.ch}</b></td><td class="num">${money(c.spend)}</td><td class="num">${c.leads}</td>
+    <td class="num">${money(c.spend/c.leads)}</td><td class="num">${c.quotes}</td><td class="num">${c.bound}</td>
+    <td class="num">${money(c.spend/c.bound)}</td><td class="num"><span class="chip ${c.bound*c.prem/c.spend>4?'g':'a'}">${(c.bound*c.prem/c.spend).toFixed(1)}x</span></td></tr>`).join('');
+  const funnel=[['Leads',129],['Contacted',111],['Quoted',69],['Bound',32]];
+  document.getElementById('funnelBars').innerHTML=funnel.map(f=>`<div class="bar"><span>${f[0]}</span><div class="track"><div class="fill" style="width:${Math.round(f[1]/129*100)}%"></div></div><span class="n">${f[1]}</span></div>`).join('');
+  document.getElementById('speedNote').innerHTML='Median speed to first contact is <b>4 minutes 20 seconds</b>. Anything over 5 minutes alerts the producer and the owner. Lead to bound takes 11 days on average.';
+  document.getElementById('zipBody').innerHTML=ZIPS.map(z=>`<tr><td class="mono">${z[0]}</td><td>${z[1]}</td><td class="num">${z[2]}</td><td class="num">${z[3]}</td><td class="num">${Math.round(z[3]/z[2]*100)}%</td></tr>`).join('');
+  document.getElementById('kwBody').innerHTML=KEYWORDS.map(k2=>`<tr><td>${k2[0]}</td><td class="num">${k2[1].toLocaleString()}</td><td class="num">#${k2[2]}</td>
+    <td class="num"><span class="chip ${k2[3]>0?'g':k2[3]<0?'r':'n'}">${k2[3]>0?'+'+k2[3]:k2[3]<0?k2[3]:'—'}</span></td></tr>`).join('');
+  document.getElementById('callBody').innerHTML=CALLS.map(c=>`<tr><td>${c[0]}</td><td style="font-size:11.5px">${c[1]}</td><td class="num">${c[2]}</td><td style="font-size:11.5px">${c[3]}</td></tr>`).join('');
+}
+
+/* ---------- sync ---------- */
+function renderSync(){
+  const k=[['EZLynx status','Connected','last pull 8:04am','up'],['Policies reconciled',593,'0 errors',''],
+    ['Carrier connections',12,'8 download or API, 4 portal',''],['Needs review',CONFLICTS.length,'address and entity conflicts','dn']];
+  document.getElementById('syncKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('syncLog').innerHTML=SYNCLOG.map(s=>`<div class="ev"><b>${s[1]}</b><div class="w">${s[0]}</div></div>`).join('');
+  document.getElementById('carrierBody').innerHTML=CARRIERS.map(c=>`<tr><td><b>${c.n}</b></td>
+    <td><span class="chip ${c.m==='api'?'g':c.m==='download'?'n':'a'}">${c.m}</span></td><td style="font-size:11.5px">${c.st}</td>
+    <td class="num">${c.rec}</td><td>${c.last}</td></tr>`).join('');
+  document.getElementById('mapBody').innerHTML=MAPPING.map(m=>`<tr><td class="mono">${m[0]}</td><td class="mono">${m[1]}</td><td style="font-size:11.5px;color:var(--muted)">${m[2]}</td></tr>`).join('');
+  document.getElementById('confCount').textContent=CONFLICTS.length+' open';
+  document.getElementById('confBody').innerHTML=CONFLICTS.map(c=>`<tr><td><b>${c[0]}</b></td><td style="font-size:11.5px">${c[1]}</td>
+    <td><button class="btn sm ghost" onclick="toast('${c[2]} queued for ${c[0].split(' ')[0]}')">${c[2]}</button></td></tr>`).join('');
+  document.getElementById('formBody').innerHTML=FORMS.map(f=>`<tr><td><b>${f[0]}</b></td><td>${f[1]}</td><td style="font-size:11.5px">${f[2]}</td>
+    <td style="font-size:11.5px">${f[3]}</td><td><span class="chip g">live</span></td></tr>`).join('');
+}
+function syncNow(){
+  SYNCLOG.unshift([new Date().toTimeString().slice(0,5),'Manual pull requested · EZLynx download queued, 593 policies']);
+  log('Manual EZLynx sync requested');
+  toast('EZLynx pull queued · 593 policies');
+  renderSync();
+}
+
+/* ---------- security ---------- */
+function renderSecurity(){
+  const k=[['Synthetic data','100%','no real policyholder records',''],['Credentials in browser','0','vault holds all 12','up'],
+    ['Audit events today','214','every view, export and bind',''],['Roles enforced',4,'owner, producer, CSR, read only','']];
+  document.getElementById('secKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  const sec=[['Tenant isolation','Each agency gets its own partition. White-label deployments share no records or indexes.'],
+    ['No credentials in the browser','Carrier logins live in an encrypted server-side vault. The browser only receives data.'],
+    ['Role-based access','Owner, producer, CSR and read only. Commission and producer performance are hidden where they should be.'],
+    ['Audit trail','Every record view, export, quote and bind is written with user, time and IP.'],
+    ['Encryption','TLS in transit, AES-256 at rest, field level encryption on SSN, date of birth and licence numbers.'],
+    ['Documents','ID cards, certificates and dec pages are generated server side and never cached in the browser.'],
+    ['Data handling','Retention rules, export controls, and a deletion path on exit that satisfies state insurance requirements.'],
+    ['Backups','Daily encrypted, 35 day retention, quarterly restore test into a separate account.']];
+  document.getElementById('secBody').innerHTML=sec.map(s=>`<tr><td><b>${s[0]}</b></td><td style="font-size:12px;color:var(--ink2)">${s[1]}</td></tr>`).join('');
+  const roles=[['Client records','yes','assigned','all','read'],['Commission and producer pay','yes','no','no','no'],['Carrier credentials','yes','no','no','no'],
+    ['Export book','yes','no','no','no'],['Billing and projections','yes','no','no','no'],['Documents and certificates','yes','yes','yes','read']];
+  document.getElementById('roleBody').innerHTML=roles.map(r=>`<tr><td>${r[0]}</td>${r.slice(1).map(v=>`<td class="num"><span class="chip ${v==='yes'?'g':v==='no'?'r':'n'}">${v}</span></td>`).join('')}</tr>`).join('');
+  document.getElementById('auditBody').innerHTML=AUDIT.map(a=>`<tr><td class="mono">${a[0]}</td><td>${a[1]}</td><td style="font-size:11.5px">${a[2]}</td><td style="font-size:11.5px;color:var(--muted)">${a[3]}</td></tr>`).join('');
+}
+
+/* ---------- projections ---------- */
+const TIERS=[
+ {n:'Tier 1 · Private agent or firm',who:'1 to 3 licensed agents, one location',fee:0,price:599,stack:786,inc:'One login, client records pulled from EZLynx, portal quoting, ID cards, certificates, renewals, drips, client portal under their brand'},
+ {n:'Tier 2 · Multi-agent agency',who:'4 to 15 agents, producers and CSRs',fee:0,price:1299,stack:1689,inc:'Everything in tier 1, roles and permissions, out-of-office coverage, ad and lead reporting, nightly EZLynx sync'},
+ {n:'Tier 3 · Enterprise',who:'16 or more agents, multi-location, or white label resale',fee:0,price:2499,stack:3724,inc:'Everything in tier 2, white-label branding and domain, tenant isolation, audit exports, priority support and onboarding'}
+];
+function renderProjections(){
+  const k=[['Tier 1 membership',money(499)+' + '+money(199)+'/mo','startup fee plus monthly',''],['Blended member',money(1249)+' + '+money(504)+'/mo','at a 60/30/10 mix','up'],
+    ['Breakeven','19 agencies','about 135 users',''],['Revenue at 50 agencies',money(37690)+'/mo','monthly plus startup fees','up']];
+  document.getElementById('projKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('tierBody').innerHTML=TIERS.map(t=>{const save=Math.round((1-t.price/t.stack)*100);
+    return `<tr><td><b>${t.n}</b><div style="font-size:11px;color:var(--muted)">${t.who}</div></td>
+    <td style="font-size:11.5px;color:#4A5768">${t.inc}</td><td class="num">${money(t.fee)}</td><td class="num"><b>${money(t.price)}</b></td>
+    <td class="num">${money(t.fee+t.price*12)}</td><td class="num"><span class="chip g">${save}%</span></td></tr>`}).join('');
+  document.getElementById('tierDetail').innerHTML=TIERS.map(t=>`<div class="pol" style="background:#fff">
+    <div class="r1"><span class="car">${t.n}</span><span class="chip n">${money(t.fee)} + ${money(t.price)}/mo</span></div>
+    <div class="meta">${t.inc}</div><div class="acts"><button onclick="toast('${t.n} selected for the proposal')">Use this tier</button></div></div>`).join('')
+    +`<div class="note">Startup fee covers onboarding and setup. Monthly covers the platform. EZLynx remains in place for every agent and is not part of this price.</div>`;
+  const mix=[[10,'60/30/10'],[25,'60/30/10'],[50,'55/35/10'],[100,'50/40/10']];
+  document.getElementById('mrrBody').innerHTML=mix.map(m=>{
+    const [a,b,c]=m[1].split('/').map(Number),n=m[0];
+    const t1=Math.round(n*a/100),t2=Math.round(n*b/100),t3=n-t1-t2;
+    const mrr=t1*199+t2*649+t3*1900;
+    return `<tr><td><b>${n} agencies</b></td><td class="num" style="font-size:11.5px">${t1} / ${t2} / ${t3}</td>
+    <td class="num">${money(mrr)}</td><td class="num">${money(mrr*12)}</td></tr>`}).join('');
+  const costs=[['Support and onboarding',3200],['Sales and marketing',2600],['Maintenance, 20 hours',1200],['Security and tooling',520]];
+  const tot=costs.reduce((s,c)=>s+c[1],0);
+  document.getElementById('costBars').innerHTML=costs.map(c=>`<div class="bar"><span>${c[0]}</span><div class="track"><div class="fill" style="width:${Math.round(c[1]/tot*100)}%"></div></div><span class="n">${money(c[1])}</span></div>`).join('');
+  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month fixed, against <b>${money(402)}</b> contribution per agency. Breakeven is <b>19 agencies</b>, about 135 users. The build is repaid by July 2027.`;
+}
+
+/* ---------- boot ---------- */
+function renderAll(){renderDash();renderClients();renderQuotes();renderPolicies();renderTasks();renderEmail();renderMessages();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+document.querySelectorAll('#clientFilters button').forEach(b=>b.onclick=()=>setClientFilter(b.dataset.f));
+document.querySelectorAll('#polFilters button').forEach(b=>b.onclick=()=>setPolFilter(b.dataset.f));
+document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeDrawer();}});
+document.getElementById('gateCode').addEventListener('keydown',e=>{if(e.key==='Enter')unlock()});
+/* ================= action layer: everything below is simulated end-product behavior ================= */
+const CLIENT_ACT={};
+let PROJ_RANGE='m';
+const now=()=>new Date().toTimeString().slice(0,5);
+function act(clientId,kind,text){
+  const stamp=now();
+  if(clientId){CLIENT_ACT[clientId]=CLIENT_ACT[clientId]||[];CLIENT_ACT[clientId].unshift({t:stamp,kind,text});}
+  ACTLOG.unshift([stamp,text]);
+  const tasksView=document.getElementById('v-tasks');
+  if(tasksView&&tasksView.classList.contains('on'))renderTasks();
+  const drawer=document.getElementById('drawer');
+  if(drawer&&drawer.classList.contains('open')&&clientId===SELECTED_CLIENT)renderDrawer();
+}
+function clientOfName(name){
+  const n=(name||'').toLowerCase().trim();
+  return CLIENTS.find(c=>c.name.toLowerCase()===n)||CLIENTS.find(c=>c.name.toLowerCase().includes(n)&&n.length>3);
+}
+function shellModal(title,sub,inner){
+  document.getElementById('sheet').innerHTML=`<h3>${title}</h3><div class="p">${sub||''}</div>${inner}`;
+  document.getElementById('modal').classList.add('open');
+}
+/* ---- compose: text, email, call ---- */
+function compose(channel,cid){
+  const c=byId(cid)||CLIENTS[0];
+  const tpl={
+    text:`Hi ${c.name.split(' ')[0]}, this is ${c.owner.split(' ')[0]} at Cardinal. Your ${polsOf(c.id)[0]?polsOf(c.id)[0].carrier:'policy'} renewal is coming up and I have two options for you. Want me to send them over?`,
+    email:`Subject: Your ${polsOf(c.id)[0]?polsOf(c.id)[0].line.toLowerCase():'policy'} renewal\n\n${c.name.split(' ')[0]},\n\nI pulled your file and re-shopped the renewal before the carrier notice goes out. Two options came back, one keeps your current deductible and one lowers the monthly.\n\nReply here and I will send both side by side.\n\n${c.owner}\nCardinal Insurance Group`
+  };
+  const body=channel==='email'?tpl.email:tpl.text;
+  shellModal(channel==='email'?'Send email · '+c.name:'Send text · '+c.name,
+    channel==='email'?c.email:c.phone,
+    `<div class="field"><label>Message</label><textarea id="composeText" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:12.5px;min-height:120px;background:#FBFCFF;font-family:inherit">${body}</textarea></div>
+     <div class="field"><label>Create follow-up task</label><select id="composeTask"><option value="yes">Yes, 3 days if no reply</option><option value="no">No</option></select></div>
+     <div class="acts"><button class="btn blue" onclick="sendCompose('${channel}','${c.id}')">Send ${channel==='email'?'email':'text'}</button>
+     <button class="btn ghost" onclick="closeModal()">Cancel</button></div>`);
+}
+function sendCompose(channel,cid){
+  const c=byId(cid),txt=(document.getElementById('composeText').value||'').slice(0,60);
+  const wantTask=document.getElementById('composeTask').value==='yes';
+  closeModal();
+  act(cid,channel,(channel==='email'?'Email':'Text')+' sent to '+c.name+' · "'+txt+'…"');
+  if(wantTask){
+    TASKS.push({id:'T'+Date.now(),clientId:cid,reason:'No reply to '+channel+' sent today',due:'this week',owner:c.owner,type:'follow-up',pri:'normal',done:false});
+    renderTasks();
+  }
+  toast((channel==='email'?'Email':'Text')+' sent to '+c.name.split(' ')[0]+(wantTask?' · follow-up task created':''));
+}
+function callModal(cid){
+  const c=byId(cid)||CLIENTS[0];
+  shellModal('Log call · '+c.name,c.phone,
+    `<div class="field"><label>Outcome</label><select id="callOut"><option>Spoke with client</option><option>Left voicemail</option><option>No answer</option><option>Booked appointment</option><option>Requested callback</option></select></div>
+     <div class="field"><label>Notes</label><textarea id="callNotes" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:12.5px;min-height:90px;background:#FBFCFF;font-family:inherit" placeholder="What was discussed"></textarea></div>
+     <div class="field"><label>Follow-up</label><select id="callFollow"><option value="3">In 3 days</option><option value="7">In a week</option><option value="30">In a month</option><option value="0">None</option></select></div>
+     <div class="acts"><button class="btn blue" onclick="saveCall('${c.id}')">Save call</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>`);
+}
+function saveCall(cid){
+  const c=byId(cid),out=document.getElementById('callOut').value,notes=(document.getElementById('callNotes').value||'').trim(),f=+document.getElementById('callFollow').value;
+  closeModal();
+  act(cid,'call','Call to '+c.name+' · '+out+(notes?' · '+notes.slice(0,50):''));
+  if(f>0){
+    TASKS.push({id:'T'+Date.now(),clientId:cid,reason:'Follow up after call: '+out.toLowerCase(),due:f<=3?'today':'this week',owner:c.owner,type:'follow-up',pri:'normal',done:false});
+    renderTasks();
+  }
+  toast('Call saved · '+out);
+}
+/* ---- tasks ---- */
+function taskModal(cid){
+  const opts=CLIENTS.map(c=>`<option value="${c.id}"${cid===c.id?' selected':''}>${c.name}</option>`).join('');
+  shellModal('New task','Assigned work shows in the queue and in the client record.',
+    `<div class="field"><label>Client</label><select id="tkClient">${opts}</select></div>
+     <div class="field"><label>Task</label><input id="tkReason" placeholder="What needs to happen" value="Renewal review call"></div>
+     <div class="field"><label>Due</label><select id="tkDue"><option>today</option><option>tomorrow</option><option>this week</option></select></div>
+     <div class="field"><label>Owner</label><select id="tkOwner">${PROD.map(p=>`<option>${p}</option>`).join('')}</select></div>
+     <div class="field"><label>Priority</label><select id="tkPri"><option value="normal">Normal</option><option value="high">High</option></select></div>
+     <div class="acts"><button class="btn blue" onclick="saveTask()">Create task</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>`);
+}
+function saveTask(){
+  const cid=document.getElementById('tkClient').value,reason=document.getElementById('tkReason').value||'Follow-up';
+  const due=document.getElementById('tkDue').value,owner=document.getElementById('tkOwner').value,pri=document.getElementById('tkPri').value;
+  closeModal();
+  TASKS.push({id:'T'+Date.now(),clientId:cid,reason,due,owner,type:'manual',pri,done:false});
+  act(cid,'task','Task created: '+reason+' · due '+due+' · '+owner);
+  renderTasks();renderDash();
+  toast('Task created for '+byId(cid).name.split(' ')[0]);
+}
+/* ---- notes ---- */
+function noteModal(cid){
+  const c=byId(cid);
+  shellModal('Add note · '+c.name,'Notes are timestamped and stay on the record.',
+    `<div class="field"><label>Note</label><textarea id="noteText" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:12.5px;min-height:100px;background:#FBFCFF;font-family:inherit" placeholder="What happened on this account"></textarea></div>
+     <div class="acts"><button class="btn blue" onclick="saveNote('${cid}')">Save note</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>`);
+}
+function saveNote(cid){
+  const v=(document.getElementById('noteText').value||'').trim();
+  closeModal();
+  if(!v){toast('Nothing to save');return}
+  act(cid,'note','Note: '+v.slice(0,70));
+  toast('Note saved to '+byId(cid).name.split(' ')[0]+"'s record");
+}
+/* ---- client record ---- */
+function renderDrawer(){
+  const c=byId(SELECTED_CLIENT);if(!c)return;
+  const ps=polsOf(c.id),cl=CLAIMS.filter(x=>x.clientId===c.id),acts=CLIENT_ACT[c.id]||[];
+  document.getElementById('dh').innerHTML=`
+    <div class="big-av">${c.name.split(' ').map(x=>x[0]).join('')}</div>
+    <div style="flex:1"><div style="font-weight:700;font-size:15px">${c.name}</div>
+    <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${c.type==='business'?'Business account':'Household'} · ${c.city} ${c.zip} · client since ${c.since}</div>
+    <div style="margin-top:6px"><span class="chip ${c.tag==='due'?'r':c.tag==='renewing'?'a':'g'}">${c.tag||'current'}</span> <span class="chip n">${c.owner}</span></div></div>
+    <button class="btn sm ghost" onclick="closeDrawer()">Close</button>`;
+  const tabs=[['overview','Overview'],['policies','Policies'],['docs','Documents'],['claims','Claims'],['activity','Activity']];
+  let body=`<div class="tabs">${tabs.map(t=>`<button class="${DRAWER_TAB===t[0]?'on':''}" onclick="setDrawerTab('${t[0]}')">${t[1]}</button>`).join('')}</div>`;
+  if(DRAWER_TAB==='overview'){
+    body+=`<div class="grid2">
+      <div class="kpi"><div class="k">Phone</div><div class="v" style="font-size:13px">${c.phone}</div><div class="s">mobile · text enabled</div></div>
+      <div class="kpi"><div class="k">Email</div><div class="v" style="font-size:13px">${c.email}</div><div class="s">consented to email</div></div>
+      <div class="kpi"><div class="k">Address</div><div class="v" style="font-size:13px">${c.street}</div><div class="s">${c.city}, AZ ${c.zip}</div></div>
+      <div class="kpi"><div class="k">Date of birth</div><div class="v" style="font-size:13px">${c.dob}</div><div class="s">birthday drip active</div></div>
+      <div class="kpi"><div class="k">Annual premium</div><div class="v">${money(premOf(c.id))}</div><div class="s">${ps.length} policies</div></div>
+      <div class="kpi"><div class="k">Last touch</div><div class="v">${c.touch}d ago</div><div class="s">owner ${c.owner}</div></div>
+    </div>
+    <div class="note" style="margin-top:12px"><b>Next best action:</b> ${ps.some(p=>p.payDue)?'collect payment before lapse risk turns into a cancellation.':'confirm renewal timing and offer the missing line while the book is open.'}</div>
+    <div class="acts" style="margin-top:10px">
+      <button onclick="callModal('${c.id}')">Log call</button>
+      <button onclick="compose('text','${c.id}')">Send text</button>
+      <button onclick="compose('email','${c.id}')">Send email</button>
+      <button onclick="taskModal('${c.id}')">Add task</button>
+      <button onclick="noteModal('${c.id}')">Add note</button></div>
+    <div class="panel" style="margin-top:12px"><div class="head"><h2>Recent activity</h2><div class="spacer"></div><span class="chip n">${acts.length} events</span></div>
+      <div class="body">${acts.length?acts.slice(0,4).map(a=>`<div class="docrow"><div class="ic">${a.kind.slice(0,3).toUpperCase()}</div><div style="flex:1"><b>${a.text}</b><div style="font-size:11px;color:var(--muted)">${a.t} · ${a.kind}</div></div></div>`).join(''):'<div style="font-size:12px;color:var(--muted)">No activity logged yet. Every call, text, email, note and payment lands here.</div>'}</div></div>`;
+  }
+  if(DRAWER_TAB==='policies'){
+    body+=ps.map(p=>`<div class="pol"><div class="r1"><span class="car">${p.carrier}</span>
+      <span class="chip ${p.payDue?'r':'g'}">${p.status}</span><span class="pill">${p.line}</span></div>
+      <div class="meta">${p.policy} · effective ${p.eff} · renews ${p.renewal} (${p.daysOut} days)<br>
+      ${money(p.premium)} annual · ${money(p.premium/12)} monthly · commission ${Math.round(p.commRate*100)}%</div>
+      <div class="acts"><button onclick="docModal('id','${p.id}')">ID card</button>
+      <button onclick="docModal('coi','${p.id}')">Certificate</button>
+      <button onclick="docModal('dec','${p.id}')">Dec page</button>
+      <button onclick="payNow('${p.id}')">Take payment</button>
+      <button onclick="policyDetail('${p.id}')">Open policy</button></div></div>`).join('')
+      ||'<div class="note">No policies on file.</div>';
+  }
+  if(DRAWER_TAB==='docs'){
+    body+=`<div class="panel" style="margin-top:0"><div class="head"><h2>Documents</h2><div class="spacer"></div><span class="chip n">${ps.length*3} files</span></div><div class="body">`;
+    ps.forEach(p=>{
+      body+=`<div class="docrow"><div class="ic">PDF</div><div style="flex:1"><b>${p.carrier} ${p.line} declarations</b><div style="font-size:11px;color:var(--muted)">generated ${p.eff} · ${p.policy}</div></div><button class="btn sm ghost" onclick="docModal('dec','${p.id}')">Open</button><button class="btn sm ghost" onclick="docModal('dec','${p.id}')">Send</button></div>`;
+      body+=`<div class="docrow"><div class="ic">ID</div><div style="flex:1"><b>${p.carrier} insurance card</b><div style="font-size:11px;color:var(--muted)">auto ID card · expires ${p.renewal}</div></div><button class="btn sm ghost" onclick="docModal('id','${p.id}')">Open</button><button class="btn sm ghost" onclick="docModal('id','${p.id}')">Send</button></div>`;
+      if(p.line.includes('Commercial')||p.line==='BOP')body+=`<div class="docrow"><div class="ic">COI</div><div style="flex:1"><b>Certificate of insurance</b><div style="font-size:11px;color:var(--muted)">holder on file · ${p.policy}</div></div><button class="btn sm ghost" onclick="docModal('coi','${p.id}')">Open</button><button class="btn sm ghost" onclick="docModal('coi','${p.id}')">Send</button></div>`;
+    });
+    body+=`</div></div>`;
+  }
+  if(DRAWER_TAB==='claims'){
+    body+=cl.length?`<table><thead><tr><th>Carrier</th><th>Loss</th><th>Date</th><th class="num">Reserve</th><th class="num">Paid</th><th>Status</th><th></th></tr></thead><tbody>`+
+      cl.map(x=>`<tr><td>${x.carrier}</td><td>${x.type}<div style="font-size:11px;color:var(--muted)">adjuster ${x.adjuster}</div></td><td>${x.date}</td><td class="num">${money(x.reserve)}</td><td class="num">${money(x.paid)}</td><td><span class="chip ${x.status==='closed'?'g':'a'}">${x.status}</span></td><td><button class="btn sm ghost" onclick="claimDetail('${x.id}')">Open</button></td></tr>`).join('')+`</tbody></table>`
+      :'<div class="note">No claims on this account. Clean loss history is worth mentioning at renewal.</div>';
+  }
+  if(DRAWER_TAB==='activity'){
+    const all=acts.slice();
+    body+=`<div class="tl">`+(all.length?all.map(a=>`<div class="ev"><b>${a.text}</b><div class="w">${a.t} · ${a.kind}</div></div>`).join(''):'<div class="ev"><b>No activity yet</b><div class="w">Log a call, send a text or add a note and it appears here</div></div>')+`</div>`;
+    body+=`<div class="acts" style="margin-top:6px"><button onclick="callModal('${c.id}')">Log call</button><button onclick="compose('text','${c.id}')">Send text</button><button onclick="compose('email','${c.id}')">Send email</button><button onclick="noteModal('${c.id}')">Add note</button></div>`;
+  }
+  document.getElementById('db').innerHTML=body;
+}
+function claimDetail(cid2){
+  const x=CLAIMS.find(c=>c.id===cid2),c=byId(x.clientId);
+  shellModal('Claim · '+x.type,c.name+' · '+x.carrier,
+    `<div class="grid2">
+      <div class="kpi"><div class="k">Date of loss</div><div class="v" style="font-size:13px">${x.date}</div></div>
+      <div class="kpi"><div class="k">Adjuster</div><div class="v" style="font-size:13px">${x.adjuster}</div></div>
+      <div class="kpi"><div class="k">Reserve</div><div class="v">${money(x.reserve)}</div></div>
+      <div class="kpi"><div class="k">Paid</div><div class="v">${money(x.paid)}</div></div>
+    </div>
+    <div class="acts" style="margin-top:10px">
+      <button onclick="claimStatus('${x.id}','open')">Mark open</button>
+      <button onclick="claimStatus('${x.id}','closed')">Mark closed</button>
+      <button onclick="act('${c.id}','claim','Called adjuster on ${x.type}')">Call adjuster</button>
+      <button onclick="closeModal()">Close</button></div>`);
+}
+function claimStatus(id,st){
+  const x=CLAIMS.find(c=>c.id===id);x.status=st;
+  act(x.clientId,'claim','Claim '+x.id+' marked '+st);
+  closeModal();renderDrawer();
+  toast('Claim marked '+st);
+}
+/* ---- payments and policies ---- */
+function payNow(pid){
+  const p=POLICIES.find(x=>x.id===pid);
+  p.payDue=false;p.status='active';
+  act(p.clientId,'payment','Payment collected on '+p.policy+' · '+money(p.premium/12));
+  toast('Payment of '+money(p.premium/12)+' collected on '+p.carrier);
+  renderDrawer();renderPolicies();renderDash();
+}
+function policyDetail(pid){
+  const p=POLICIES.find(x=>x.id===pid),c=byId(p.clientId);
+  shellModal('Policy · '+p.carrier+' '+p.line,c.name+' · '+p.policy,
+    `<div class="grid3">
+      <div class="kpi"><div class="k">Annual premium</div><div class="v">${money(p.premium)}</div></div>
+      <div class="kpi"><div class="k">Monthly</div><div class="v">${money(p.premium/12)}</div></div>
+      <div class="kpi"><div class="k">Commission</div><div class="v">${money(p.premium*p.commRate)}</div><div class="s">${Math.round(p.commRate*100)}% of premium</div></div>
+      <div class="kpi"><div class="k">Effective</div><div class="v" style="font-size:13px">${p.eff}</div></div>
+      <div class="kpi"><div class="k">Renewal</div><div class="v" style="font-size:13px">${p.renewal}</div><div class="s">${p.daysOut} days out</div></div>
+      <div class="kpi"><div class="k">Status</div><div class="v" style="font-size:13px">${p.status}</div></div>
+    </div>
+    <div class="acts" style="margin-top:12px">
+      <button onclick="payNow('${p.id}')">Take payment</button>
+      <button onclick="docModal('id','${p.id}')">ID card</button>
+      <button onclick="docModal('coi','${p.id}')">Certificate</button>
+      <button onclick="docModal('dec','${p.id}')">Dec page</button>
+      <button onclick="renewPolicy('${p.id}')">Renew now</button>
+      <button onclick="cancelPolicy('${p.id}')">${p.status==='cancelled'?'Reinstate':'Cancel policy'}</button>
+      <button onclick="closeModal()">Close</button></div>`);
+}
+function renewPolicy(pid){
+  const p=POLICIES.find(x=>x.id===pid);
+  p.renewal=d2(addDays(TODAY,365));p.daysOut=365;p.eff=d2(TODAY);p.status='active';p.payDue=false;
+  act(p.clientId,'policy','Renewed '+p.policy+' for another term at '+money(p.premium));
+  closeModal();renderPolicies();renderDrawer();
+  toast('Renewed with '+p.carrier+' · new term starts today');
+}
+function cancelPolicy(pid){
+  const p=POLICIES.find(x=>x.id===pid);
+  const reinstate=p.status==='cancelled';
+  p.status=reinstate?'active':'cancelled';
+  act(p.clientId,'policy',(reinstate?'Reinstated ':'Cancelled ')+p.policy);
+  closeModal();renderPolicies();renderDrawer();
+  toast((reinstate?'Reinstated ':'Cancelled ')+p.carrier+' policy');
+}
+/* ---- quotes ---- */
+let QUOTE_CLIENT=null;
+function renderQuotes(){
+  const dl=document.getElementById('clientList');
+  if(dl)dl.innerHTML=CLIENTS.map(c=>`<option value="${c.name}">`).join('');
+  document.getElementById('qHistCount').textContent=QUOTES.length+' quotes';
+  document.getElementById('qHistBody').innerHTML=QUOTES.slice().reverse().map(q=>{const c=byId(q.clientId)||{name:'Prospect'};
+    return `<tr><td><b>${c.name}</b></td><td>${q.line}</td><td>${q.carrier}</td><td class="num">${money(q.premium)}</td>
+    <td><span class="chip ${q.status==='bound'?'g':q.status==='lost'?'r':'a'}">${q.status}</span></td><td>${q.sent}</td>
+    <td><button class="btn sm ghost" onclick="quoteDetail('${q.id}')">Open</button></td></tr>`}).join('');
+  renderMarkets();
+  const loss=[['Price, client found cheaper',38],['No response after 3 touches',26],['Coverage requirement not met',16],['Went with current carrier',12],['Payment or down payment issue',8]];
+  document.getElementById('lossBars').innerHTML=loss.map(x=>`<div class="bar"><span>${x[0]}</span><div class="track"><div class="fill" style="width:${x[1]*2.4}%"></div></div><span class="n">${x[1]}%</span></div>`).join('');
+}
+function marketRows(){
+  const line=document.getElementById('qLine')?document.getElementById('qLine').value:'Auto';
+  const f=line==='Home'?1.28:line==='Umbrella'?0.24:line.includes('Commercial')||line==='BOP'?2.4:line==='Renters'?0.22:1;
+  return [['Safeco','download','Preferred · clean loss history',1240],
+    ['Travelers','api','Preferred · multi-policy discount',1310],
+    ['Progressive','api','Standard · one violation, 3 years',1440],
+    ['Openly','api','Preferred · newer roof required',1510],
+    ['Nationwide','download','Standard · prior lapse, acceptable',1580],
+    ['Chubb','download','Elite only · declined appetite',0],
+    ['Stillwater','download','Preferred · coastal exclusion',1660],
+    ['Mercury','portal','Standard · 2 vehicles, garaged',1620],
+    ['Bristol West','portal','Non-standard · prior cancellation',1890],
+    ['Foremost','portal','Manufactured home only · n/a',0],
+    ['GAINSCO','portal','Non-standard auto only',1740],
+    ['The Hartford','download','Commercial lines only · n/a',0]].map(r=>[r[0],r[1],r[2],Math.round(r[3]*f/10)*10]);
+}
+function renderMarkets(){
+  const m=marketRows(),best=Math.min(...m.filter(x=>x[3]>0).map(x=>x[3]));
+  document.getElementById('marketCount').textContent=m.filter(x=>x[3]>0).length+' of 12 markets returned a number';
+  document.getElementById('marketBody').innerHTML=m.map(x=>x[3]>0?`<tr><td><b>${x[0]}</b></td><td><span class="chip ${x[1]==='api'?'g':x[1]==='download'?'n':'a'}">${x[1]}</span></td>
+    <td style="font-size:11.5px;color:var(--muted)">${x[2]}</td><td class="num"><b>${money(x[3])}</b></td><td class="num">${money(x[3]/12)}</td>
+    <td><button class="btn sm ${x[3]===best?'blue':'ghost'}" onclick="bindQuote('${x[0]}',${x[3]},'${x[1]}')">${x[3]===best?'Bind best':'Select'}</button></td></tr>`
+    :`<tr style="opacity:.55"><td><b>${x[0]}</b></td><td><span class="chip n">${x[1]}</span></td><td style="font-size:11.5px">${x[2]}</td><td class="num">—</td><td class="num">—</td><td></td></tr>`).join('');
+}
+function runQuote(){
+  const name=(document.getElementById('qName').value||'Prospect').trim();
+  const line=document.getElementById('qLine').value,zip=(document.getElementById('qZip').value||'85142').trim();
+  QUOTE_CLIENT=clientOfName(name);
+  renderMarkets();
+  act(QUOTE_CLIENT?QUOTE_CLIENT.id:null,'quote','Quoted '+name+' · '+line+' · ZIP '+zip+' across 12 markets');
+  toast('12 markets quoted for '+name+' · '+line);
+}
+function bindQuote(carrier,prem,method){
+  if(!prem){toast('That market did not return a number');return}
+  const name=(document.getElementById('qName').value||'').trim();
+  let c=clientOfName(name)||QUOTE_CLIENT;
+  if(!c && name){
+    c={id:'C'+(9000+CLIENTS.length),name,type:'household',city:'Queen Creek',zip:'85142',owner:PROD[0],
+      since:'2026',tag:'prospect',touch:0,phone:'(480) 555-01'+String(10+CLIENTS.length).slice(-2),
+      email:name.toLowerCase().replace(/[^a-z]+/g,'.')+'@example.com',street:'—',dob:'—'};
+    CLIENTS.push(c);QUOTE_CLIENT=c;
+  }
+  if(!c){toast('Enter a client or prospect name first');return}
+  const line=document.getElementById('qLine').value;
+  const p={id:'P'+(9000+POLICIES.length),clientId:c.id,carrier,policy:'AZ-'+carrier.slice(0,2).toUpperCase()+'-'+String(700000+POLICIES.length*41),line,
+    eff:d2(TODAY),renewal:d2(addDays(TODAY,365)),daysOut:365,premium:prem,status:'active',payDue:false,commRate:0.15,docs:['Declarations page','ID card']};
+  POLICIES.push(p);
+  QUOTES.push({id:'Q'+Date.now(),clientId:c.id,line,carrier,premium:prem,status:'bound',sent:'today'});
+  act(c.id,'quote','Bound '+carrier+' '+line+' at '+money(prem)+' for '+c.name);
+  toast('Bound with '+carrier+' at '+money(prem)+' · added to '+c.name.split(' ')[0]+"'s book");
+  renderQuotes();renderPolicies();renderDash();
+}
+function quoteDetail(qid){
+  const q=QUOTES.find(x=>x.id===qid),c=byId(q.clientId)||{name:'Prospect',id:null,email:'',phone:''};
+  shellModal('Quote · '+q.line+' · '+q.carrier,c.name+' · issued '+q.sent,
+    `<div class="grid3">
+      <div class="kpi"><div class="k">Annual</div><div class="v">${money(q.premium)}</div></div>
+      <div class="kpi"><div class="k">Monthly</div><div class="v">${money(q.premium/12)}</div></div>
+      <div class="kpi"><div class="k">Status</div><div class="v" style="font-size:13px">${q.status}</div></div>
+    </div>
+    <div class="acts" style="margin-top:12px">
+      <button onclick="sendQuote('${q.id}')">Send to client</button>
+      <button onclick="bindExisting('${q.id}')">Bind</button>
+      <button onclick="loseQuote('${q.id}')">Mark lost</button>
+      <button onclick="closeModal()">Close</button></div>`);
+}
+function sendQuote(qid){
+  const q=QUOTES.find(x=>x.id===qid),c=byId(q.clientId);
+  q.status='sent';
+  act(q.clientId,'quote','Quote sent · '+q.carrier+' '+money(q.premium));
+  if(c)TASKS.push({id:'T'+Date.now(),clientId:c.id,reason:'Quote sent, no reply in 3 days',due:'this week',owner:c.owner,type:'quote',pri:'normal',done:false});
+  closeModal();renderQuotes();renderTasks();
+  toast('Quote sent · follow-up task created');
+}
+function bindExisting(qid){
+  const q=QUOTES.find(x=>x.id===qid),c=byId(q.clientId);
+  q.status='bound';
+  POLICIES.push({id:'P'+(9000+POLICIES.length),clientId:q.clientId,carrier:q.carrier,policy:'AZ-'+q.carrier.slice(0,2).toUpperCase()+'-'+String(700000+POLICIES.length*41),
+    line:q.line,eff:d2(TODAY),renewal:d2(addDays(TODAY,365)),daysOut:365,premium:q.premium,status:'active',payDue:false,commRate:0.15,docs:['Declarations page','ID card']});
+  act(q.clientId,'quote','Bound '+q.carrier+' at '+money(q.premium));
+  closeModal();renderQuotes();renderPolicies();
+  toast('Bound with '+q.carrier);
+}
+function loseQuote(qid){
+  const q=QUOTES.find(x=>x.id===qid);
+  q.status='lost';
+  act(q.clientId,'quote','Quote marked lost · '+q.carrier);
+  closeModal();renderQuotes();
+  toast('Quote marked lost');
+}
+/* ---- campaigns ---- */
+function renderCampaigns(){
+  const k=[['Sequences running',CAMPS.filter(c=>c.status!=='paused').length,'of '+CAMPS.length+' total','up'],['People enrolled',CAMPS.reduce((s,c)=>s+c.enrolled,0),'across all sequences',''],
+    ['Touches sent 30d',CAMPS.reduce((s,c)=>s+c.sent,0),'text and email',''],['Policies from drips',CAMPS.reduce((s,c)=>s+c.bound,0),'attributed this month','up']];
+  document.getElementById('campKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('campBody').innerHTML=CAMPS.map((c,i)=>`<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${c.status==='paused'?'paused':'running'}</div></td><td style="font-size:11.5px">${c.trig}</td>
+    <td class="num">${c.steps}</td><td class="num">${c.enrolled}</td><td class="num">${c.sent}</td>
+    <td class="num">${Math.round(c.reply/c.enrolled*100)}%</td><td class="num">${c.bound}</td>
+    <td style="white-space:nowrap"><button class="btn sm ghost" onclick="showCamp(${i})">View</button>
+    <button class="btn sm ghost" onclick="toggleCamp(${i})">${c.status==='paused'?'Resume':'Pause'}</button></td></tr>`).join('');
+  showCamp(SELECTED_CAMP,false);
+}
+function toggleCamp(i){
+  const c=CAMPS[i];c.status=c.status==='paused'?'running':'paused';
+  act(null,'campaign',c.name+' '+(c.status==='paused'?'paused':'resumed'));
+  renderCampaigns();
+  toast(c.name+' '+(c.status==='paused'?'paused':'running again'));
+}
+function showCamp(i,fromUser){
+  SELECTED_CAMP=i;const c=CAMPS[i];
+  document.querySelectorAll('#campBody tr').forEach((tr,j)=>tr.style.background=j===i?'#F3F7FF':'');
+  if(fromUser!==false)toast('Showing '+c.name+' · '+c.steps+' steps');
+  document.getElementById('campName').textContent=c.name;
+  document.getElementById('campDetail').innerHTML=
+    `<div class="kpi"><div class="k">Trigger</div><div class="v" style="font-size:13px">${c.trig}</div><div class="s">Runs whether or not anyone remembers it</div></div>
+     <div class="tl" style="margin-top:12px">${c.detail.map((s,j)=>`<div class="ev"><b>${s}</b><div class="w">step ${j+1} of ${c.detail.length}</div></div>`).join('')}</div>
+     <div class="acts"><button onclick="editStep(${i})">Edit steps</button><button onclick="enrollTest(${i})">Send test to myself</button></div>
+     <div class="note">${c.enrolled} enrolled, ${c.sent} touches sent in 30 days, ${Math.round(c.reply/c.enrolled*100)}% replied, ${c.bound} bound. Replies route to the assigned producer as a task, not into a dead inbox.</div>`;
+  document.getElementById('msgLib').innerHTML=[['SMS · renewal',"Hi {first}, your {carrier} renewal lands {date}. I re-shopped it and I have two options before it auto-renews. Want me to send them over?"],
+    ['SMS · payment',"{first}, the {carrier} payment of {amount} did not go through. Coverage is at risk after {date}. Here is the secure link."],
+    ['Email · quote follow-up',"Subject: your numbers, side by side. {first}, attached is what each market came back with. The difference is mostly in the deductible and the roof age."],
+    ['SMS · birthday',"Happy birthday {first}. No pitch, just hoping the year treats you well. — {producer}"]]
+    .map((m,j)=>`<div class="pol"><div class="r1"><span class="car">${m[0]}</span></div><div class="meta">${m[1]}</div>
+      <div class="acts"><button onclick="editTemplate(${j})">Edit</button><button onclick="copyTemplate(${j})">Copy</button><button onclick="testSend('${m[0]}')">Send test</button></div></div>`).join('');
+}
+const MSG_LIB=[['SMS · renewal',"Hi {first}, your {carrier} renewal lands {date}. I re-shopped it and I have two options before it auto-renews. Want me to send them over?"],
+    ['SMS · payment',"{first}, the {carrier} payment of {amount} did not go through. Coverage is at risk after {date}. Here is the secure link."],
+    ['Email · quote follow-up',"Subject: your numbers, side by side. {first}, attached is what each market came back with. The difference is mostly in the deductible and the roof age."],
+    ['SMS · birthday',"Happy birthday {first}. No pitch, just hoping the year treats you well. — {producer}"]];
+function editTemplate(j){
+  const m=MSG_LIB[j];
+  shellModal('Edit template · '+m[0],'Placeholders in braces fill from the client record.',
+    `<div class="field"><label>Message</label><textarea id="tplText" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:12.5px;min-height:110px;background:#FBFCFF;font-family:inherit">${m[1]}</textarea></div>
+     <div class="acts"><button class="btn blue" onclick="saveTemplate(${j})">Save template</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>`);
+}
+function saveTemplate(j){
+  MSG_LIB[j][1]=document.getElementById('tplText').value;
+  closeModal();showCamp(SELECTED_CAMP);
+  act(null,'campaign','Template updated: '+MSG_LIB[j][0]);
+  toast('Template saved');
+}
+function testSend(label){
+  act(null,'campaign','Test sent: '+label);
+  toast('Test sent to your own phone and inbox · '+label);
+}
+function copyTemplate(j){
+  navigator.clipboard&&navigator.clipboard.writeText(MSG_LIB[j][1]).catch(()=>{});
+  toast('Template copied');
+}
+function editStep(i){
+  const c=CAMPS[i];
+  shellModal('Edit steps · '+c.name,'One line per step. Keep it to five or fewer.',
+    `<div class="field"><label>Steps</label><textarea id="stepText" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:12.5px;min-height:130px;background:#FBFCFF;font-family:inherit">${c.detail.join('\n')}</textarea></div>
+     <div class="acts"><button class="btn blue" onclick="saveSteps(${i})">Save steps</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>`);
+}
+function saveSteps(i){
+  const v=document.getElementById('stepText').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  CAMPS[i].detail=v;CAMPS[i].steps=v.length;
+  closeModal();renderCampaigns();
+  act(null,'campaign','Steps updated: '+CAMPS[i].name);
+  toast('Sequence updated');
+}
+function enrollTest(i){
+  CAMPS[i].enrolled++;CAMPS[i].sent++;
+  renderCampaigns();
+  act(null,'campaign','Test contact enrolled in '+CAMPS[i].name);
+  toast('Test contact enrolled in '+CAMPS[i].name);
+}
+/* ---- growth ---- */
+function setRange(r){
+  PROJ_RANGE=r;
+  document.querySelectorAll('#rangeFilters button').forEach(b=>b.classList.toggle('on',b.dataset.r===r));
+  renderGrowth();
+  toast('Showing '+(r==='q'?'the quarter':r==='y'?'the year':'this month'));
+}
+function renderGrowth(){
+  const mult=PROJ_RANGE==='q'?3:PROJ_RANGE==='y'?12:1;
+  const label=PROJ_RANGE==='q'?'quarter':PROJ_RANGE==='y'?'year':'month';
+  const spend=CHANNELS.reduce((s,c)=>s+c.spend,0)*mult,leads=CHANNELS.reduce((s,c)=>s+c.leads,0)*mult,bound=CHANNELS.reduce((s,c)=>s+c.bound,0)*mult;
+  const revenue=CHANNELS.reduce((s,c)=>s+c.bound*c.prem,0)*mult;
+  const k=[['Ad spend, '+label,money(spend),'five channels',''],['Leads captured',leads,'blended CPL '+money(spend/leads),''],
+    ['Policies bound',bound,'cost per policy '+money(spend/bound),'up'],['Premium written',money(revenue),'ROAS '+(revenue/spend).toFixed(1)+'x','up']];
+  document.getElementById('growthKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('chanBody').innerHTML=CHANNELS.map((c,i)=>{const sp=c.spend*mult,ld=c.leads*mult,qt=c.quotes*mult,bd=c.bound*mult;
+    return `<tr><td><b>${c.ch}</b></td><td class="num">${money(sp)}</td><td class="num">${ld}</td>
+    <td class="num">${money(sp/ld)}</td><td class="num">${qt}</td><td class="num">${bd}</td>
+    <td class="num">${money(sp/bd)}</td><td class="num"><span class="chip ${bd*c.prem/sp>4?'g':'a'}">${(bd*c.prem/sp).toFixed(1)}x</span></td></tr>`}).join('');
+  const funnel=[['Leads',129*mult],['Contacted',111*mult],['Quoted',69*mult],['Bound',32*mult]];
+  document.getElementById('funnelBars').innerHTML=funnel.map(f=>`<div class="bar"><span>${f[0]}</span><div class="track"><div class="fill" style="width:${Math.round(f[1]/(129*mult)*100)}%"></div></div><span class="n">${f[1]}</span></div>`).join('');
+  document.getElementById('speedNote').innerHTML='Median speed to first contact is <b>4 minutes 20 seconds</b>. Anything over 5 minutes alerts the producer and the owner. Lead to bound takes 11 days on average.';
+  document.getElementById('zipBody').innerHTML=ZIPS.map(z=>`<tr><td class="mono">${z[0]}</td><td>${z[1]}</td><td class="num">${z[2]*mult}</td><td class="num">${z[3]*mult}</td><td class="num">${Math.round(z[3]/z[2]*100)}%</td></tr>`).join('');
+  document.getElementById('kwBody').innerHTML=KEYWORDS.map(k2=>`<tr><td>${k2[0]}</td><td class="num">${(k2[1]*mult).toLocaleString()}</td><td class="num">#${k2[2]}</td>
+    <td class="num"><span class="chip ${k2[3]>0?'g':k2[3]<0?'r':'n'}">${k2[3]>0?'+'+k2[3]:k2[3]<0?k2[3]:'—'}</span></td></tr>`).join('');
+  document.getElementById('callBody').innerHTML=CALLS.map(c=>`<tr><td>${c[0]}</td><td style="font-size:11.5px">${c[1]}</td><td class="num">${c[2]}</td><td style="font-size:11.5px">${c[3]}</td></tr>`).join('');
+}
+/* ---- sync ---- */
+function renderSync(){
+  const k=[['EZLynx status','Connected','last pull 8:04am','up'],['Policies reconciled',593,'0 errors',''],
+    ['Carrier connections',CARRIERS.length,'8 download or API, 4 portal',''],['Needs review',CONFLICTS.length,'address and entity conflicts','dn']];
+  document.getElementById('syncKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('syncLog').innerHTML=SYNCLOG.map(s=>`<div class="ev"><b>${s[1]}</b><div class="w">${s[0]}</div></div>`).join('');
+  document.getElementById('carrierBody').innerHTML=CARRIERS.map((c,i)=>`<tr><td><b>${c.n}</b></td>
+    <td><span class="chip ${c.m==='api'?'g':c.m==='download'?'n':'a'}">${c.m}</span></td><td style="font-size:11.5px">${c.st}</td>
+    <td class="num">${c.rec}</td><td>${c.last}</td></tr>`).join('');
+  document.getElementById('mapBody').innerHTML=MAPPING.map((m,i)=>`<tr><td class="mono">${m[0]}</td><td class="mono">${m[1]}</td>
+    <td style="font-size:11.5px;color:var(--muted)">${m[2]}</td><td><button class="btn sm ghost" onclick="editMapping(${i})">Edit</button></td></tr>`).join('');
+  document.getElementById('confCount').textContent=CONFLICTS.length+' open';
+  document.getElementById('confBody').innerHTML=CONFLICTS.map((c,i)=>`<tr><td><b>${c[0]}</b></td><td style="font-size:11.5px">${c[1]}</td>
+    <td><button class="btn sm ghost" onclick="resolveConflict(${i})">${c[2]}</button></td></tr>`).join('')
+    ||'<tr><td colspan="3" style="color:var(--muted)">Everything reconciled.</td></tr>';
+  document.getElementById('formBody').innerHTML=FORMS.map(f=>`<tr><td><b>${f[0]}</b></td><td>${f[1]}</td><td style="font-size:11.5px">${f[2]}</td>
+    <td style="font-size:11.5px">${f[3]}</td><td><span class="chip g">live</span></td></tr>`).join('');
+}
+function resolveConflict(i){
+  const c=CONFLICTS[i];
+  CONFLICTS.splice(i,1);
+  SYNCLOG.unshift([now(),'Resolved: '+c[0]+' · '+c[1]]);
+  act(null,'sync','Resolved conflict for '+c[0]);
+  renderSync();
+  toast('Resolved · '+c[0]);
+}
+function editMapping(i){
+  const m=MAPPING[i];
+  shellModal('Field mapping',m[0]+' → '+m[1],
+    `<div class="field"><label>Cardinal field</label><input id="mapField" value="${m[1]}"></div>
+     <div class="field"><label>Transform</label><input id="mapRule" value="${m[2]}"></div>
+     <div class="acts"><button class="btn blue" onclick="saveMapping(${i})">Save</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>`);
+}
+function saveMapping(i){
+  MAPPING[i][1]=document.getElementById('mapField').value;
+  MAPPING[i][2]=document.getElementById('mapRule').value;
+  closeModal();renderSync();
+  act(null,'sync','Mapping updated: '+MAPPING[i][0]);
+  toast('Mapping saved');
+}
+function syncNow(){
+  SYNCLOG.unshift([now(),'Manual pull requested · EZLynx download queued, 593 policies']);
+  act(null,'sync','Manual EZLynx sync requested');
+  renderSync();
+  toast('EZLynx pull queued · 593 policies');
+}
+/* ---- security ---- */
+function renderSecurity(){
+  const k=[['Synthetic data','100%','no real policyholder records',''],['Credentials in browser','0','vault holds all 12','up'],
+    ['Audit events today','214','every view, export and bind',''],['Roles enforced',4,'owner, producer, CSR, read only','']];
+  document.getElementById('secKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  const sec=[['Tenant isolation','Each agency gets its own partition. White-label deployments share no records or indexes.'],
+    ['No credentials in the browser','Carrier logins live in an encrypted server-side vault. The browser only receives data.'],
+    ['Role-based access','Owner, producer, CSR and read only. Commission and producer performance are hidden where they should be.'],
+    ['Audit trail','Every record view, export, quote and bind is written with user, time and IP.'],
+    ['Encryption','TLS in transit, AES-256 at rest, field level encryption on SSN, date of birth and licence numbers.'],
+    ['Documents','ID cards, certificates and dec pages are generated server side and never cached in the browser.'],
+    ['Data handling','Retention rules, export controls, and a deletion path on exit that satisfies state insurance requirements.'],
+    ['Backups','Daily encrypted, 35 day retention, quarterly restore test into a separate account.']];
+  document.getElementById('secBody').innerHTML=sec.map(s=>`<tr><td><b>${s[0]}</b></td><td style="font-size:12px;color:var(--ink2)">${s[1]}</td></tr>`).join('');
+  const roles=[['Client records','yes','assigned','all','read'],['Commission and producer pay','yes','no','no','no'],['Carrier credentials','yes','no','no','no'],
+    ['Export book','yes','no','no','no'],['Billing and projections','yes','no','no','no'],['Documents and certificates','yes','yes','yes','read']];
+  document.getElementById('roleBody').innerHTML=roles.map(r=>`<tr><td>${r[0]}</td>${r.slice(1).map(v=>`<td class="num"><span class="chip ${v==='yes'?'g':v==='no'?'r':'n'}">${v}</span></td>`).join('')}</tr>`).join('');
+  document.getElementById('auditBody').innerHTML=AUDIT.map((a,i)=>`<tr style="cursor:pointer" onclick="auditDetail(${i})"><td class="mono">${a[0]}</td><td>${a[1]}</td><td style="font-size:11.5px">${a[2]}</td><td style="font-size:11.5px;color:var(--muted)">${a[3]}</td></tr>`).join('');
+}
+function auditDetail(i){
+  const a=AUDIT[i];
+  shellModal('Audit event',a[2]+' · '+a[1],
+    `<div class="grid2">
+      <div class="kpi"><div class="k">Time</div><div class="v" style="font-size:13px">${a[0]}</div></div>
+      <div class="kpi"><div class="k">User</div><div class="v" style="font-size:13px">${a[1]}</div></div>
+      <div class="kpi"><div class="k">Record</div><div class="v" style="font-size:13px">${a[3]}</div></div>
+      <div class="kpi"><div class="k">IP</div><div class="v" style="font-size:13px">72.14.${20+i}.${100+i}</div></div>
+    </div>
+    <div class="note">Immutable. Events are written before the response returns, so nothing can be read or exported without a record.</div>
+    <div class="acts"><button class="btn ghost" onclick="closeModal()">Close</button></div>`);
+}
+function exportAudit(){
+  const rows=[['time','user','action','record'],...AUDIT];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='cardinal-audit-log.csv';a.click();
+  act(null,'security','Audit log exported to CSV');
+  toast('Audit log exported');
+}
+/* ---- projections calculator ---- */
+function tierInputs(){
+  const g=id=>+((document.getElementById(id)||{}).value||0);
+  return {t1:g('pT1'),n1:g('pN1'),t2:g('pT2'),n2:g('pN2'),t3:g('pT3'),n3:g('pN3'),
+    c1:g('pC1'),c2:g('pC2'),c3:g('pC3'),c4:g('pC4'),v:g('pV'),build:g('pBuild')};
+}
+function calcProj(){
+  const i=tierInputs();
+  const n=i.n1+i.n2+i.n3;
+  const mrr=i.n1*i.t1+i.n2*i.t2+i.n3*i.t3;
+  const fixed=i.c1+i.c2+i.c3*60+i.c4;
+  const variable=n*i.v;
+  const profit=mrr-variable-fixed;
+  const blended=n?mrr/n:0;
+  const contribution=blended-i.v;
+  const breakeven=contribution>0?Math.ceil(fixed/contribution):0;
+  const payback=profit>0?Math.max(1,Math.ceil(i.build/profit)):0;
+  const margin=mrr?Math.round(profit/mrr*100):0;
+  document.getElementById('calcOut').innerHTML=[
+    ['Monthly recurring',money(mrr),n+' agencies, no startup fee',''],
+    ['Monthly fixed cost',money(fixed),'support, sales, maintenance, infra',''],
+    ['Monthly profit',money(profit),margin+'% margin',profit>=0?'up':'dn'],
+    ['Breakeven agencies',breakeven,money(contribution)+' kept per agency at this mix',''],
+    ['Build repaid, at this rate',payback?payback+' months':'not at this mix','$'+i.build.toLocaleString()+' to recover','']]
+    .map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('calcNote').innerHTML=`At ${n} agencies (${i.n1}/${i.n2}/${i.n3} split) the service earns <b>${money(mrr)}</b> a month and keeps <b>${money(profit)}</b> of it. You need <b>${breakeven} agencies</b> to cover ${money(fixed)} of fixed cost, and the ${money(i.build)} build is repaid in <b>${payback||'—'} months</b>. Year one revenue at this mix is <b>${money(mrr*12)}</b>, with no startup fee anywhere in it.`;
+  const mixT1=i.n1,mixT2=i.n2,mixT3=i.n3,total=Math.max(1,mixT1+mixT2+mixT3);
+  document.getElementById('calcRows').innerHTML=[10,25,50,100,200].map(a=>{
+    const t1=Math.round(a*mixT1/total),t2=Math.round(a*mixT2/total),t3=a-t1-t2;
+    const m=t1*i.t1+t2*i.t2+t3*i.t3, p=m-a*i.v-fixed;
+    const pb=p>0?Math.max(1,Math.ceil(i.build/p)):0;
+    return `<tr><td><b>${a}</b></td><td class="num" style="font-size:11.5px">${t1} / ${t2} / ${t3}</td><td class="num">${money(m)}</td>
+    <td class="num">${money(m*12)}</td><td class="num">${money(p)}</td><td class="num">${pb?pb+' mo':'—'}</td></tr>`}).join('');
+}
+function renderProjections(){
+  const k=[['Tier 1 membership',money(599)+'/mo','flat monthly, no startup fee',''],['Blended member',money(1034)+'/mo','at a 55/35/10 mix','up'],
+    ['Breakeven','9 agencies','about 63 users',''],['Revenue at 50 agencies',money(51350)+'/mo',money(616200)+' a year','up']];
+  document.getElementById('projKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('tierBody').innerHTML=TIERS.map(t=>{const save=Math.round((1-t.price/t.stack)*100);
+    return `<tr><td><b>${t.n}</b><div style="font-size:11px;color:var(--muted)">${t.who}</div></td>
+    <td style="font-size:11.5px;color:#4A5768">${t.inc}</td><td class="num"><b>${money(t.price)}</b></td>
+    <td class="num">${money(t.price*12)}</td><td class="num"><span class="chip g">${save}%</span></td></tr>`}).join('');
+  document.getElementById('tierDetail').innerHTML=TIERS.map(t=>`<div class="pol" style="background:#fff">
+    <div class="r1"><span class="car">${t.n}</span><span class="chip n">${money(t.price)}/mo</span></div>
+    <div class="meta">${t.inc}</div><div class="acts"><button onclick="useTier(${TIERS.indexOf(t)})">Use this tier</button></div></div>`).join('')
+    +`<div class="note">One flat monthly price per agency, no startup fee, no per seat charge. Onboarding and setup are included. EZLynx remains in place for every agent and is not part of this price.</div>`;
+  const mix=[[25,14,9,2],[35,19,12,4],[45,25,16,4],[50,28,17,5],[75,41,26,8],[100,55,35,10]];
+  document.getElementById('mrrBody').innerHTML=mix.map(m=>{
+    const [n,t1,t2,t3]=m;
+    const mrr=t1*TIERS[0].price+t2*TIERS[1].price+t3*TIERS[2].price;
+    return `<tr><td><b>${n} agencies</b></td><td class="num" style="font-size:11.5px">${t1} / ${t2} / ${t3}</td>
+    <td class="num">${money(mrr)}</td><td class="num">${money(mrr*12)}</td></tr>`}).join('');
+  const costs=[['Support and onboarding',3200],['Sales and marketing',2600],['Maintenance, 20 hours',1200],['Security and tooling',520]];
+  const tot=costs.reduce((s,c)=>s+c[1],0);
+  document.getElementById('costBars').innerHTML=costs.map(c=>`<div class="bar"><span>${c[0]}</span><div class="track"><div class="fill" style="width:${Math.round(c[1]/tot*100)}%"></div></div><span class="n">${money(c[1])}</span></div>`).join('');
+  document.getElementById('costNote').innerHTML=`<b>${money(tot)}</b> per month fixed, against <b>${money(934)}</b> kept per agency at the 55/35/10 mix. Breakeven is <b>9 agencies</b>, about 63 users. At 25 agencies the service earns <b>${money(25075)}</b> a month and keeps <b>${money(15055)}</b>. The ${money(66000)} build is repaid by July 2027.`;
+  calcProj();
+}
+function useTier(i){
+  const t=TIERS[i];
+  const map={0:'pT1',1:'pT2',2:'pT3'}[i];
+  document.getElementById(map).value=t.price;
+  calcProj();
+  toast(t.n.split('·')[0].trim()+' loaded into the calculator');
+}
+/* ---- filter wiring ---- */
+function wireFilters(){
+  document.querySelectorAll('#clientFilters button').forEach(b=>{
+    b.onclick=()=>{CLIENT_FILTER=b.dataset.f;
+      document.querySelectorAll('#clientFilters button').forEach(x=>x.classList.toggle('on',x===b));
+      renderClients();
+      toast('Showing: '+b.innerText.trim().toLowerCase());
+    };
+  });
+  document.querySelectorAll('#polFilters button').forEach(b=>{
+    b.onclick=()=>{POL_FILTER=b.dataset.f;
+      document.querySelectorAll('#polFilters button').forEach(x=>x.classList.toggle('on',x===b));
+      renderPolicies();
+      toast('Showing: '+b.innerText.trim().toLowerCase());
+    };
+  });
+}
+wireFilters();
+/* ---- boot additions ---- */
+document.querySelectorAll('#rangeFilters button').forEach(b=>b.onclick=()=>setRange(b.dataset.r));
+document.getElementById('qLine').addEventListener('change',()=>{if(MARKETS.length||true)renderMarkets()});
+/* ================= EMAIL ================= */
+const MAILBOXES=[
+  {n:'kelsey@cardinalagency.com',p:'Microsoft 365',ok:1},
+  {n:'service@cardinalagency.com',p:'Microsoft 365',ok:1},
+  {n:'quotes@cardinalagency.com',p:'Google Workspace',ok:1}
+];
+const MAIL_SEED=[
+  {from:'Jill Nakamura',email:'jill.nakamura@example.com',subject:'Auto renewal: need the new rate before Friday',tag:'Renewal',time:'9:12 AM',unread:1,client:'Jill Nakamura',box:'kelsey@cardinalagency.com',
+   body:['Hi Kelsey, my auto policy renews Friday and the notice came in higher than last year. Can you send me the new rate and what changed before I decide?','If the increase is because of the teen driver, I want to talk about whether raising the deductible makes sense.','Thanks, Jill'],
+   att:['renewal-notice-nov.pdf']},
+  {from:'Tom Duffy',email:'tom@duffycontracting.com',subject:'COI for the Gilbert job, need it today',tag:'Certificate',time:'8:47 AM',unread:1,client:'Tom Duffy',box:'service@cardinalagency.com',
+   body:['The general contractor will not let my crew on site without a certificate naming them as additional insured.','Job address is 1420 E Williams Field Rd, Gilbert. Please send it to permits@example.com and copy me.','Tom'],
+   att:['coi-template.pdf']},
+  {from:'Safeco Agency Support',email:'agency.support@safeco.example',subject:'Quote 4471 ready: home + auto bundle',tag:'Carrier',time:'8:20 AM',unread:1,client:'Elena Kowalski',box:'quotes@cardinalagency.com',
+   body:['The bundled quote for Elena Kowalski is available in your agency portal.','Home $1,890, auto $1,240, total $3,130 with the multi-policy credit applied. The quote holds for 14 days.','No action is needed here, this is a notification only.'],
+   att:['safeco-quote-4471.pdf']},
+  {from:'Priya Okafor',email:'priya.okafor@example.com',subject:'Payment went through twice this month',tag:'Billing',time:'Yesterday',unread:1,client:'Priya Okafor',box:'service@cardinalagency.com',
+   body:['I see two charges of $186.40 on my card for November. Can you confirm one is being reversed?','I am not upset, just want it cleaned up before my statement closes.'],
+   att:[]},
+  {from:'Curtis Hale',email:'curtis.hale@example.com',subject:'Re: lapse notice, please call me',tag:'Lapse',time:'Yesterday',unread:0,client:'Curtis Hale',box:'kelsey@cardinalagency.com',
+   body:['Got the lapse notice. I did not realize the autopay card expired in September.','I can pay the balance today if you can tell me the exact amount to reinstate, and I would rather do it on the phone.'],
+   att:['lapse-notice.pdf']},
+  {from:'Progressive Commercial',email:'commercial@progressive.example',subject:'Missing driver schedule for Hector Villanueva',tag:'Carrier',time:'Mon',unread:0,client:'Hector Villanueva',box:'quotes@cardinalagency.com',
+   body:['We cannot finalize the commercial auto quote without the driver schedule and MVR authorization for two added drivers.','Once received, underwriting turns in one business day.'],
+   att:['driver-schedule-blank.xlsx']},
+  {from:'Sofia Okafor',email:'sofia@okaforstudio.com',subject:'Adding a second location in January',tag:'Cross-sell',time:'Mon',unread:0,client:'Sofia Okafor',box:'kelsey@cardinalagency.com',
+   body:['We signed the lease on the Chandler location and open January 12.','I need the BOP extended to cover it, and I want to look at workers comp for the three people we are hiring.'],
+   att:[]},
+  {from:'Tanya Ferraro',email:'tanya.ferraro@example.com',subject:'Thank you, and one question on the dec page',tag:'Service',time:'Fri',unread:0,client:'Tanya Ferraro',box:'service@cardinalagency.com',
+   body:['The declarations page came through, thank you.','One question: the mortgagee is listed with an old loan number. Does that matter, or should we update it?'],
+   att:['dec-page-ferraro.pdf']},
+  {from:'Marisol Cardenas',email:'marisol@cardenasgroup.com',subject:'Umbrella limit question before the board meeting',tag:'Quote',time:'Fri',unread:0,client:'Marisol Cardenas',box:'kelsey@cardinalagency.com',
+   body:['The board wants to know what a $2M umbrella would cost on top of the current $1M.','Can you get me a number by Wednesday? They meet Thursday morning.'],
+   att:[]},
+  {from:'Grant Pierce',email:'grant.pierce@example.com',subject:'New teen driver, what do you need from me',tag:'Endorsement',time:'Thu',unread:0,client:'Grant Pierce',box:'service@cardinalagency.com',
+   body:['My daughter got her permit and turns 16 in January. What do you need from me to add her, and what will it do to the rate?','Happy to send the license and the driver safety course certificate.'],
+   att:[]}
+];
+let MAIL_FILTER='all', MAIL_SELECTED=0, MAIL_FOLDER='Inbox', MAILSENT=[], MAILDRAFTS=[];
+function saveDraft(){
+  const t=document.getElementById('replyText'); const body=(t.value||'').trim();
+  if(!body){toast('Nothing to save yet');return;}
+  const m=MAIL_SEED[MAIL_SELECTED];
+  MAILDRAFTS.unshift({to:m.from,subject:'Re: '+m.subject,body,time:'Just now'});
+  t.value=''; toast('Draft saved, unsent');
+}
+const TPL={
+  'Renewal reminder':{s:'Your policy renews soon: here is what changed',b:'Hi {{first}},\n\nYour policy renews on {{date}}. The new premium is {{premium}}, up from {{old}} last term.\n\nWhat changed: {{reason}}. If you would like to adjust the deductible or review coverage before it renews, reply here or call the office and we will walk through it together.\n\nKelsey\nCardinal Agency'},
+  'Quote follow-up':{s:'Your quotes are ready to review',b:'Hi {{first}},\n\nI have quotes back from {{carriers}}. The strongest option is {{carrier}} at {{premium}} for the term.\n\nNothing is bound until you say go. Reply with a time that works and I will walk you through the differences in five minutes.\n\nKelsey\nCardinal Agency'},
+  'Certificate request':{s:'Certificate of insurance for your records',b:'Hi {{first}},\n\nAttached is the certificate naming {{holder}} as additional insured for {{address}}.\n\nIf the holder needs different wording or a waiver of subrogation, send me their requirement page and I will reissue the same day.\n\nKelsey\nCardinal Agency'},
+  'Lapse notice':{s:'Payment did not go through: coverage at risk',b:'Hi {{first}},\n\nThe payment on {{policy}} did not process, so coverage is at risk of lapsing on {{date}}.\n\nThe amount to bring it current is {{amount}}. You can pay by card through your client portal, or call the office and we will take it over the phone. If something has changed financially, tell me and we will look at options rather than let it lapse.\n\nKelsey\nCardinal Agency'},
+  'Welcome':{s:'Welcome to Cardinal: here is what happens next',b:'Hi {{first}},\n\nWelcome aboard. Here is what happens next:\n\n1. Your policies are loaded and visible in your client portal.\n2. ID cards and declarations pages are available to download any time.\n3. Payments can be made in the portal, and reminders are automatic.\n\nAnything you need, reply to this email and it comes straight to me.\n\nKelsey\nCardinal Agency'}
+};
+function mailTagChip(t){
+  const m={Renewal:'n',Certificate:'g',Carrier:'n',Billing:'r',Lapse:'r','Cross-sell':'g',Service:'n',Quote:'n',Endorsement:'n'};
+  return `<span class="chip ${m[t]||'n'}" style="font-size:10px">${t}</span>`;
+}
+function mailList(){
+  const box=document.getElementById('mailThreads'); if(!box)return;
+  const q=(document.getElementById('mailSearch').value||'').toLowerCase();
+  const rows=MAIL_SEED.map((m,i)=>({m,i})).filter(({m})=>{
+    if(MAIL_FOLDER==='Sent')return false;
+    if(MAIL_FOLDER==='Drafts')return false;
+    if(MAIL_FILTER==='unread'&&!m.unread)return false;
+    if(MAIL_FILTER==='renewals'&&!['Renewal','Lapse'].includes(m.tag))return false;
+    if(MAIL_FILTER==='carrier'&&m.tag!=='Carrier')return false;
+    if(MAIL_FILTER==='claims'&&!['Service','Billing'].includes(m.tag))return false;
+    if(q&&!(m.from+m.subject+m.body[0]+m.tag).toLowerCase().includes(q))return false;
+    return true;
+  });
+  if(MAIL_FOLDER==='Sent'){
+    box.innerHTML=MAILSENT.map((m,i)=>`<div class="thread"><div class="t1"><b>To: ${m.to}</b><span style="font-size:11px;color:var(--muted)">${m.time}</span></div>
+      <div class="t2">${m.subject}</div><div class="t3">${m.body.replace(/\n/g,' ').slice(0,90)}</div></div>`).join('')
+      ||`<div class="note">Nothing sent yet in this session. Send a reply or a new message and it lands here.</div>`;
+    return;
+  }
+  if(MAIL_FOLDER==='Drafts'){
+    box.innerHTML=`<div class="note">3 drafts held: <b>Bianca Ibarra</b> umbrella quote, <b>Reggie Lindqvist</b> payment plan, <b>Owen Sorensen</b> renewal review. Drafts stay unsent until you press send.</div>`;
+    return;
+  }
+  box.innerHTML=rows.map(({m,i})=>`<div class="thread ${i===MAIL_SELECTED?'on':''}" onclick="openMail(${i})">
+    <div class="t1"><span>${m.unread?'<span class="udot"></span>':''}<b>${m.from}</b></span><span style="font-size:11px;color:var(--muted)">${m.time}</span></div>
+    <div class="t2">${m.subject}</div><div class="t3">${m.body[0]}</div>
+    <div style="margin-top:5px">${mailTagChip(m.tag)}<span style="font-size:10.5px;color:var(--muted);margin-left:6px">${m.box.split('@')[0]}</span></div></div>`).join('')
+    ||`<div class="note">No messages match that filter.</div>`;
+}
+function openMail(i){
+  MAIL_SELECTED=i; const m=MAIL_SEED[i]; m.unread=0;
+  document.getElementById('mailRead').innerHTML=`
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="chip n">${m.tag}</span><span style="font-size:11.5px;color:var(--muted)">${m.box} · received ${m.time}</span>
+      <div class="spacer" style="flex:1"></div>
+      <button class="btn ghost sm" onclick="mailAction('task')">Create task</button>
+      <button class="btn ghost sm" onclick="mailAction('client')">Open client record</button>
+      <button class="btn ghost sm" onclick="mailAction('note')">Add to activity</button>
+    </div>
+    <h3>${m.subject}</h3>
+    <div style="font-size:12.5px;color:var(--muted)">${m.from} &lt;${m.email}&gt; · to me · ${m.client?('<b style="color:var(--blue)">'+m.client+'</b>'):'unmatched sender'}</div>
+    <div class="mbody">${m.body.map(p=>`<p>${p}</p>`).join('')}</div>
+    ${m.att.length?`<div>${m.att.map(a=>`<span class="att" onclick="toast('Opening ${a}')">📎 ${a}</span>`).join('')}</div>`:''}
+    <div class="replybox">
+      <textarea id="replyText" placeholder="Reply to ${m.from}…"></textarea>
+      <div style="display:flex;gap:7px;align-items:center;margin-top:7px;flex-wrap:wrap">
+        <button class="btn blue sm" onclick="sendReply()">Send reply</button>
+        <button class="btn ghost sm" onclick="saveDraft()">Save draft</button>
+        <span style="font-size:11px;color:var(--muted)">Sends from ${m.box}</span>
+      </div>
+    </div>`;
+  mailList();
+}
+function sendReply(){
+  const t=document.getElementById('replyText'); const body=(t.value||'').trim();
+  if(!body){toast('Write something first');return;}
+  const m=MAIL_SEED[MAIL_SELECTED];
+  MAILSENT.unshift({to:m.from,subject:'Re: '+m.subject,body,time:'Just now',box:m.box});
+  t.value=''; toast('Reply sent to '+m.from);
+  act(null,'email','Replied to '+m.from+': '+m.subject);
+  log('Email reply sent · '+m.client);
+  renderEmail();
+}
+function mailAction(kind){
+  const m=MAIL_SEED[MAIL_SELECTED];
+  if(kind==='task'){
+    const c=CLIENTS.find(c=>c.name===m.client);
+    TASKS.unshift({id:'T'+(900+TASKS.length),clientId:c?c.id:CLIENTS[0].id,reason:'Follow up on email: '+m.subject,due:'today',owner:'Dana R.',type:'service',pri:'high',done:false});
+    renderTasks(); toast('Task created from email'); act(null,'tasks','Task created from '+m.from+' email');
+  }
+  if(kind==='client'){
+    const c=CLIENTS.find(c=>c.name===m.client);
+    if(c){openClient(c.id);toast('Opened '+c.name);} else toast('No client record matches that sender');
+  }
+  if(kind==='note'){ act(null,'email','Logged to activity: '+m.subject); toast('Added to the client activity feed'); }
+}
+function composeMail(){
+  document.getElementById('sheet').innerHTML=`
+    <div class="head"><h2>New message</h2><div class="spacer"></div><button class="btn ghost sm" onclick="closeModal()">Close</button></div>
+    <div class="body">
+      <div class="grid2">
+        <div class="field"><label>To</label><select id="cmTo">${CLIENTS.map(c=>`<option>${c.name}</option>`).join('')}<option>All clients on a renewal this month</option></select></div>
+        <div class="field"><label>Send from</label><select id="cmFrom">${MAILBOXES.map(b=>`<option>${b.n}</option>`).join('')}</select></div>
+      </div>
+      <div class="field"><label>Template</label><select id="cmTpl" onchange="fillTemplate()"><option value="">Blank message</option>${Object.keys(TPL).map(k=>`<option>${k}</option>`).join('')}</select></div>
+      <div class="field"><label>Subject</label><input id="cmSub" placeholder="Subject line"></div>
+      <div class="field"><label>Message</label><textarea id="cmBody" style="min-height:170px;width:100%;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:9px;padding:9px"></textarea></div>
+      <div style="display:flex;gap:8px"><button class="btn blue" onclick="sendCompose()">Send</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function fillTemplate(){
+  const k=document.getElementById('cmTpl').value; if(!k)return;
+  const c=CLIENTS.find(x=>x.name===document.getElementById('cmTo').value)||{name:'Client'};
+  const first=c.name.split(' ')[0];
+  document.getElementById('cmSub').value=TPL[k].s;
+  document.getElementById('cmBody').value=TPL[k].b.replace(/\{\{first\}\}/g,first).replace(/\{\{date\}\}/g,'December 12').replace(/\{\{premium\}\}/g,'$1,940').replace(/\{\{old\}\}/g,'$1,780').replace(/\{\{reason\}\}/g,'the teen driver added in March').replace(/\{\{carriers\}\}/g,'Safeco, Travelers and Progressive').replace(/\{\{carrier\}\}/g,'Safeco').replace(/\{\{holder\}\}/g,'Duffy Contracting').replace(/\{\{address\}\}/g,'1420 E Williams Field Rd, Gilbert').replace(/\{\{policy\}\}/g,'auto policy').replace(/\{\{amount\}\}/g,'$186.40');
+}
+function sendCompose(){
+  const to=document.getElementById('cmTo').value, sub=document.getElementById('cmSub').value||'(no subject)', body=document.getElementById('cmBody').value;
+  if(!body.trim()){toast('Add a message before sending');return;}
+  MAILSENT.unshift({to,subject:sub,body,time:'Just now',box:document.getElementById('cmFrom').value});
+  closeModal(); toast('Sent to '+to); act(null,'email','Sent email to '+to+': '+sub); log('Email sent · '+to);
+  MAIL_FOLDER='Sent'; renderEmail();
+}
+function renderEmail(){
+  const unread=MAIL_SEED.filter(m=>m.unread).length;
+  const k=[['Unread in queue',unread,'across 3 connected mailboxes','dn'],
+    ['Median first reply','4 min','agency target is under 15','up'],
+    ['Sent this week','86','62 from templates, 24 written',''],
+    ['Linked to a client',MAIL_SEED.filter(m=>m.client).length+' of '+MAIL_SEED.length,'matched automatically by sender','']];
+  document.getElementById('mailKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+  document.getElementById('mailFolders').innerHTML=[
+    ['Inbox',MAIL_SEED.filter(m=>m.unread).length],['Sent',MAILSENT.length],['Drafts',3+MAILDRAFTS.length],['Templates',Object.keys(TPL).length]
+  ].map(([n,c])=>`<div class="folder ${MAIL_FOLDER===n?'on':''}" onclick="mailFolder('${n}')"><span>${n}</span><b>${c}</b></div>`).join('');
+  document.getElementById('mailBoxes').innerHTML=MAILBOXES.map(b=>`<div class="mbox"><span class="dot"></span><div><div style="font-weight:600">${b.n}</div><div style="font-size:10.5px;color:var(--muted)">${b.p} · synced 1 min ago</div></div></div>`).join('');
+  mailList();
+  if(!document.getElementById('mailRead').innerHTML.trim())openMail(MAIL_SELECTED);
+}
+function mailFolder(n){ MAIL_FOLDER=n; renderEmail(); toast(n+' · '+({Inbox:'live queue',Sent:'sent from here',Drafts:'unsent',Templates:'saved replies'}[n]||'')); }
+function mailFilter(f,el){
+  MAIL_FILTER=f;
+  document.querySelectorAll('#mailFilters button').forEach(b=>b.classList.toggle('on',b===el));
+  mailList();
+  toast('Showing: '+f);
+}
+
+/* ================= MESSAGES + VIDEO ================= */
+const TEAM=[
+  {n:'Kelsey Trevino',r:'Admin',s:'Available',c:'var(--green)'},
+  {n:'Jacobo Morales',r:'Producer',s:'Available',c:'var(--green)'},
+  {n:'Dana Ruiz',r:'CSR',s:'In a huddle',c:'var(--amber)'},
+  {n:'Steve Lundin',r:'Service',s:'On a call',c:'var(--red)'},
+  {n:'Kayla Brooks',r:'Producer',s:'Focusing',c:'var(--muted)'}
+];
+const TEAMCHANS=[
+  {id:'front-desk',n:'# front-desk',d:'Intake, walk-ins and the phone queue',msgs:[
+    {w:'Dana Ruiz',t:'8:04 AM',x:'Morning. Three new web leads came in overnight, all med spa, all assigned to Jacobo.'},
+    {w:'Jacobo Morales',t:'8:06 AM',x:'Got them. Calling the first one at 9, she asked specifically about commercial auto.'},
+    {w:'Kelsey Trevino',t:'8:09 AM',x:'Put the call notes in the client record, not in a text to me, so the next person can pick it up.'},
+    {w:'Dana Ruiz',t:'8:11 AM',x:'Jill Nakamura called at 8:02 about the renewal increase. Wants a callback before Friday.'}
+  ]},
+  {id:'service-desk',n:'# service-desk',d:'Endorsements, certificates, payments',msgs:[
+    {w:'Steve Lundin',t:'7:52 AM',x:'Tom Duffy needs a COI for the Gilbert job today. Issuing it now, naming the GC as additional insured.'},
+    {w:'Dana Ruiz',t:'7:58 AM',x:'Priya Okafor was double charged $186.40. I see both payments in the portal, one needs reversing.'},
+    {w:'Steve Lundin',t:'8:01 AM',x:'Reverse the second one and send her the confirmation. Do not wait for the carrier, it clears faster from our side.'},
+    {w:'Kayla Brooks',t:'8:14 AM',x:'Curtis Hale lapsed on the 18th. He emailed that his autopay card expired in September.'}
+  ]},
+  {id:'sales-floor',n:'# sales-floor',d:'Quotes, pipeline and producer numbers',msgs:[
+    {w:'Jacobo Morales',t:'8:00 AM',x:'Safeco came back on the Kowalski bundle, $3,130 total with the multi-policy credit. That is $210 under what she pays now.'},
+    {w:'Kayla Brooks',t:'8:03 AM',x:'Marisol Cardenas wants a $2M umbrella number by Wednesday, board meets Thursday.'},
+    {w:'Kelsey Trevino',t:'8:05 AM',x:'Run it through Chubb and Travelers, and send her the difference in plain language, not the rating worksheet.'},
+    {w:'Jacobo Morales',t:'8:07 AM',x:'On it. Also Sofia Okafor is opening a second location in January, that is a BOP rewrite plus workers comp.'}
+  ]},
+  {id:'carrier-issues',n:'# carrier-issues',d:'Portal access, MFA and download failures',msgs:[
+    {w:'Steve Lundin',t:'7:40 AM',x:'Progressive commercial portal asked for MFA twice this morning, second code never arrived.'},
+    {w:'Kelsey Trevino',t:'7:44 AM',x:'Vault credential is fine, that is on their side. Log it and retry in 20 minutes, do not reset the login.'},
+    {w:'Steve Lundin',t:'7:46 AM',x:'Retried at 7:45, worked. Quote is in the client record with the driver schedule request attached.'},
+    {w:'Kayla Brooks',t:'8:12 AM',x:'EZLynx download ran clean at 6:00 AM, 48 policies updated, two conflicts flagged.'}
+  ]},
+  {id:'dm-dana',n:'Dana Ruiz',d:'Direct message',msgs:[
+    {w:'Dana Ruiz',t:'8:16 AM',x:'Do you want me to handle the Hale reinstatement or send it to Steve?'},
+    {w:'Kelsey Trevino',t:'8:17 AM',x:'You take it, he prefers the phone. Get the exact amount first so he is not calling back twice.'},
+    {w:'Dana Ruiz',t:'8:18 AM',x:'Will do. Calling him at 9:30.'}
+  ]}
+];
+const MEETINGS=[
+  {t:'Daily huddle',when:'Today 8:30 AM',who:'Whole team · 12 min',live:1},
+  {t:'Renewal review, next 30 days',when:'Today 11:00 AM',who:'Kelsey, Jacobo, Dana',live:0},
+  {t:'John Chleboun, platform walkthrough',when:'Today 2:00 PM',who:'Kelsey, John · external',live:0},
+  {t:'Carrier integration standup',when:'Tomorrow 9:00 AM',who:'Kelsey, Steve',live:0}
+];
+let CH=0, IN_CALL=false, CALL_T=0, CALL_H=null, MUTED=false, CAM=false;
+function renderMessages(){
+  document.getElementById('presence').innerHTML=TEAM.map(p=>`<div class="pchip"><div class="av">${p.n.split(' ').map(x=>x[0]).join('')}</div><div><div style="font-weight:700">${p.n.split(' ')[0]} ${p.n.split(' ')[1][0]}.</div><div style="font-size:10px;color:var(--muted)">${p.r}</div></div><i style="background:${p.c}"></i></div>`).join('');
+  document.getElementById('chanList').innerHTML=TEAMCHANS.map((c,i)=>`<div class="folder ${i===CH?'on':''}" onclick="openChan(${i})"><div><div>${c.n}</div><div style="font-size:10.5px;color:var(--muted);font-weight:500">${c.d}</div></div></div>`).join('');
+  const c=TEAMCHANS[CH];
+  document.getElementById('chanTitle').textContent=c.n;
+  document.getElementById('chanSub').textContent=c.d;
+  document.getElementById('msgs').innerHTML=c.msgs.map(m=>`<div class="msg"><div class="av">${m.w.split(' ').map(x=>x[0]).join('')}</div><div><div class="who">${m.w}<span class="tm">${m.t}</span></div><div class="tx">${m.x}</div></div></div>`).join('');
+  const box=document.getElementById('msgs'); box.scrollTop=box.scrollHeight;
+  document.getElementById('meetList').innerHTML=MEETINGS.map((m,i)=>`<div class="pol" style="background:#fff">
+    <div class="r1"><span class="car">${m.t}</span><span class="chip ${m.live?'g':'n'}">${m.live?'starting':'scheduled'}</span></div>
+    <div class="meta">${m.when} · ${m.who}</div>
+    <div class="acts"><button onclick="startCall('${m.t.replace(/'/g,'')}')">Join video room</button></div></div>`).join('');
+  document.getElementById('callRecap').innerHTML=`<b>Last call:</b> ${CALL_RECAPS.length?CALL_RECAPS[0]:'Daily huddle, 12 min, 5 attendees, recap posted to # front-desk.'}`;
+}
+function openChan(i){ CH=i; renderMessages(); }
+function sendChat(){
+  const el=document.getElementById('chatInput'); const v=(el.value||'').trim();
+  if(!v){toast('Type a message first');return;}
+  const now=new Date(); const t=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  TEAMCHANS[CH].msgs.push({w:'Kelsey Trevino',t,x:v});
+  el.value=''; renderMessages(); toast('Sent to '+TEAMCHANS[CH].n);
+}
+let CALL_RECAPS=['Daily huddle, 12 min, 5 attendees, recap posted to # front-desk.'];
+function startCall(title){
+  IN_CALL=true; CALL_T=0; MUTED=false; CAM=false;
+  document.getElementById('callTitle').textContent=title||TEAMCHANS[CH].n;
+  document.getElementById('callSub').textContent='Cardinal video room · encrypted · recording off';
+  const tiles=[[TEAM[0].n,'host'],[TEAM[1].n,''],['Dana Ruiz',''],['Steve Lundin','muted']];
+  document.getElementById('tiles').innerHTML=tiles.map(([n,st])=>`<div class="tile"><div class="bigav">${n.split(' ').map(x=>x[0]).join('')}</div><div class="nm">${n}</div><div class="st">${st}</div></div>`).join('');
+  document.getElementById('call').classList.add('on');
+  document.getElementById('callTimer').textContent='00:00';
+  clearInterval(CALL_H);
+  CALL_H=setInterval(()=>{CALL_T++;const m=String(Math.floor(CALL_T/60)).padStart(2,'0'),s=String(CALL_T%60).padStart(2,'0');
+    const el=document.getElementById('callTimer'); if(el)el.textContent=m+':'+s;},1000);
+  act(null,'messages','Joined video room: '+(title||TEAMCHANS[CH].n));
+}
+function callToggle(kind){
+  if(kind==='mute'){MUTED=!MUTED;document.getElementById('btnMute').classList.toggle('off',MUTED);document.getElementById('btnMute').textContent=MUTED?'Unmute':'Mute';}
+  if(kind==='cam'){CAM=!CAM;document.getElementById('btnCam').classList.toggle('off',CAM);document.getElementById('btnCam').textContent=CAM?'Camera off':'Camera on';}
+  if(kind==='share'){document.getElementById('btnShare').classList.toggle('off');toast('Screen sharing toggled');}
+  if(kind==='people'){toast('5 in the room · 2 can present');}
+}
+function endCall(){
+  clearInterval(CALL_H); IN_CALL=false;
+  document.getElementById('call').classList.remove('on');
+  const mm=String(Math.floor(CALL_T/60)).padStart(2,'0'),ss=String(CALL_T%60).padStart(2,'0');
+  const recap=`Call ended after ${mm}:${ss}. Recap posted to ${TEAMCHANS[CH].n}: 3 follow-ups, 1 owner assigned.`;
+  CALL_RECAPS.unshift(recap);
+  TEAMCHANS[CH].msgs.push({w:'System',t:'now',x:recap});
+  renderMessages(); toast('Call ended, recap posted'); act(null,'messages','Video call ended, recap posted');
+}
+/* ================= employee (producer) workspace layer ================= */
+const EMP={name:'Andrew Whitehead',first:'Andrew',role:'Producer',initials:'AW',office:'Gilbert'};
+const RESTRICTED=['campaigns','growth','security','brand'];
+function signOut(){
+  const g=document.createElement('div');
+  g.className='gate'; g.id='gate';
+  g.innerHTML='<div class="box"><div class="mark" style="margin-bottom:12px">C</div><h2>Signed out</h2><p>Your session ended. Sign back in with your access code.</p><button class="btn blue" style="width:100%;justify-content:center" onclick="location.reload()">Sign in again</button></div>';
+  document.body.appendChild(g);
+}
+function go(v){
+  if(RESTRICTED.includes(v)){toast('Not available on this login');return;}
+  goBase(v);
+}
+function renderDash(){ renderDashBase(); renderStaffPanels(); }
+
+const MY_LEADS=[
+  {n:'Alicia Serrano',src:'Web form',line:'Auto + home bundle',t:'22 min ago',st:'New'},
+  {n:'Dev Patel',src:'Referral, Tanya Ferraro',line:'Home',t:'1 hr ago',st:'New'},
+  {n:'Kurt Lindgren',src:'Google Business',line:'Commercial auto',t:'2 hr ago',st:'Contacted'},
+  {n:'Renee Alvarez',src:'Walk-in',line:'Renters',t:'Yesterday',st:'Quote out'},
+  {n:'Bo Whitfield',src:'Web form',line:'Umbrella',t:'Yesterday',st:'Contacted'}
+];
+const MY_OUT=[
+  {t:'8:12 AM',ch:'Call',who:'Jill Nakamura',what:'Renewal review, left voicemail',res:'No answer, retry 11:00'},
+  {t:'8:26 AM',ch:'Text',who:'Priya Okafor',what:'Payment link for the duplicate charge',res:'Replied, confirmed'},
+  {t:'8:41 AM',ch:'Email',who:'Tom Duffy',what:'Certificate sent to the GC',res:'Replied, thank you'},
+  {t:'9:03 AM',ch:'Call',who:'Curtis Hale',what:'Reinstatement amount and payment',res:'Spoke, paying today'},
+  {t:'9:20 AM',ch:'Email',who:'Elena Kowalski',what:'Bundle quote, $3,130 with the credit',res:'Awaiting reply'},
+  {t:'9:38 AM',ch:'Text',who:'Grant Pierce',what:'Asked for license and driver course',res:'Replied, sending'},
+  {t:'10:05 AM',ch:'Call',who:'Dev Patel',what:'First call on new home lead',res:'No answer, retry 1:30'},
+  {t:'10:22 AM',ch:'Email',who:'Marisol Cardenas',what:'Umbrella options at $2M',res:'Awaiting reply'}
+];
+function renderStaffPanels(){
+  if(!document.getElementById('myKpis'))return;
+  const mine=CLIENTS.filter(c=>c.owner===EMP.name.replace(' Whitehead',' W.')||c.owner===EMP.name);
+  const myPrem=mine.reduce((s,c)=>s+premOf(c.id),0);
+  const myTasks=TASKS.filter(t=>!t.done&&t.owner==='Andrew W.');
+  const quotesOut=QUOTES.filter(q=>q.status==='sent').length;
+  const replied=MY_OUT.filter(o=>/Replied|Spoke|confirmed|thank/i.test(o.res)).length;
+  const k=[['My clients',mine.length,money(myPrem)+' of premium',''],
+    ['My follow-ups',myTasks.length,myTasks.filter(t=>t.due==='today').length+' due today','dn'],
+    ['My touches today',MY_OUT.length,replied+' came back with a response','up'],
+    ['Quotes waiting on a client',quotesOut,'median 2.1 days out','']];
+  document.getElementById('myKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
+
+  document.getElementById('outCount').textContent=MY_OUT.length+' touches';
+  document.getElementById('outBody').innerHTML=MY_OUT.map((o,i)=>`<tr><td class="num" style="color:var(--muted)">${o.t}</td><td><span class="chip ${o.ch==='Call'?'n':o.ch==='Text'?'g':'n'}">${o.ch}</span></td>
+    <td><b>${o.who}</b></td><td style="font-size:12px;color:#3A4655">${o.what}</td>
+    <td><span class="chip ${/No answer|Awaiting/i.test(o.res)?'a':'g'}">${o.res}</span></td></tr>`).join('');
+
+  document.getElementById('leadCount').textContent=MY_LEADS.filter(l=>l.st==='New').length+' new';
+  document.getElementById('leadBody').innerHTML=MY_LEADS.map((l,i)=>`<tr><td><b>${l.n}</b></td><td>${l.src}</td><td>${l.line}</td><td style="color:var(--muted)">${l.t}</td>
+    <td><span class="chip ${l.st==='New'?'g':l.st==='Contacted'?'n':'a'}">${l.st}</span></td>
+    <td><button class="btn ghost sm" onclick="leadAction(${i})">${l.st==='New'?'Log first touch':'Open'}</button></td></tr>`).join('');
+
+  document.getElementById('myTaskCount').textContent=myTasks.length+' open';
+  document.getElementById('myTaskBody').innerHTML=(myTasks.length?myTasks:[]).map(t=>{const c=byId(t.clientId);return `<tr><td><b>${c?c.name:'—'}</b></td><td style="font-size:12px">${t.reason}</td>
+    <td><span class="chip ${t.due==='today'?'r':'n'}">${t.due}</span></td>
+    <td><button class="btn ghost sm" onclick="openClient('${t.clientId}')">Open</button></td></tr>`;}).join('')
+    ||`<tr><td colspan="4" style="color:var(--muted)">Nothing open. Pick up a new lead above.</td></tr>`;
+
+  const bound=POLICIES.filter(p=>p.clientId&&mine.some(c=>c.id===p.clientId)).length;
+  const bars=[['Quotes issued',quotesOut,Math.max(quotesOut,12)],['Touches logged',MY_OUT.length,20],['Clients touched',new Set(MY_OUT.map(o=>o.who)).size,12],['Policies in my book',bound,20]];
+  document.getElementById('myBars').innerHTML=bars.map(b=>`<div class="bar"><span>${b[0]}</span><div class="track"><div class="fill" style="width:${Math.min(100,Math.round(b[1]/b[2]*100))}%"></div></div><b>${b[1]}</b></div>`).join('');
+  document.getElementById('myNote').innerHTML=`You are at <b>${Math.round(replied/MY_OUT.length*100)}%</b> response on today's touches. Follow-ups close the loop, so log the touch even when nobody picks up.`;
+}
+function leadAction(i){
+  const l=MY_LEADS[i];
+  if(l.st==='New'){
+    l.st='Contacted';
+    MY_OUT.unshift({t:'now',ch:'Call',who:l.n,what:'First call on the new '+l.line+' lead',res:'No answer, retry tomorrow'});
+    act(null,'tasks','First touch logged on new lead '+l.n);
+    toast('First touch logged on '+l.n); renderStaffPanels(); return;
+  }
+  const c=CLIENTS.find(c=>c.name.split(' ')[1]===l.n.split(' ')[1]);
+  if(c&&l.st==='Quote out'){openClient(c.id);return;}
+  leadCard(i);
+}
+function leadCard(i){
+  const l=MY_LEADS[i];
+  document.getElementById('sheet').innerHTML=`
+    <div class="head"><h2>${l.n}</h2><span class="chip ${l.st==='New'?'g':l.st==='Contacted'?'n':'a'}">${l.st}</span><div class="spacer"></div><button class="btn ghost sm" onclick="closeModal()">Close</button></div>
+    <div class="body">
+      <div class="grid2">
+        <div class="field"><label>Source</label><div style="font-size:13px;padding:7px 0">${l.src}</div></div>
+        <div class="field"><label>Interested in</label><div style="font-size:13px;padding:7px 0">${l.line}</div></div>
+        <div class="field"><label>Phone</label><div style="font-size:13px;padding:7px 0">(480) 555-01${40+i}</div></div>
+        <div class="field"><label>Email</label><div style="font-size:13px;padding:7px 0">${l.n.toLowerCase().replace(/ /g,'.')}@example.com</div></div>
+      </div>
+      <div class="note">No policy record yet. This is a prospect until a quote is bound, so nothing shows on the book of business.</div>
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:12px 0 6px">What has happened</div>
+      <div style="font-size:12.5px;color:#3A4655;line-height:1.6">
+        ${l.t}: came in through ${l.src}. Interested in ${l.line}.<br>
+        ${l.st==='New'?'No touch yet, this is the first attempt.':'First call made, no answer. Text sent asking for a good time.'}
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <button class="btn blue sm" onclick="leadQuote(${i})">Start a quote</button>
+        <button class="btn ghost sm" onclick="leadTouch(${i},'Text')">Send a text</button>
+        <button class="btn ghost sm" onclick="leadTouch(${i},'Email')">Send an email</button>
+        <button class="btn ghost sm" onclick="leadNote(${i})">Add a note</button>
+        <button class="btn ghost sm" onclick="leadTask(${i})">Create follow-up</button>
+      </div>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function leadQuote(i){
+  const l=MY_LEADS[i]; l.st='Quote out'; closeModal();
+  go('quotes'); renderQuotes();
+  const n=document.getElementById('qName'); if(n)n.value=l.n;
+  const ln=document.getElementById('qLine'); if(ln&&l.line.toLowerCase().includes('home'))ln.value='Home';
+  toast('Quote started for '+l.n); renderStaffPanels();
+  act(null,'quotes','Quote started for new lead '+l.n);
+}
+function leadTouch(i,ch){
+  const l=MY_LEADS[i]; closeModal();
+  MY_OUT.unshift({t:'now',ch,who:l.n,what:ch==='Text'?'Intro text, asked for a good time to call':'Intro email with what we need to quote',res:'Awaiting reply'});
+  if(l.st==='New')l.st='Contacted';
+  toast(ch+' queued to '+l.n); renderStaffPanels();
+  act(null,'email',ch+' sent to new lead '+l.n);
+}
+function leadNote(i){
+  const l=MY_LEADS[i];
+  const txt=prompt('Note for '+l.n,'Called, left voicemail. Wants a home quote before the weekend.');
+  if(txt){toast('Note added to '+l.n); act(null,'notes','Note on lead '+l.n+': '+txt);}
+}
+function leadTask(i){
+  const l=MY_LEADS[i];
+  TASKS.unshift({id:'T'+(960+TASKS.length),clientId:CLIENTS[0].id,reason:'Follow up with lead '+l.n+' about '+l.line,due:'tomorrow',owner:'Andrew W.',type:'quote',pri:'high',done:false});
+  renderTasks(); closeModal(); toast('Follow-up created for '+l.n); renderStaffPanels();
+}
+function logTouchModal(){
+  document.getElementById('sheet').innerHTML=`
+    <div class="head"><h2>Log a touch</h2><div class="spacer"></div><button class="btn ghost sm" onclick="closeModal()">Close</button></div>
+    <div class="body">
+      <div class="grid2">
+        <div class="field"><label>Client</label><select id="ltWho">${CLIENTS.map(c=>`<option>${c.name}</option>`).join('')}</select></div>
+        <div class="field"><label>Channel</label><select id="ltCh"><option>Call</option><option>Text</option><option>Email</option></select></div>
+      </div>
+      <div class="field"><label>What happened</label><input id="ltWhat" placeholder="Left voicemail about the renewal"></div>
+      <div class="grid2">
+        <div class="field"><label>Response</label><select id="ltRes"><option>No answer, retry</option><option>Spoke, follow-up set</option><option>Replied, confirmed</option><option>Awaiting reply</option></select></div>
+        <div class="field"><label>Create a follow-up</label><select id="ltTask"><option>Yes, due tomorrow</option><option>Yes, due today</option><option>No</option></select></div>
+      </div>
+      <button class="btn blue" onclick="saveTouch()">Save touch</button>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function saveTouch(){
+  const who=document.getElementById('ltWho').value, ch=document.getElementById('ltCh').value,
+        what=document.getElementById('ltWhat').value||ch+' to '+who, res=document.getElementById('ltRes').value,
+        mk=document.getElementById('ltTask').value;
+  MY_OUT.unshift({t:'now',ch,who,what,res});
+  if(mk.startsWith('Yes')){
+    const c=CLIENTS.find(c=>c.name===who);
+    TASKS.unshift({id:'T'+(950+TASKS.length),clientId:c?c.id:CLIENTS[0].id,reason:'Follow up after '+ch.toLowerCase()+': '+what,
+      due:mk.includes('today')?'today':'tomorrow',owner:'Andrew W.',type:'service',pri:'high',done:false});
+    renderTasks();
+  }
+  closeModal(); toast('Touch saved for '+who); act(null,'tasks','Logged '+ch.toLowerCase()+' to '+who);
+  renderStaffPanels();
+}
+</script></body></html>
