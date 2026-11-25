@@ -195,6 +195,7 @@ tbody tr:hover{background:#FAFBFD}
     <div class="logo"><div class="mark">C</div><div><b>Cardinal</b><span>agency workspace</span></div></div>
     <nav class="navi" id="nav">
       <button data-v="dash" class="on"><span class="ic">▦</span><span>Dashboard</span></button>
+      <button data-v="leads"><span class="ic">◈</span><span>Leads</span></button>
       <button data-v="clients"><span class="ic">◉</span><span>Clients</span></button>
       <button data-v="quotes"><span class="ic">✎</span><span>Quotes</span></button>
       <button data-v="policies"><span class="ic">▤</span><span>Policies</span></button>
@@ -242,6 +243,29 @@ tbody tr:hover{background:#FAFBFD}
             <div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Occasion</th><th>When</th><th></th></tr></thead><tbody id="bdayBody"></tbody></table></div></div>
         </div>
       </div>
+    </section>
+
+    <section class="view" id="v-leads">
+      <div class="cards" id="leadKpis"></div>
+      <div class="note" id="leadNote" style="margin-bottom:12px">Every lead carries an X-Date: the day it comes back to the top of the list. Set it from a callback, a week out, or 30 days before the renewal, and the list sorts itself.</div>
+      <div class="panel"><div class="head"><h2>Lead pipeline</h2><div class="spacer"></div>
+        <div class="filters" id="leadFilters">
+          <button class="on" onclick="leadFilter('all',this)">All</button>
+          <button onclick="leadFilter('lead',this)">Leads</button>
+          <button onclick="leadFilter('prospect',this)">Prospects</button>
+          <button onclick="leadFilter('due',this)">Due now</button>
+          <button onclick="leadFilter('lost',this)">Lost</button>
+        </div>
+        <button class="btn blue sm" onclick="newLeadModal()">Add lead</button></div>
+        <div class="body" style="padding:0">
+          <div style="display:flex;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);align-items:center">
+            <input id="leadSearch" class="search" placeholder="Search name, phone, email or source" oninput="renderLeads()" style="max-width:360px">
+            <span class="chip n" id="leadCount"></span>
+            <div class="spacer"></div>
+            <span style="font-size:11.5px;color:var(--muted)">Sorted by X-Date, soonest first. Blank X-Dates sink to the bottom.</span>
+          </div>
+          <table><thead><tr><th>Name</th><th>Contact</th><th>Source</th><th>Stage</th><th>Last touch</th><th>X-Date</th><th></th></tr></thead><tbody id="leadBody"></tbody></table>
+        </div></div>
     </section>
 
     <section class="view" id="v-clients">
@@ -863,7 +887,46 @@ function syncClaims(){
   CLAIM_CASES.forEach(c=>CLAIMS.push({id:c.id,clientId:c.clientId,carrier:c.carrier,line:c.type,type:c.type,date:c.loss,
     adjuster:c.adj,reserve:c.reserve,paid:c.paid,status:(c.status==='Open'||c.status==='Under review')?'open':'closed'}));
 }
-const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients','One record per household and business'],quotes:['Quotes','Quoted in each carrier portal, sent from here'],policies:['Policies','Renewals, payments and documents'],claims:['Claims','Losses, reserves and status by carrier'],
+/* ================= LEADS AND PROSPECTS with X-Date ================= */
+const LEAD_TODAY=new Date('2026-11-25');
+const LEADS=[
+ {id:'L2001',name:'Marisol Vega',phone:'(480) 555-0117',email:'marisol.vega@gmail.com',source:'Web form',stage:'Lead',last:'',xdate:'2026-11-25',line:'Auto + Home',renewal:'2027-03-14',notes:'Filled the website form at 11pm, asked about bundling two cars and a rental property.',owner:'Andrew W.'},
+ {id:'L2002',name:'Devon Acker',phone:'(480) 555-0184',email:'d.acker@ackerbuilt.com',source:'Referral · Tom Duffy',stage:'Prospect',last:'Nov 21 call, 6 min',xdate:'2026-11-25',line:'BOP + Commercial Auto',renewal:'2027-02-01',notes:'Contractor with 4 trucks. Wants GL and auto quoted together, said send numbers by Wednesday.',owner:'Andrew W.'},
+ {id:'L2003',name:'Renee Whitfield',phone:'(480) 555-0163',email:'renee.whitfield@outlook.com',source:'Meta ad',stage:'Lead',last:'',xdate:'2026-11-22',line:'Auto',renewal:'2027-05-09',notes:'Two texts and one call, no answer. Keep in the loop, do not drop.',owner:'Andrew W.'},
+ {id:'L2004',name:'Curtis Nakamura',phone:'(480) 555-0129',email:'cnakamura@nakamuralaw.com',source:'Networking · Gilbert chamber',stage:'Prospect',last:'Nov 19 meeting, 25 min',xdate:'2026-11-26',line:'Home + Umbrella',renewal:'2027-01-12',notes:'Attorney, high value home. Wants umbrella at 2M. Comparing against his captive agent.',owner:'Andrew W.'},
+ {id:'L2005',name:'Bethany Rios',phone:'(480) 555-0142',email:'bethany.rios@gmail.com',source:'Flyer QR',stage:'Lead',last:'',xdate:'',line:'Renters',renewal:'',notes:'Scanned the flyer at the Gilbert location, never picked up.',owner:'Andrew W.'},
+ {id:'L2006',name:'Hector Villalobos',phone:'(480) 555-0198',email:'hector@villalobosroofing.com',source:'Referral · Dana R.',stage:'Prospect',last:'Nov 24 call, 9 min',xdate:'2026-12-02',line:'Workers Comp + BOP',renewal:'2027-01-31',notes:'Roofing crew of 11. Workers comp is the pain, current carrier raised him 22%.',owner:'Andrew W.'},
+ {id:'L2007',name:'Priya Raman',phone:'(480) 555-0176',email:'priya.raman@yahoo.com',source:'Web form',stage:'Lead',last:'',xdate:'2026-11-28',line:'Auto',renewal:'2027-04-03',notes:'Asked for a callback after 5pm, works days at the hospital.',owner:'Andrew W.'},
+ {id:'L2008',name:'Grant Ostrowski',phone:'(480) 555-0151',email:'gostrowski@email.com',source:'Purchased list',stage:'Lost',last:'Nov 12 call, no interest',xdate:'',line:'Auto',renewal:'2027-06-20',notes:'Said he is locked in with USAA and happy. Move back to lead in June before renewal.',owner:'Andrew W.'},
+ {id:'L2009',name:'Yolanda Fuentes',phone:'(480) 555-0107',email:'yfuentes@gmail.com',source:'Referral · Jill Nakamura',stage:'Prospect',last:'Nov 23 text, replied',xdate:'2026-11-25',line:'Life',renewal:'',notes:'Wants 250k term on her husband. Needs the medical history question answered first.',owner:'Andrew W.'},
+ {id:'L2010',name:'Desmond Blake',phone:'(480) 555-0139',email:'dblake@blakefitness.com',source:'Meta ad',stage:'Lead',last:'',xdate:'2026-11-30',line:'BOP',renewal:'2027-02-18',notes:'Gym owner, opened a second location. Asked about equipment and liability coverage.',owner:'Andrew W.'},
+ {id:'L2011',name:'Alma Sandoval',phone:'(480) 555-0188',email:'alma.sandoval@gmail.com',source:'Walk-in',stage:'Prospect',last:'Nov 20 visit, 30 min',xdate:'2026-11-27',line:'Auto + Home',renewal:'2027-03-02',notes:'Came into the Gilbert office. Two teens driving, needs a quote with them listed.',owner:'Andrew W.'},
+ {id:'L2012',name:'Trevor Lindqvist',phone:'(480) 555-0122',email:'tlindqvist@outlook.com',source:'Google Business',stage:'Lead',last:'',xdate:'',line:'Auto',renewal:'',notes:'Left a voicemail asking about rates, no callback scheduled.',owner:'Andrew W.'},
+ {id:'L2013',name:'Simone Carter',phone:'(480) 555-0173',email:'simone.carter@gmail.com',source:'Referral · Sofia Okafor',stage:'Prospect',last:'Nov 22 email sent',xdate:'2026-12-01',line:'Home',renewal:'2027-04-22',notes:'New build in Queen Creek, closing December. Needs dwelling coverage before closing.',owner:'Andrew W.'},
+ {id:'L2014',name:'Oscar Delgado',phone:'(480) 555-0164',email:'odelgado@delgadotransport.com',source:'Referral · Hector V.',stage:'Lead',last:'',xdate:'2026-11-25',line:'Commercial Auto',renewal:'2027-01-08',notes:'Six box trucks, current policy cancels January. High intent, call first.',owner:'Andrew W.'},
+ {id:'L2015',name:'Nadia Petrov',phone:'(480) 555-0195',email:'nadia.petrov@gmail.com',source:'Web form',stage:'Lost',last:'Nov 8 call, went with another agency',xdate:'',line:'Renters',renewal:'2027-05-30',notes:'Went with a captive for $4 less a month. Pipeline out 30 days before her renewal.',owner:'Andrew W.'},
+ {id:'L2016',name:'Malik Turner',phone:'(480) 555-0118',email:'mturner@turnerplumbing.com',source:'Networking · BNI',stage:'Prospect',last:'Nov 24 meeting, 20 min',xdate:'2026-11-28',line:'BOP + Workers Comp',renewal:'2027-02-25',notes:'Plumbing, 6 employees. Wants certificates for two builders, needs COI turnaround fast.',owner:'Andrew W.'},
+ {id:'L2017',name:'Kendra Bowen',phone:'(480) 555-0155',email:'kbowen@email.com',source:'Flyer QR',stage:'Lead',last:'',xdate:'2026-12-04',line:'Auto',renewal:'2027-07-11',notes:'Scanned at the Mesa event, said she would look at it after the holidays.',owner:'Andrew W.'},
+ {id:'L2018',name:'Ruben Escobar',phone:'(480) 555-0134',email:'ruben.esco@gmail.com',source:'Referral · Priya Okafor',stage:'Prospect',last:'Nov 18 call, 12 min',xdate:'2026-11-25',line:'Auto + Umbrella',renewal:'2027-01-19',notes:'Wants the umbrella quote in writing. Has an SR-22 question from 2024.',owner:'Andrew W.'},
+ {id:'L2019',name:'Claire Whitmore',phone:'(480) 555-0181',email:'claire.whitmore@gmail.com',source:'Meta ad',stage:'Lead',last:'',xdate:'',line:'Life',renewal:'',notes:'Downloaded the life insurance guide, no contact yet.',owner:'Andrew W.'},
+ {id:'L2020',name:'Andre Kowalczyk',phone:'(480) 555-0146',email:'akowalczyk@kowalbuild.com',source:'Referral · Tom Duffy',stage:'Prospect',last:'Nov 21 call, 8 min',xdate:'2026-12-03',line:'Builders Risk',renewal:'',notes:'Building two spec homes in San Tan. Needs builders risk for both before framing.',owner:'Andrew W.'},
+ {id:'L2021',name:'Tanya Brooks',phone:'(480) 555-0102',email:'tanya.brooks@gmail.com',source:'Web form',stage:'Lost',last:'Nov 15, unresponsive after 3 touches',xdate:'',line:'Auto',renewal:'2027-06-04',notes:'Three touches, no reply. Park until 30 days before renewal.',owner:'Andrew W.'},
+ {id:'L2022',name:'Felix Navarro',phone:'(480) 555-0192',email:'felix.navarro@gmail.com',source:'Google Business',stage:'Lead',last:'',xdate:'2026-11-29',line:'Auto',renewal:'2027-03-27',notes:'Called after hours, left a message about a DUI from last year.',owner:'Andrew W.'},
+ {id:'L2023',name:'Gwen Achterberg',phone:'(480) 555-0169',email:'gwen.a@outlook.com',source:'Walk-in',stage:'Prospect',last:'Nov 23 visit, 15 min',xdate:'2026-11-26',line:'Home + Auto',renewal:'2027-02-09',notes:'Brought her declarations pages in. Wants a side by side before she renews.',owner:'Andrew W.'},
+ {id:'L2024',name:'Jamal Whitaker',phone:'(480) 555-0113',email:'jwhitaker@whitakerlaw.net',source:'Referral · Curtis N.',stage:'Lead',last:'',xdate:'',line:'Umbrella',renewal:'2027-04-15',notes:'Referred by Curtis, has not been contacted yet.',owner:'Andrew W.'},
+ {id:'L2025',name:'Elena Marsh',phone:'(480) 555-0158',email:'elena.marsh@gmail.com',source:'Meta ad',stage:'Lost',last:'Nov 6 call, budget',xdate:'',line:'Renters',renewal:'2027-08-01',notes:'Said the price was fine but she is moving in with family. Check back in the spring.',owner:'Andrew W.'},
+ {id:'L2026',name:'Bryce Tanaka',phone:'(480) 555-0126',email:'btanaka@tanakadesign.com',source:'Referral · Marisol Cardenas',stage:'Prospect',last:'Nov 24 email, opened twice',xdate:'2026-11-27',line:'BOP + EPLI',renewal:'2027-01-22',notes:'Interior design studio, 3 employees. Asked about EPLI after a hire.',owner:'Andrew W.'},
+ {id:'L2027',name:'Rosa Delacruz',phone:'(480) 555-0187',email:'rosa.delacruz@gmail.com',source:'Flyer QR',stage:'Lead',last:'',xdate:'2026-12-05',line:'Auto',renewal:'2027-05-16',notes:'QR from the Chandler flyer drop. Spanish preferred.',owner:'Andrew W.'},
+ {id:'L2028',name:'Trent Whitfield',phone:'(480) 555-0109',email:'trent.whitfield@gmail.com',source:'Purchased list',stage:'Lead',last:'',xdate:'',line:'Auto',renewal:'',notes:'Cold list, unverified number.',owner:'Andrew W.'},
+ {id:'L2029',name:'Adriana Sosa',phone:'(480) 555-0174',email:'adriana.sosa@outlook.com',source:'Referral · Renee W.',stage:'Prospect',last:'Nov 20 text, replied',xdate:'2026-12-01',line:'Auto + Life',renewal:'2027-02-14',notes:'Wants auto and a small term policy together. Husband is self employed.',owner:'Andrew W.'},
+ {id:'L2030',name:'Miles Fontaine',phone:'(480) 555-0191',email:'miles.fontaine@gmail.com',source:'Web form',stage:'Lead',last:'',xdate:'2026-11-25',line:'Home',renewal:'2027-06-12',notes:'New homeowner in Gilbert, asked if flood is worth it.',owner:'Andrew W.'}
+];
+const LEAD_LOG={};
+function leadById(id){return LEADS.find(l=>l.id===id)}
+function daysTo(d){if(!d)return null;const a=new Date(d),b=new Date(LEAD_TODAY);return Math.round((a-b)/86400000)}
+function xLabel(d){if(!d)return 'Not set';const n=daysTo(d);if(n<0)return Math.abs(n)+'d overdue';if(n===0)return 'Due today';if(n===1)return 'Tomorrow';return 'In '+n+' days'}
+function xChip(d){if(!d)return '<span class="chip n">Not set</span>';const n=daysTo(d);const c=n<0?'r':n<=2?'a':'n';return '<span class="chip '+c+'">'+xLabel(d)+'</span>'}
+const NAV={dash:['Dashboard','Book of business at a glance'],leads:['Leads','Worked by X-Date, moved to prospect on contact'],clients:['Clients','One record per household and business'],quotes:['Quotes','Quoted in each carrier portal, sent from here'],policies:['Policies','Renewals, payments and documents'],claims:['Claims','Losses, reserves and status by carrier'],
   payments:['Payments','Who owes what, and how it gets collected'],
   commissions:['Commissions','Carrier statements reconciled against the book'],
   tasks:['Tasks','Who does what, and who covers'],
@@ -887,7 +950,7 @@ function go(v){
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   document.getElementById('ttl').textContent=NAV[v][0];
   document.getElementById('sub').textContent=NAV[v][1];
-  const R={dash:renderDash,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,claims:renderClaims,payments:renderPayments,commissions:renderComms,tasks:renderTasks,email:renderEmail,access:renderAccess,team:renderTeam,messages:renderMessages,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
+  const R={dash:renderDash,leads:renderLeads,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,claims:renderClaims,payments:renderPayments,commissions:renderComms,tasks:renderTasks,email:renderEmail,access:renderAccess,team:renderTeam,messages:renderMessages,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
   if(R[v])R[v]();
 }
 function quickSearch(v){
@@ -1338,7 +1401,7 @@ function renderProjections(){
 }
 
 /* ---------- boot ---------- */
-function renderAll(){renderDash();renderClients();renderQuotes();renderPolicies();renderTasks();renderEmail();renderMessages();renderClaims();renderPayments();renderComms();renderAccess();renderTeam();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
+function renderAll(){renderDash();renderClients();renderLeads();renderQuotes();renderPolicies();renderTasks();renderEmail();renderMessages();renderClaims();renderPayments();renderComms();renderAccess();renderTeam();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 document.querySelectorAll('#clientFilters button').forEach(b=>b.onclick=()=>setClientFilter(b.dataset.f));
 document.querySelectorAll('#polFilters button').forEach(b=>b.onclick=()=>setPolFilter(b.dataset.f));
@@ -2514,6 +2577,169 @@ function saveInvite(){
   USERS.push({n,role:r,email:e,mfa:m,last:'Never',status:'Active',sees:map[r]});
   ACCESS_LOG.unshift(['just now','Invite sent to '+n+' as '+r]);
   closeModal(); renderAccess(); toast('Invite sent to '+n);
+}
+/* ================= LEADS: list, stage moves, X-Date ================= */
+let LEAD_FILTER='all';
+function leadFilter(f,el){LEAD_FILTER=f;document.querySelectorAll('#leadFilters button').forEach(b=>b.classList.toggle('on',b===el));renderLeads();
+  const names={all:'All leads and prospects',lead:'Leads only, no quote yet',prospect:'Prospects quoting',due:'Due now or overdue',lost:'Lost, parked for renewal'};
+  toast(names[f]+' · '+leadRows().length+' shown')}
+function leadRows(){
+  const q=(document.getElementById('leadSearch')||{}).value||'';
+  const qq=q.trim().toLowerCase();
+  return LEADS.filter(l=>{
+    if(LEAD_FILTER==='lead'&&l.stage!=='Lead')return false;
+    if(LEAD_FILTER==='prospect'&&l.stage!=='Prospect')return false;
+    if(LEAD_FILTER==='lost'&&l.stage!=='Lost')return false;
+    if(LEAD_FILTER==='due'){const n=daysTo(l.xdate);if(n===null||n>0)return false}
+    if(qq){const hay=(l.name+' '+l.phone+' '+l.email+' '+l.source+' '+l.line+' '+l.notes).toLowerCase();if(hay.indexOf(qq)<0)return false}
+    return true;
+  }).sort((a,b)=>{
+    const da=daysTo(a.xdate),db=daysTo(b.xdate);
+    if(da===null&&db===null)return a.name.localeCompare(b.name);
+    if(da===null)return 1;
+    if(db===null)return -1;
+    return da-db;
+  });
+}
+function renderLeads(){
+  const rows=leadRows();
+  const due=LEADS.filter(l=>{const n=daysTo(l.xdate);return n!==null&&n<=0&&l.stage!=='Lost'}).length;
+  const hot=LEADS.filter(l=>{const n=daysTo(l.xdate);return n!==null&&n<=2&&l.stage!=='Lost'}).length;
+  const kp=document.getElementById('leadKpis');
+  if(kp)kp.innerHTML=[
+    ['Due now or overdue',due,'Needs a touch today'],
+    ['Due in 48 hours',hot,'Queued behind today'],
+    ['Leads, no contact',LEADS.filter(l=>l.stage==='Lead'&&!l.last).length,'Never worked'],
+    ['Prospects quoting',LEADS.filter(l=>l.stage==='Prospect').length,'Moved after contact'],
+    ['Lost, parked',LEADS.filter(l=>l.stage==='Lost').length,'Back before renewal']
+  ].map(k=>'<div class="card"><div class="k">'+k[0]+'</div><div class="val">'+k[1]+'</div><div class="lab">'+k[2]+'</div></div>').join('');
+  const c=document.getElementById('leadCount');
+  if(c)c.textContent=rows.length+' shown';
+  const body=document.getElementById('leadBody');
+  if(!body)return;
+  body.innerHTML=rows.map(l=>{
+    const stageChip=l.stage==='Prospect'?'<span class="chip g">Prospect</span>':l.stage==='Lost'?'<span class="chip r">Lost</span>':'<span class="chip a">Lead</span>';
+    return '<tr><td><b>'+l.name+'</b><div style="font-size:11px;color:var(--muted)">'+l.line+' · '+l.owner+'</div></td>'
+      +'<td style="font-size:11.5px">'+l.phone+'<div style="color:var(--muted)">'+l.email+'</div></td>'
+      +'<td style="font-size:11.5px">'+l.source+'</td>'
+      +'<td>'+stageChip+'</td>'
+      +'<td style="font-size:11.5px">'+(l.last||'<span style="color:var(--muted)">No touch</span>')+'</td>'
+      +'<td>'+xChip(l.xdate)+'<div style="font-size:11px;color:var(--muted)">'+(l.xdate||'')+'</div></td>'
+      +'<td><div class="acts"><button onclick="leadProfile(\''+l.id+'\')">Open</button>'
+      +'<button onclick="xDateModal(\''+l.id+'\')">X-Date</button>'
+      +'<button onclick="quickTouch(\''+l.id+'\')">Log touch</button></div></td></tr>';
+  }).join('')||'<tr><td colspan="7" style="color:var(--muted);padding:16px">Nothing matches that filter.</td></tr>';
+}
+function quickTouch(id){
+  const l=leadById(id);
+  l.last='Nov 25 call, logged';
+  LEAD_LOG[id]=LEAD_LOG[id]||[];
+  LEAD_LOG[id].unshift({t:'Nov 25',k:'Call',x:'Outbound call logged, 3 min'});
+  if(!l.xdate)l.xdate='2026-12-02';
+  renderLeads();toast('Touch logged for '+l.name+', X-Date set to Dec 2');
+}
+function leadProfile(id){
+  const l=leadById(id),log=LEAD_LOG[id]||[];
+  const hist=log.length?log.map(e=>'<div class="ev"><b>'+e.k+'</b> · '+e.t+'<div style="color:var(--muted);font-size:11.5px">'+e.x+'</div></div>').join(''):'<div class="note" style="margin:0">No touches logged yet. This lead has never been worked.</div>';
+  shellModal(l.name, l.stage+' · '+l.line+' · '+l.source,
+    '<div class="grid2" style="margin-bottom:10px">'
+    +'<div class="kpi"><div class="k">Phone</div><div class="v" style="font-size:13px">'+l.phone+'</div></div>'
+    +'<div class="kpi"><div class="k">Email</div><div class="v" style="font-size:12px">'+l.email+'</div></div>'
+    +'<div class="kpi"><div class="k">X-Date</div><div class="v" style="font-size:13px">'+xChip(l.xdate)+'</div></div>'
+    +'<div class="kpi"><div class="k">Renewal</div><div class="v" style="font-size:13px">'+(l.renewal||'Not in a policy yet')+'</div></div>'
+    +'</div>'
+    +'<div class="note" style="margin:0 0 10px">'+l.notes+'</div>'
+    +'<div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:4px">Activity</div>'
+    +hist
+    +'<div class="acts" style="margin-top:10px;flex-wrap:wrap">'
+    +'<button onclick="leadTouch(\''+l.id+'\',\'Call\')">Log call</button>'
+    +'<button onclick="leadTouch(\''+l.id+'\',\'Text\')">Log text</button>'
+    +'<button onclick="leadTouch(\''+l.id+'\',\'Email\')">Log email</button>'
+    +'<button onclick="xDateModal(\''+l.id+'\')">Set X-Date</button>'
+    +'<button onclick="moveLead(\''+l.id+'\',\'Prospect\')">Move to Prospect</button>'
+    +'<button onclick="moveLead(\''+l.id+'\',\'Lead\')">Move back to Lead</button>'
+    +'<button onclick="startQuoteFromLead(\''+l.id+'\')">Start a quote</button>'
+    +'<button onclick="closeModal()">Close</button></div>');
+}
+function leadTouch(id,kind){
+  const l=leadById(id);
+  LEAD_LOG[id]=LEAD_LOG[id]||[];
+  LEAD_LOG[id].unshift({t:'Nov 25',k:kind,x:kind+' logged against '+l.name});
+  l.last='Nov 25 '+kind.toLowerCase()+', logged';
+  act(null,'lead',kind+' logged with '+l.name);
+  renderLeads();leadProfile(id);toast(kind+' logged for '+l.name);
+}
+function moveLead(id,stage){
+  const l=leadById(id);
+  const was=l.stage;
+  l.stage=stage;
+  LEAD_LOG[id]=LEAD_LOG[id]||[];
+  LEAD_LOG[id].unshift({t:'Nov 25',k:'Stage',x:'Moved from '+was+' to '+stage});
+  if(stage==='Prospect'&&!l.xdate)l.xdate='2026-11-28';
+  if(stage==='Lead'&&was==='Lost')l.xdate='';
+  act(null,'lead',l.name+' moved to '+stage);
+  renderLeads();leadProfile(id);
+  toast(l.name+' moved to '+stage);
+}
+function xDateModal(id){
+  const l=leadById(id);
+  const presets=[
+    ['Callback tomorrow','2026-11-26'],
+    ['One week out','2026-12-02'],
+    ['Two weeks out','2026-12-09'],
+    ['Thirty days out','2026-12-25'],
+    ['Thirty days before renewal', l.renewal?shiftDays(l.renewal,-30):'']
+  ].filter(p=>p[1]);
+  shellModal('X-Date · '+l.name,'The day this lead comes back to the top of the list',
+    '<div class="note" style="margin:0 0 10px">Current: '+xChip(l.xdate)+'. Today is November 25, 2026.</div>'
+    +'<div class="field"><label>Pick a date</label><input id="xdInput" type="date" value="'+(l.xdate||'2026-12-02')+'"></div>'
+    +'<div class="acts" style="flex-wrap:wrap;margin-top:6px">'
+    +presets.map(p=>'<button onclick="setXDate(\''+l.id+'\',\''+p[1]+'\')">'+p[0]+'</button>').join('')
+    +'</div>'
+    +'<div class="acts" style="margin-top:10px"><button class="btn blue" onclick="setXDate(\''+l.id+'\',document.getElementById(\'xdInput\').value)">Save X-Date</button>'
+    +'<button class="btn ghost" onclick="setXDate(\''+l.id+'\',\'\')">Clear</button>'
+    +'<button class="btn ghost" onclick="closeModal()">Cancel</button></div>');
+}
+function shiftDays(iso,n){const d=new Date(iso);d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+function setXDate(id,val){
+  const l=leadById(id);
+  l.xdate=val||'';
+  LEAD_LOG[id]=LEAD_LOG[id]||[];
+  LEAD_LOG[id].unshift({t:'Nov 25',k:'X-Date',x:val?('Pipelined to '+val):'X-Date cleared'});
+  act(null,'lead','X-Date set for '+l.name+': '+(val||'cleared'));
+  renderLeads();closeModal();
+  toast(val?('X-Date set for '+l.name+', '+xLabel(val)):('X-Date cleared for '+l.name));
+}
+function newLeadModal(){
+  shellModal('Add a lead','New lead, no contact yet',
+    '<div class="grid2">'
+    +'<div class="field"><label>Name</label><input id="nlName" placeholder="First and last"></div>'
+    +'<div class="field"><label>Phone</label><input id="nlPhone" placeholder="(480) 555-0000"></div>'
+    +'<div class="field"><label>Email</label><input id="nlEmail" placeholder="name@email.com"></div>'
+    +'<div class="field"><label>Source</label><select id="nlSource"><option>Web form</option><option>Meta ad</option><option>Google Business</option><option>Referral</option><option>Walk-in</option><option>Flyer QR</option><option>Purchased list</option></select></div>'
+    +'<div class="field"><label>Line of business</label><select id="nlLine"><option>Auto</option><option>Home</option><option>Auto + Home</option><option>Renters</option><option>Life</option><option>Umbrella</option><option>BOP</option><option>Commercial Auto</option><option>Workers Comp</option></select></div>'
+    +'<div class="field"><label>X-Date</label><input id="nlX" type="date" value="2026-11-28"></div>'
+    +'</div>'
+    +'<div class="field"><label>Notes</label><input id="nlNotes" placeholder="What they asked for"></div>'
+    +'<div class="acts" style="margin-top:8px"><button class="btn blue" onclick="saveLead()">Save lead</button><button class="btn ghost" onclick="closeModal()">Cancel</button></div>');
+}
+function saveLead(){
+  const g=id=>(document.getElementById(id)||{}).value||'';
+  const name=g('nlName').trim();
+  if(!name){toast('A name is required');return}
+  const l={id:'L2'+(100+LEADS.length),name:name,phone:g('nlPhone')||'(480) 555-0000',email:g('nlEmail')||'no email',source:g('nlSource'),stage:'Lead',last:'',xdate:g('nlX'),line:g('nlLine'),renewal:'',notes:g('nlNotes')||'Added by hand from the lead list.',owner:'Andrew W.'};
+  LEADS.unshift(l);
+  LEAD_LOG[l.id]=[{t:'Nov 25',k:'Created',x:'Lead added by '+l.owner}];
+  act(null,'lead','Lead added: '+l.name);
+  closeModal();renderLeads();toast(l.name+' added to Leads');
+}
+function startQuoteFromLead(id){
+  const l=leadById(id);
+  l.stage='Prospect';
+  const q=document.getElementById('qName');
+  if(q)q.value=l.name;
+  closeModal();go('quotes');
+  toast('Quote started for '+l.name);
 }
 /* ================= PRODUCTION AND COMMISSION PERFORMANCE ================= */
 const MONTHS=['Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'];
