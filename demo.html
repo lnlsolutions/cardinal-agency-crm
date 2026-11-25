@@ -184,8 +184,8 @@ tbody tr:hover{background:#FAFBFD}
 </style></head><body>
 <div class="gate" id="gate"><div class="box">
   <div class="mark" style="margin-bottom:12px">C</div>
-  <h2>Cardinal agency demo</h2>
-  <p>Synthetic agency data. No real policyholder information is present.</p>
+  <h2>Cardinal · John Chleboun</h2>
+  <p>Owner and manager access. Every client, policy, producer, call and follow-up in the agency. Synthetic data, no real policyholder information.</p>
   <div class="field"><label>Access code</label><input id="gateCode" placeholder="Enter code" autocomplete="off"></div>
   <button class="btn blue" style="width:100%;justify-content:center" onclick="unlock()">Open demo</button>
 </div></div>
@@ -212,7 +212,7 @@ tbody tr:hover{background:#FAFBFD}
       <button data-v="team"><span class="ic">◎</span><span>Team performance</span></button>
       <button data-v="brand"><span class="ic">◐</span><span>Projections</span></button>
     </nav>
-    <div class="sidefoot">Signed in as<br><b style="color:#fff">Jacobo M.</b> · owner<br>Gilbert office</div>
+    <div class="sidefoot">Signed in as<br><b style="color:#fff">John Chleboun</b> · owner and manager<br>Gilbert office</div>
   </aside>
   <main class="main">
     <div class="top">
@@ -220,7 +220,7 @@ tbody tr:hover{background:#FAFBFD}
       <div class="spacer"></div>
       <div class="search"><span style="color:var(--muted)">⌕</span><input id="q" placeholder="Search client, policy or phone" oninput="quickSearch(this.value)"></div>
       <button class="btn sm ghost" onclick="toast('EZLynx sync started, 593 policies queued')">Sync EZLynx</button>
-      <div class="avatar">JM</div>
+      <div class="avatar" title="John Chleboun">JC</div>
     </div>
 
     <section class="view on" id="v-dash">
@@ -500,6 +500,9 @@ tbody tr:hover{background:#FAFBFD}
           <div class="panel"><div class="head"><h2>Full scope board</h2><div class="spacer"></div><span class="chip g">owner view</span></div>
             <div class="body"><div class="note" style="margin:0 0 8px">This login sees the whole agency: every employee, every client, every policy, commission, claim and payment, plus the campaign and ad spend board the producer logins cannot see.</div>
               <div class="acts" style="flex-wrap:wrap"><button onclick="go('dash')">Dashboard</button><button onclick="go('clients')">Clients</button><button onclick="go('policies')">Policies</button><button onclick="go('commissions')">Commissions</button><button onclick="go('claims')">Claims</button><button onclick="go('growth')">Growth and ad spend</button><button onclick="go('campaigns')">Campaigns</button><button onclick="go('access')">Users and access</button></div></div></div>
+          <div class="panel"><div class="head"><h2>Call activity this month</h2><div class="spacer"></div><span class="chip n">in and out</span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Person</th><th class="num">Out</th><th class="num">In</th><th class="num">Connected</th><th class="num">Talk time</th><th class="num">Follow-ups open</th><th></th></tr></thead><tbody id="teamCallBody"></tbody></table></div>
+            <div class="body"><div class="note" id="teamCallNote"></div></div></div>
           <div class="panel"><div class="head"><h2>Who can see what</h2></div><div class="body" style="padding:0"><table><thead><tr><th>Login</th><th>Board</th><th>Ad spend</th><th>Team pay</th></tr></thead><tbody>
             <tr><td>John Chleboun · owner</td><td class="num"><span class="chip g">full</span></td><td class="num"><span class="chip g">yes</span></td><td class="num"><span class="chip g">yes</span></td></tr>
             <tr><td>Andrew Whitehead · producer</td><td class="num"><span class="chip g">full</span></td><td class="num"><span class="chip r">no</span></td><td class="num"><span class="chip n">own only</span></td></tr>
@@ -2515,11 +2518,11 @@ function saveInvite(){
 /* ================= PRODUCTION AND COMMISSION PERFORMANCE ================= */
 const MONTHS=['Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'];
 const PROD_PERF=[
- {n:'Andrew W.',role:'Producer',goal:20000,rate:0.125,mon:[9800,11200,10400,12600,11800,13400,12900,14100,13600,15200,14800,16400]},
- {n:'Jacobo M.',role:'Producer',goal:26000,rate:0.13,mon:[16400,15800,17200,16600,18100,17400,18900,18200,19600,18800,20400,21200]},
- {n:'Kayla B.',role:'Producer',goal:22000,rate:0.12,mon:[12800,13400,12900,14100,13700,14900,14300,15600,15100,16300,15800,17100]},
- {n:'Dana R.',role:'CSR',goal:9000,rate:0.10,mon:[6200,6800,6400,7100,6900,7600,7300,7900,7700,8300,8100,8700]},
- {n:'Steve L.',role:'Service',goal:8000,rate:0.10,mon:[5400,5600,5900,6100,6000,6400,6200,6700,6500,6900,6800,7200]}
+ {n:'Andrew W.',role:'Producer',goal:20000,rate:0.125,out:312,inn:148,conn:96,talk:1240,fu:18,mon:[9800,11200,10400,12600,11800,13400,12900,14100,13600,15200,14800,16400]},
+ {n:'Jacobo M.',role:'Producer',goal:26000,rate:0.13,out:388,inn:205,conn:131,talk:1610,fu:22,mon:[16400,15800,17200,16600,18100,17400,18900,18200,19600,18800,20400,21200]},
+ {n:'Kayla B.',role:'Producer',goal:22000,rate:0.12,out:341,inn:176,conn:109,talk:1405,fu:15,mon:[12800,13400,12900,14100,13700,14900,14300,15600,15100,16300,15800,17100]},
+ {n:'Dana R.',role:'CSR',goal:9000,rate:0.10,out:402,inn:512,conn:260,talk:1880,fu:26,mon:[6200,6800,6400,7100,6900,7600,7300,7900,7700,8300,8100,8700]},
+ {n:'Steve L.',role:'Service',goal:8000,rate:0.10,out:240,inn:388,conn:205,talk:1520,fu:12,mon:[5400,5600,5900,6100,6000,6400,6200,6700,6500,6900,6800,7200]}
 ];
 const perfOf=n=>PROD_PERF.find(p=>p.n===n);
 const polCount=prem=>Math.max(1,Math.round(prem/1650));
@@ -2570,6 +2573,7 @@ function renderTeam(){
     +'<td><button class="btn ghost sm" onclick="prodModal(\''+r.n+'\')">Board</button></td></tr>').join('');
   document.getElementById('teamBars').innerHTML=rows.map(r=>'<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>'+r.n+'</span><span style="color:var(--muted)">'+money(r.mtd)+' of '+money(r.goal)+'</span></div><div class="track"><div class="fill" style="width:'+Math.min(100,r.pct)+'%;background:'+(r.pct>=100?'var(--green)':'var(--blue)')+'"></div></div></div>').join('');
   document.getElementById('teamNote').textContent='Goal attainment is new written premium this month against each monthly goal. Board opens the 12 month production and commission statement.';
+  renderTeamCalls();
 }
 function renderMyProd(){
   const p=perfOf('Andrew W.'),r=perfRow(p);
@@ -2585,5 +2589,56 @@ function renderMyProd(){
   if(bar) bar.innerHTML='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Goal '+money(r.goal)+'</span><span style="color:var(--muted)">'+r.pct+'% · '+money(r.goal-r.mtd)+' to go</span></div><div class="track" style="height:9px"><div class="fill" style="width:'+Math.min(100,r.pct)+'%;background:'+(r.pct>=100?'var(--green)':'var(--blue)')+'"></div></div>';
   const rows=document.getElementById('myProdMonths');
   if(rows) rows.innerHTML=p.mon.map((v,i)=>'<tr><td>'+MONTHS[i]+'</td><td class="num">'+polCount(v)+'</td><td class="num">'+money(v)+'</td><td class="num">'+money(Math.round(v*p.rate))+'</td></tr>').join('');
+}
+
+const CALL_LOG={
+ 'Andrew W.':[['09:12','Out','Jill Nakamura','Auto renewal','4:12','Reached, quote to send'],
+              ['09:48','In','Priya Okafor','Payment failed','2:38','Reached, link texted'],
+              ['10:31','Out','Tom Duffy','COI for Gilbert job','1:55','Left voicemail'],
+              ['11:06','Out','Elena Kowalski','Renewal up 14%','6:20','Reached, shopping carriers'],
+              ['13:22','In','Grant Pierce','Added teen driver','3:04','Reached, quote sent'],
+              ['14:40','Out','Tanya Ferraro','Lapse notice','0:48','No answer, texted']],
+ 'Jacobo M.':[['08:55','Out','Nina Kowalski','Umbrella cross-sell','5:10','Reached, quote to send'],
+              ['09:40','In','Caleb Brennan','Claim status','3:22','Reached, adjuster called'],
+              ['11:15','Out','Sofia Okafor','BOP renewal','7:05','Reached, meeting set']],
+ 'Kayla B.':[['09:05','Out','Owen Sorensen','Home plus auto','4:44','Reached, shopping'],
+             ['10:20','In','Lena Kowalski','ID card request','1:12','Reached, card emailed'],
+             ['15:10','Out','Reggie Lindqvist','Quote follow-up','2:01','Left voicemail']],
+ 'Dana R.':[['08:40','In','Marisol Cardenas','Certificate rush','2:15','Reached, sent'],
+            ['09:30','In','Hector Villanueva','Payroll change','4:02','Reached, updated'],
+            ['12:10','Out','Andre Boateng','Payment plan','3:48','Reached, autopay set']],
+ 'Steve L.':[['08:35','In','Yvonne Salazar','Water damage claim','8:12','Reached, FNOL filed'],
+             ['10:05','Out','Ellis Boone','Renewal review','3:30','Reached, review booked']]
+};
+function callLogModal(n){
+  const p=perfOf(n),rows=(CALL_LOG[n]||[]).map(c=>'<tr><td>'+c[0]+'</td><td><span class="chip '+(c[1]==='In'?'n':'g')+'">'+c[1]+'</span></td><td>'+c[2]+'</td><td>'+c[3]+'</td><td class="num">'+c[4]+'</td><td>'+c[5]+'</td></tr>').join('');
+  const pct=Math.round(p.conn/(p.out+p.inn)*100);
+  shellModal(n+' call log','This month · '+p.out+' out, '+p.inn+' in, '+pct+'% connected, '+p.talk.toLocaleString()+' minutes',
+    '<div class="grid2">'
+    +'<div class="kpi"><div class="k">Calls out</div><div class="v">'+p.out+'</div></div>'
+    +'<div class="kpi"><div class="k">Calls in</div><div class="v">'+p.inn+'</div></div>'
+    +'<div class="kpi"><div class="k">Connected</div><div class="v">'+p.conn+'</div></div>'
+    +'<div class="kpi"><div class="k">Talk time</div><div class="v">'+p.talk.toLocaleString()+' min</div></div>'
+    +'</div>'
+    +'<div style="padding:0;margin-top:8px"><table><thead><tr><th>Time</th><th>Dir</th><th>Client</th><th>Reason</th><th class="num">Length</th><th>Outcome</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+    +'<div class="note">'+p.fu+' follow-ups are open for '+n+'. Every call is logged against the client record with the reason and the outcome, so nothing depends on memory.</div>'
+    +'<div class="acts" style="margin-top:10px"><button onclick="closeModal()">Close</button></div>');
+}
+function renderTeamCalls(){
+  const el=document.getElementById('teamCallBody'); if(!el) return;
+  el.innerHTML=PROD_PERF.map(p=>{
+    const pct=Math.round(p.conn/(p.out+p.inn)*100);
+    return '<tr><td><b>'+p.n+'</b></td><td class="num">'+p.out+'</td><td class="num">'+p.inn+'</td><td class="num">'+p.conn+' ('+pct+'%)</td><td class="num">'+p.talk+' min</td><td class="num">'+p.fu+'</td><td><button class="btn ghost sm" onclick="callLogModal(\''+p.n+'\')">Call log</button></td></tr>';
+  }).join('');
+  const note=document.getElementById('teamCallNote');
+  if(note) note.textContent='Calls are logged from the CRM dialer and the office line, so inbound calls are captured even when the client calls the main number.';
+}
+function renderMyCalls(){
+  const el=document.getElementById('myCallKpis'); if(!el) return;
+  const p=perfOf('Andrew W.'),pct=Math.round(p.conn/(p.out+p.inn)*100);
+  el.innerHTML=[['Calls out',p.out,'this month',''],['Calls in',p.inn,'direct to my line',''],['Connected',pct+'%',p.conn+' of '+(p.out+p.inn),'up'],['Open follow-ups',p.fu,'after calls','']]
+    .map(k=>'<div class="card"><div class="lab">'+k[0]+'</div><div class="val">'+k[1]+'</div><div class="meta">'+k[2]+'</div></div>').join('');
+  const rows=document.getElementById('myCallBody');
+  if(rows) rows.innerHTML=(CALL_LOG['Andrew W.']||[]).map(c=>'<tr><td>'+c[0]+'</td><td><span class="chip '+(c[1]==='In'?'n':'g')+'">'+c[1]+'</span></td><td>'+c[2]+'</td><td>'+c[3]+'</td><td class="num">'+c[4]+'</td><td>'+c[5]+'</td></tr>').join('');
 }
 </script></body></html>
