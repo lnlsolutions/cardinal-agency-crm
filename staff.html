@@ -223,6 +223,12 @@ tbody tr:hover{background:#FAFBFD}
         <b>Your view.</b> Everything on the book, every client and policy, plus your own calls, texts, emails and follow-ups. Ad spend, campaign cost allocation and campaign closure rates are not part of this login.
       </div>
       <div class="cards" id="myKpis"></div>
+      <div class="cards" id="myProdKpis"></div>
+      <div class="cols">
+        <div class="panel"><div class="head"><h2>My goal this month</h2><div class="spacer"></div><span class="chip n">MTD</span></div><div class="body"><div id="myProdBar"></div><div class="note">New written premium this month against your monthly goal. Updated as policies are bound.</div></div></div>
+        <div class="panel"><div class="head"><h2>My 12 months</h2><div class="spacer"></div><span class="chip n">rolling</span></div><div class="body" style="padding:0"><table><thead><tr><th>Month</th><th class="num">Policies</th><th class="num">Premium</th><th class="num">Commission</th></tr></thead><tbody id="myProdMonths"></tbody></table></div></div>
+      </div>
+
       <div class="cols">
         <div>
           <div class="panel"><div class="head"><h2>My outbound today</h2><div class="spacer"></div><span class="chip n" id="outCount"></span>
@@ -501,6 +507,26 @@ tbody tr:hover{background:#FAFBFD}
       </div>
     </section>
 
+    <section class="view" id="v-team">
+      <div class="cards" id="teamKpis"></div>
+      <div class="cols">
+        <div>
+          <div class="panel"><div class="head"><h2>Every producer, every number</h2><div class="spacer"></div><span class="chip n">this month</span></div>
+            <div class="body" style="padding:0"><table><thead><tr><th>Person</th><th class="num">Monthly goal</th><th class="num">Written MTD</th><th>Attainment</th><th class="num">Policies MTD</th><th class="num">12 mo premium</th><th class="num">12 mo policies</th><th class="num">Commission earned</th><th class="num">Pending</th><th></th></tr></thead><tbody id="teamBody"></tbody></table></div></div>
+          <div class="panel"><div class="head"><h2>Goal attainment</h2><div class="spacer"></div><span class="chip n">MTD</span></div><div class="body"><div id="teamBars"></div><div class="note" id="teamNote"></div></div></div>
+        </div>
+        <div>
+          <div class="panel"><div class="head"><h2>Full scope board</h2><div class="spacer"></div><span class="chip g">owner view</span></div>
+            <div class="body"><div class="note" style="margin:0 0 8px">This login sees the whole agency: every employee, every client, every policy, commission, claim and payment, plus the campaign and ad spend board the producer logins cannot see.</div>
+              <div class="acts" style="flex-wrap:wrap"><button onclick="go('dash')">Dashboard</button><button onclick="go('clients')">Clients</button><button onclick="go('policies')">Policies</button><button onclick="go('commissions')">Commissions</button><button onclick="go('claims')">Claims</button><button onclick="go('growth')">Growth and ad spend</button><button onclick="go('campaigns')">Campaigns</button><button onclick="go('access')">Users and access</button></div></div></div>
+          <div class="panel"><div class="head"><h2>Who can see what</h2></div><div class="body" style="padding:0"><table><thead><tr><th>Login</th><th>Board</th><th>Ad spend</th><th>Team pay</th></tr></thead><tbody>
+            <tr><td>John Chleboun · owner</td><td class="num"><span class="chip g">full</span></td><td class="num"><span class="chip g">yes</span></td><td class="num"><span class="chip g">yes</span></td></tr>
+            <tr><td>Andrew Whitehead · producer</td><td class="num"><span class="chip g">full</span></td><td class="num"><span class="chip r">no</span></td><td class="num"><span class="chip n">own only</span></td></tr>
+            <tr><td>Dana R. · CSR</td><td class="num"><span class="chip n">service</span></td><td class="num"><span class="chip r">no</span></td><td class="num"><span class="chip r">no</span></td></tr>
+          </tbody></table></div></div>
+        </div>
+      </div>
+    </section>
     <section class="view" id="v-brand">
       <div class="cards" id="projKpis"></div>
       <div class="panel"><div class="head"><h2>Three tiers, priced against the stack they replace</h2><div class="spacer"></div><span class="chip n">projection</span></div>
@@ -868,7 +894,7 @@ const NAV={dash:['Dashboard','Book of business at a glance'],clients:['Clients',
   payments:['Payments','Who owes what, and how it gets collected'],
   commissions:['Commissions','Carrier statements reconciled against the book'],
   tasks:['Tasks','Who does what, and who covers'],
-  access:['Users and access','Who can see what at Cardinal'],email:['Email','Every client, carrier and portal thread in one inbox'],messages:['Messages','Team chat, huddles and video in one room'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
+  access:['Users and access','Who can see what at Cardinal'],team:['Team performance','Every producer against goal, month and year'],email:['Email','Every client, carrier and portal thread in one inbox'],messages:['Messages','Team chat, huddles and video in one room'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
 const byId=id=>CLIENTS.find(c=>c.id===id);
 const polsOf=id=>POLICIES.filter(p=>p.clientId===id);
 const premOf=id=>polsOf(id).reduce((s,p)=>s+p.premium,0);
@@ -888,7 +914,7 @@ function goBase(v){
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   document.getElementById('ttl').textContent=NAV[v][0];
   document.getElementById('sub').textContent=NAV[v][1];
-  const R={dash:renderDash,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,claims:renderClaims,payments:renderPayments,commissions:renderComms,tasks:renderTasks,email:renderEmail,access:renderAccess,messages:renderMessages,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
+  const R={dash:renderDash,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,claims:renderClaims,payments:renderPayments,commissions:renderComms,tasks:renderTasks,email:renderEmail,access:renderAccess,team:renderTeam,messages:renderMessages,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
   if(R[v])R[v]();
 }
 function quickSearch(v){
@@ -1339,7 +1365,7 @@ function renderProjections(){
 }
 
 /* ---------- boot ---------- */
-function renderAll(){renderDash();renderClients();renderQuotes();renderPolicies();renderTasks();renderEmail();renderMessages();renderClaims();renderPayments();renderComms();renderAccess();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
+function renderAll(){renderDash();renderClients();renderQuotes();renderPolicies();renderTasks();renderEmail();renderMessages();renderClaims();renderPayments();renderComms();renderAccess();renderTeam();renderCampaigns();renderGrowth();renderSync();renderSecurity();renderProjections();}
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 document.querySelectorAll('#clientFilters button').forEach(b=>b.onclick=()=>setClientFilter(b.dataset.f));
 document.querySelectorAll('#polFilters button').forEach(b=>b.onclick=()=>setPolFilter(b.dataset.f));
@@ -2516,6 +2542,80 @@ function saveInvite(){
   ACCESS_LOG.unshift(['just now','Invite sent to '+n+' as '+r]);
   closeModal(); renderAccess(); toast('Invite sent to '+n);
 }
+/* ================= PRODUCTION AND COMMISSION PERFORMANCE ================= */
+const MONTHS=['Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'];
+const PROD_PERF=[
+ {n:'Andrew W.',role:'Producer',goal:20000,rate:0.125,mon:[9800,11200,10400,12600,11800,13400,12900,14100,13600,15200,14800,16400]},
+ {n:'Jacobo M.',role:'Producer',goal:26000,rate:0.13,mon:[16400,15800,17200,16600,18100,17400,18900,18200,19600,18800,20400,21200]},
+ {n:'Kayla B.',role:'Producer',goal:22000,rate:0.12,mon:[12800,13400,12900,14100,13700,14900,14300,15600,15100,16300,15800,17100]},
+ {n:'Dana R.',role:'CSR',goal:9000,rate:0.10,mon:[6200,6800,6400,7100,6900,7600,7300,7900,7700,8300,8100,8700]},
+ {n:'Steve L.',role:'Service',goal:8000,rate:0.10,mon:[5400,5600,5900,6100,6000,6400,6200,6700,6500,6900,6800,7200]}
+];
+const perfOf=n=>PROD_PERF.find(p=>p.n===n);
+const polCount=prem=>Math.max(1,Math.round(prem/1650));
+function perfRow(p){
+  const mtd=p.mon[p.mon.length-1];
+  const twelve=p.mon.reduce((s,v)=>s+v,0);
+  const comm=Math.round(twelve*p.rate);
+  const paid=Math.round(comm*0.78);
+  return {n:p.n,role:p.role,goal:p.goal,mtd:mtd,pct:Math.round(mtd/p.goal*100),polMTD:polCount(mtd),
+    twelve:twelve,pol12:p.mon.reduce((s,v)=>s+polCount(v),0),comm:comm,paid:paid,pending:comm-paid,rate:p.rate};
+}
+function prodModal(n){
+  const p=perfOf(n),r=perfRow(p);
+  const rows=p.mon.map((v,i)=>'<tr><td>'+MONTHS[i]+' 2026</td><td class="num">'+polCount(v)+'</td><td class="num">'+money(v)+'</td><td class="num">'+money(Math.round(v*p.rate))+'</td></tr>').join('');
+  shellModal(n+' production and commission',r.role+' · goal '+money(r.goal)+' a month in new premium',
+    '<div class="grid2">'
+    +'<div class="kpi"><div class="k">Written this month</div><div class="v">'+money(r.mtd)+'</div></div>'
+    +'<div class="kpi"><div class="k">Goal attainment</div><div class="v">'+r.pct+'%</div></div>'
+    +'<div class="kpi"><div class="k">Policies this month</div><div class="v">'+r.polMTD+'</div></div>'
+    +'<div class="kpi"><div class="k">Generated, 12 months</div><div class="v">'+money(r.twelve)+'</div></div>'
+    +'<div class="kpi"><div class="k">Policies, 12 months</div><div class="v">'+r.pol12+'</div></div>'
+    +'<div class="kpi"><div class="k">Commission earned</div><div class="v">'+money(r.comm)+'</div></div>'
+    +'</div>'
+    +'<div style="padding:0;margin-top:8px"><table><thead><tr><th>Month</th><th class="num">Policies</th><th class="num">Premium written</th><th class="num">Commission</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+    +'<div class="note">Commission is '+Math.round(p.rate*100)+'% of written premium. '+money(r.paid)+' has been paid out and '+money(r.pending)+' is pending carrier statement.</div>'
+    +'<div class="acts" style="margin-top:10px"><button onclick="closeModal()">Close</button></div>');
+}
+function renderTeam(){
+  const rows=PROD_PERF.map(perfRow);
+  const tPrem=rows.reduce((s,r)=>s+r.mtd,0),tGoal=rows.reduce((s,r)=>s+r.goal,0);
+  const tPol=rows.reduce((s,r)=>s+r.polMTD,0),tComm=rows.reduce((s,r)=>s+r.comm,0),t12=rows.reduce((s,r)=>s+r.twelve,0);
+  document.getElementById('teamKpis').innerHTML=[
+    ['Team written, this month',money(tPrem),Math.round(tPrem/tGoal*100)+'% of '+money(tGoal)+' goal',''],
+    ['Policies written, this month',tPol,'across '+rows.length+' people',''],
+    ['Generated, 12 months',money(t12),'written premium','up'],
+    ['Commission earned, 12 months',money(tComm),'paid and pending','up']
+  ].map(k=>'<div class="card"><div class="lab">'+k[0]+'</div><div class="val">'+k[1]+'</div><div class="meta">'+k[2]+'</div></div>').join('');
+  document.getElementById('teamBody').innerHTML=rows.map(r=>'<tr>'
+    +'<td><b>'+r.n+'</b><div style="font-size:11.5px;color:var(--muted)">'+r.role+'</div></td>'
+    +'<td class="num">'+money(r.goal)+'</td>'
+    +'<td class="num">'+money(r.mtd)+'</td>'
+    +'<td><div class="track"><div class="fill" style="width:'+Math.min(100,r.pct)+'%;background:'+(r.pct>=100?'var(--green)':r.pct>=75?'var(--blue)':'var(--amber)')+'"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px">'+r.pct+'% of goal</div></td>'
+    +'<td class="num">'+r.polMTD+'</td>'
+    +'<td class="num">'+money(r.twelve)+'</td>'
+    +'<td class="num">'+r.pol12+'</td>'
+    +'<td class="num">'+money(r.comm)+'</td>'
+    +'<td class="num">'+money(r.pending)+'</td>'
+    +'<td><button class="btn ghost sm" onclick="prodModal(\''+r.n+'\')">Board</button></td></tr>').join('');
+  document.getElementById('teamBars').innerHTML=rows.map(r=>'<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>'+r.n+'</span><span style="color:var(--muted)">'+money(r.mtd)+' of '+money(r.goal)+'</span></div><div class="track"><div class="fill" style="width:'+Math.min(100,r.pct)+'%;background:'+(r.pct>=100?'var(--green)':'var(--blue)')+'"></div></div></div>').join('');
+  document.getElementById('teamNote').textContent='Goal attainment is new written premium this month against each monthly goal. Board opens the 12 month production and commission statement.';
+}
+function renderMyProd(){
+  const p=perfOf('Andrew W.'),r=perfRow(p);
+  const el=document.getElementById('myProdKpis');
+  if(!el) return;
+  el.innerHTML=[
+    ['My monthly goal',money(r.goal),r.pct+'% attained',''],
+    ['Written this month',money(r.mtd),r.polMTD+' policies','up'],
+    ['Generated, 12 months',money(r.twelve),r.pol12+' policies','up'],
+    ['Commission earned',money(r.comm),money(r.paid)+' paid, '+money(r.pending)+' pending','up']
+  ].map(k=>'<div class="card"><div class="lab">'+k[0]+'</div><div class="val">'+k[1]+'</div><div class="meta">'+k[2]+'</div></div>').join('');
+  const bar=document.getElementById('myProdBar');
+  if(bar) bar.innerHTML='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Goal '+money(r.goal)+'</span><span style="color:var(--muted)">'+r.pct+'% · '+money(r.goal-r.mtd)+' to go</span></div><div class="track" style="height:9px"><div class="fill" style="width:'+Math.min(100,r.pct)+'%;background:'+(r.pct>=100?'var(--green)':'var(--blue)')+'"></div></div>';
+  const rows=document.getElementById('myProdMonths');
+  if(rows) rows.innerHTML=p.mon.map((v,i)=>'<tr><td>'+MONTHS[i]+'</td><td class="num">'+polCount(v)+'</td><td class="num">'+money(v)+'</td><td class="num">'+money(Math.round(v*p.rate))+'</td></tr>').join('');
+}
 /* ================= employee (producer) workspace layer ================= */
 const EMP={name:'Andrew Whitehead',first:'Andrew',role:'Producer',initials:'AW',office:'Gilbert'};
 const RESTRICTED=['campaigns','growth','security','brand'];
@@ -2549,6 +2649,7 @@ const MY_OUT=[
   {t:'10:22 AM',ch:'Email',who:'Marisol Cardenas',what:'Umbrella options at $2M',res:'Awaiting reply'}
 ];
 function renderStaffPanels(){
+  if(typeof renderMyProd==='function')renderMyProd();
   if(!document.getElementById('myKpis'))return;
   const mine=CLIENTS.filter(c=>c.owner===EMP.name.replace(' Whitehead',' W.')||c.owner===EMP.name);
   const myPrem=mine.reduce((s,c)=>s+premOf(c.id),0);
