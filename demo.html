@@ -181,6 +181,11 @@ tbody tr:hover{background:#FAFBFD}
 .cbtn:hover{background:#22304a}
 .cbtn.off{background:#3a2028;border-color:#5d2f3a;color:#ffc9d1}
 .cbtn.end{background:var(--red);border-color:var(--red)}
+
+.zipwrap{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;align-items:start}
+@media(max-width:900px){.zipwrap{grid-template-columns:1fr}}
+#zipMap text{pointer-events:none}
+#zipDetail .card .val{font-size:17px}
 </style></head><body>
 <div class="gate" id="gate"><div class="box">
   <div class="mark" style="margin-bottom:12px">C</div>
@@ -458,6 +463,22 @@ tbody tr:hover{background:#FAFBFD}
 
     <section class="view" id="v-growth">
       <div class="cards" id="growthKpis"></div>
+
+      <div class="panel"><div class="head"><h2>Where the leads come from</h2><div class="spacer"></div>
+        <div class="filters" id="zipMetric"><button class="on" data-m="leads" onclick="zipMetric('leads',this)">Leads</button><button data-m="cpl" onclick="zipMetric('cpl',this)">Cost per lead</button><button data-m="bound" onclick="zipMetric('bound',this)">Bound</button><button data-m="close" onclick="zipMetric('close',this)">Close rate</button></div></div>
+        <div class="body zipwrap">
+          <div>
+            <div id="zipMapWrap" style="border:1px solid var(--line);border-radius:10px;background:#FBFCFE;overflow:hidden">
+              <svg id="zipMap" viewBox="0 0 760 440" style="width:100%;height:auto;display:block"></svg>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11px;color:var(--muted)">
+              <span>Low</span><span id="zipLegend" style="height:9px;flex:1;border-radius:5px"></span><span>High</span>
+              <span id="zipLegendNote" style="margin-left:8px"></span>
+            </div>
+            <div class="note" style="margin-top:8px">Relative position, not survey boundaries. Click a ZIP for the people behind the number and what they bound.</div>
+          </div>
+          <div id="zipDetail"></div>
+        </div></div>
       <div class="panel"><div class="head"><h2>Spend and return by channel</h2><div class="spacer"></div><div class="filters" id="rangeFilters"><button class="on" data-r="m">This month</button><button data-r="q">Quarter</button><button data-r="y">Year</button></div></div>
         <div class="body" style="padding:0"><table><thead><tr><th>Channel</th><th class="num">Spend</th><th class="num">Leads</th><th class="num">CPL</th><th class="num">Quotes</th><th class="num">Bound</th><th class="num">Cost / policy</th><th class="num">ROAS</th></tr></thead><tbody id="chanBody"></tbody></table></div></div>
       <div class="grid2">
@@ -1846,6 +1867,7 @@ function renderGrowth(){
   document.getElementById('kwBody').innerHTML=KEYWORDS.map(k2=>`<tr><td>${k2[0]}</td><td class="num">${(k2[1]*mult).toLocaleString()}</td><td class="num">#${k2[2]}</td>
     <td class="num"><span class="chip ${k2[3]>0?'g':k2[3]<0?'r':'n'}">${k2[3]>0?'+'+k2[3]:k2[3]<0?k2[3]:'—'}</span></td></tr>`).join('');
   document.getElementById('callBody').innerHTML=CALLS.map(c=>`<tr><td>${c[0]}</td><td style="font-size:11.5px">${c[1]}</td><td class="num">${c[2]}</td><td style="font-size:11.5px">${c[3]}</td></tr>`).join('');
+  if(typeof renderZipMap==='function')renderZipMap();
 }
 /* ---- sync ---- */
 function renderSync(){
@@ -2867,4 +2889,192 @@ function renderMyCalls(){
   const rows=document.getElementById('myCallBody');
   if(rows) rows.innerHTML=(CALL_LOG['Andrew W.']||[]).map(c=>'<tr><td>'+c[0]+'</td><td><span class="chip '+(c[1]==='In'?'n':'g')+'">'+c[1]+'</span></td><td>'+c[2]+'</td><td>'+c[3]+'</td><td class="num">'+c[4]+'</td><td>'+c[5]+'</td></tr>').join('');
 }
-</script></body></html>
+</script>
+<script>
+/* ---------- ZIP map: leads, cost per lead, bound, close rate ---------- */
+const ZIP_META=[
+  {zip:'85254',area:'Scottsdale',pts:'70,44 196,36 214,120 150,158 62,138',cx:132,cy:96,spend:1450},
+  {zip:'85205',area:'Mesa',pts:'404,44 606,38 622,150 470,176 398,128',cx:512,cy:104,spend:1280},
+  {zip:'85234',area:'Gilbert',pts:'206,152 392,138 412,258 268,286 196,236',cx:300,cy:212,spend:2210},
+  {zip:'85236',area:'Higley',pts:'422,180 552,166 566,286 442,306 408,244',cx:492,cy:240,spend:1180},
+  {zip:'85225',area:'Chandler',pts:'146,286 336,268 352,382 206,404 132,352',cx:244,cy:336,spend:1640},
+  {zip:'85142',area:'Queen Creek',pts:'380,314 618,296 632,404 424,424 366,378',cx:498,cy:366,spend:990}
+];
+const ZIP_FIRST=['Marisol','Devon','Renee','Curtis','Bianca','Hector','Ellis','Tanya','Marcus','Priya','Sofia','Grant','Nadia','Owen','Camila','Trent','Alicia','Damon','Erin','Rafael','Jonah','Selena','Brett','Lucia','Kyle','Paige','Andres','Noelle','Victor','Harper'];
+const ZIP_LAST=['Vega','Acker','Whitfield','Nakamura','Ibarra','Villanueva','Boone','Ferraro','Alvarado','Sandoval','Ruiz','Hobbs','Kaur','Bennett','Ortiz','Dalton','Mercer','Cobb','Frazier','Quintero','Pike','Nunez','Holley','Marin','Doyle','Webb','Cardenas','Frost','Salas','Trujillo'];
+const ZIP_LINES=['Auto','Home','Auto + Home','BOP + Commercial Auto','Umbrella','Renters','Workers Comp','Life','Commercial Property'];
+const ZIP_SRC=['Google Ads','Meta ad','Local Services','Website / SEO','Referral','Networking · Gilbert chamber','Repeat client'];
+let ZIP_METRIC='leads', ZIP_PICKED=null, ZIP_ROWS=[];
+
+(function seedZipLeads(){
+  const counts={'85234':22,'85205':17,'85225':14,'85236':11,'85142':9,'85254':6};
+  const bounds={'85234':9,'85205':5,'85225':6,'85236':4,'85142':4,'85254':3};
+  let n=0;
+  ZIP_META.forEach((z,zi)=>{
+    const total=counts[z.zip], bd=bounds[z.zip];
+    for(let i=0;i<total;i++){
+      const nm=ZIP_FIRST[(n*3+zi)%ZIP_FIRST.length]+' '+ZIP_LAST[(n*5+zi*3)%ZIP_LAST.length];
+      const bound=i<bd;
+      ZIP_ROWS.push({id:'Z'+z.zip+'-'+(i+1),zip:z.zip,area:z.area,name:nm,
+        src:ZIP_SRC[(n+zi)%ZIP_SRC.length],line:ZIP_LINES[(n*2+zi)%ZIP_LINES.length],
+        stage:bound?'Bound':(i%4===0?'Prospect':i%7===3?'Lost':'Lead'),
+        prem:bound?420+((n*137)%1180):0,
+        when:['Nov 24','Nov 22','Nov 19','Nov 16','Nov 12','Nov 8'][i%6]});
+      n++;
+    }
+  });
+})();
+
+function zipStats(zip){
+  const rows=ZIP_ROWS.filter(r=>r.zip===zip);
+  const meta=ZIP_META.find(z=>z.zip===zip);
+  const leads=rows.length;
+  const bound=rows.filter(r=>r.stage==='Bound').length;
+  const quoted=rows.filter(r=>r.stage==='Prospect'||r.stage==='Bound').length;
+  const prem=rows.reduce((s,r)=>s+r.prem,0);
+  return {rows,leads,bound,quoted,prem,spend:meta.spend,cpl:meta.spend/leads,cpp:bound?meta.spend/bound:0,close:bound/leads};
+}
+
+function zipValue(z){
+  const s=zipStats(z.zip);
+  return ZIP_METRIC==='leads'?s.leads:ZIP_METRIC==='cpl'?s.cpl:ZIP_METRIC==='bound'?s.bound:s.close;
+}
+function zipColor(v,min,max){
+  const t=max===min?0.5:(v-min)/(max-min);
+  const hot=ZIP_METRIC==='cpl';
+  const from=hot?[255,236,236]:[232,238,249], to=hot?[195,62,71]:[29,91,214];
+  const c=from.map((f,i)=>Math.round(f+(to[i]-f)*t));
+  return 'rgb('+c.join(',')+')';
+}
+function zipMetric(m,el){
+  ZIP_METRIC=m;
+  document.querySelectorAll('#zipMetric button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  renderZipMap();
+}
+function renderZipMap(){
+  const svg=document.getElementById('zipMap'); if(!svg)return;
+  const vals=ZIP_META.map(zipValue);
+  const min=Math.min.apply(null,vals), max=Math.max.apply(null,vals);
+  const fmt=z=>ZIP_METRIC==='cpl'?money(Math.round(z)):ZIP_METRIC==='close'?Math.round(z*100)+'%':z;
+  let out='';
+  out+='<defs><linearGradient id="zipbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7F9FD"/><stop offset="1" stop-color="#EDF2FA"/></linearGradient></defs>';
+  out+='<rect x="0" y="0" width="760" height="440" fill="url(#zipbg)"/>';
+  out+='<g stroke="#DCE4F0" stroke-width="7" fill="none"><path d="M20 262 L740 236"/><path d="M300 20 L352 424"/><path d="M60 160 L690 320"/></g>';
+  out+='<g fill="#8FA3BF" font-size="10" font-family="inherit"><text x="26" y="256">US-60</text><text x="360" y="34">SR-87</text><text x="620" y="316">Loop 202</text></g>';
+  ZIP_META.forEach(z=>{
+    const v=zipValue(z), s=zipStats(z.zip), picked=ZIP_PICKED===z.zip;
+    const fill=zipColor(v,min,max);
+    const dark=(ZIP_METRIC==='cpl'?(v-min)/(max-min||1):(v-min)/(max-min||1))>0.55;
+    const txt=dark?'#fff':'#0D1622';
+    const sub=dark?'rgba(255,255,255,.82)':'#5A6B82';
+    out+='<g style="cursor:pointer" onclick="zipPick(\''+z.zip+'\')">';
+    out+='<polygon points="'+z.pts+'" fill="'+fill+'" stroke="'+(picked?'#0D1622':'#FFFFFF')+'" stroke-width="'+(picked?3:2)+'" style="transition:fill .18s"/>';
+    out+='<text x="'+z.cx+'" y="'+(z.cy-6)+'" text-anchor="middle" font-size="15" font-weight="800" fill="'+txt+'" font-family="inherit">'+z.zip+'</text>';
+    out+='<text x="'+z.cx+'" y="'+(z.cy+9)+'" text-anchor="middle" font-size="10.5" fill="'+sub+'" font-family="inherit">'+z.area+'</text>';
+    out+='<text x="'+z.cx+'" y="'+(z.cy+25)+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+txt+'" font-family="inherit">'+fmt(v)+'</text>';
+    out+='</g>';
+  });
+  svg.innerHTML=out;
+  const l=document.getElementById('zipLegend');
+  if(l){
+    const hot=ZIP_METRIC==='cpl';
+    l.style.background='linear-gradient(90deg,'+(hot?'#FFECEC,#C33E47':'#E8EEF9,#1D5BD6')+')';
+    document.getElementById('zipLegendNote').textContent=ZIP_METRIC==='leads'?'leads per ZIP':ZIP_METRIC==='cpl'?'spend divided by leads':ZIP_METRIC==='bound'?'policies bound':ZIP_METRIC==='close'?'bound divided by leads':'';
+  }
+  if(!ZIP_PICKED)zipPick(ZIP_META[0].zip);
+  else zipPick(ZIP_PICKED,true);
+}
+function zipPick(zip,quiet){
+  ZIP_PICKED=zip;
+  const s=zipStats(zip), z=ZIP_META.find(x=>x.zip===zip);
+  const el=document.getElementById('zipDetail'); if(!el)return;
+  el.innerHTML=
+    '<div style="display:flex;align-items:baseline;gap:8px"><div style="font-size:17px;font-weight:800">'+zip+'</div><div style="color:var(--muted);font-size:12px">'+z.area+'</div></div>'
+    +'<div class="cards" style="grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 12px">'
+    +'<div class="card" style="padding:9px 11px"><div class="lab">Leads</div><div class="val">'+s.leads+'</div></div>'
+    +'<div class="card" style="padding:9px 11px"><div class="lab">Cost per lead</div><div class="val">'+money(Math.round(s.cpl))+'</div></div>'
+    +'<div class="card" style="padding:9px 11px"><div class="lab">Bound</div><div class="val">'+s.bound+'</div></div>'
+    +'<div class="card" style="padding:9px 11px"><div class="lab">Cost per policy</div><div class="val">'+(s.bound?money(Math.round(s.cpp)):'—')+'</div></div>'
+    +'</div>'
+    +'<div style="font-size:11.5px;color:var(--muted);margin-bottom:6px">'+money(s.spend)+' spent · '+s.quoted+' quoted · '+money(s.prem)+' premium written</div>'
+    +'<div style="max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:8px">'
+    +'<table><thead><tr><th>Who</th><th>Stage</th><th class="num">Premium</th><th></th></tr></thead><tbody>'
+    + s.rows.map(r=>'<tr><td><b>'+r.name+'</b><div style="font-size:10.5px;color:var(--muted)">'+r.src+' · '+r.line+'</div></td>'
+      +'<td>'+(r.stage==='Bound'?'<span class="chip g">Bound</span>':r.stage==='Prospect'?'<span class="chip a">Prospect</span>':r.stage==='Lost'?'<span class="chip r">Lost</span>':'<span class="chip n">Lead</span>')+'</td>'
+      +'<td class="num">'+(r.prem?money(r.prem):'—')+'</td>'
+      +'<td><button onclick="zipLeadOpen(\''+r.id+'\')" style="font-size:11px;padding:3px 7px">Open</button></td></tr>').join('')
+    +'</tbody></table></div>'
+    +'<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">'
+    +'<button onclick="zipBulk(\''+zip+'\',\'text\')" style="font-size:11.5px">Text the unworked leads</button>'
+    +'<button onclick="zipBulk(\''+zip+'\',\'quote\')" style="font-size:11.5px">Queue quotes for the prospects</button>'
+    +'</div>';
+  renderZipMap0();
+}
+function renderZipMap0(){
+  const svg=document.getElementById('zipMap'); if(!svg)return;
+  const vals=ZIP_META.map(zipValue);
+  const min=Math.min.apply(null,vals), max=Math.max.apply(null,vals);
+  const fmt=z=>ZIP_METRIC==='cpl'?money(Math.round(z)):ZIP_METRIC==='close'?Math.round(z*100)+'%':z;
+  let out='<defs><linearGradient id="zipbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7F9FD"/><stop offset="1" stop-color="#EDF2FA"/></linearGradient></defs>';
+  out+='<rect x="0" y="0" width="760" height="440" fill="url(#zipbg)"/>';
+  out+='<g stroke="#DCE4F0" stroke-width="7" fill="none"><path d="M20 262 L740 236"/><path d="M300 20 L352 424"/><path d="M60 160 L690 320"/></g>';
+  out+='<g fill="#8FA3BF" font-size="10" font-family="inherit"><text x="26" y="256">US-60</text><text x="360" y="34">SR-87</text><text x="620" y="316">Loop 202</text></g>';
+  ZIP_META.forEach(z=>{
+    const v=zipValue(z), picked=ZIP_PICKED===z.zip;
+    const fill=zipColor(v,min,max);
+    const t=(v-min)/(max-min||1);
+    const dark=(ZIP_METRIC==='cpl'?t:t)>0.55;
+    const txt=dark?'#fff':'#0D1622', sub=dark?'rgba(255,255,255,.82)':'#5A6B82';
+    out+='<g style="cursor:pointer" onclick="zipPick(\''+z.zip+'\')">';
+    out+='<polygon points="'+z.pts+'" fill="'+fill+'" stroke="'+(picked?'#0D1622':'#FFFFFF')+'" stroke-width="'+(picked?3:2)+'"/>';
+    out+='<text x="'+z.cx+'" y="'+(z.cy-6)+'" text-anchor="middle" font-size="15" font-weight="800" fill="'+txt+'" font-family="inherit">'+z.zip+'</text>';
+    out+='<text x="'+z.cx+'" y="'+(z.cy+9)+'" text-anchor="middle" font-size="10.5" fill="'+sub+'" font-family="inherit">'+z.area+'</text>';
+    out+='<text x="'+z.cx+'" y="'+(z.cy+25)+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+txt+'" font-family="inherit">'+fmt(v)+'</text>';
+    out+='</g>';
+  });
+  svg.innerHTML=out;
+}
+function zipLeadOpen(id){
+  const r=ZIP_ROWS.find(x=>x.id===id); if(!r)return;
+  document.getElementById('sheet').innerHTML='<h3>'+r.name+' · '+r.zip+' '+r.area+'</h3>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'
+    +'<span class="chip '+(r.stage==='Bound'?'g':r.stage==='Lost'?'r':r.stage==='Prospect'?'a':'n')+'">'+r.stage+'</span>'
+    +'<span class="chip n">'+r.line+'</span><span class="chip">'+r.src+'</span><span class="chip">First seen '+r.when+'</span></div>'
+    +'<table><tbody>'
+    +'<tr><th style="width:34%">ZIP</th><td>'+r.zip+' · '+r.area+'</td></tr>'
+    +'<tr><th>Source</th><td>'+r.src+'</td></tr>'
+    +'<tr><th>Line of business</th><td>'+r.line+'</td></tr>'
+    +'<tr><th>Stage</th><td>'+r.stage+'</td></tr>'
+    +'<tr><th>Premium</th><td>'+(r.prem?money(r.prem):'not bound yet')+'</td></tr>'
+    +'</tbody></table>'
+    +'<div class="note" style="margin-top:9px">This record came from the ZIP layer of the Growth tab, so the number on the map and the person here are the same record. Working it moves the map.</div>'
+    +'<div class="acts" style="margin-top:10px">'
+    +'<button class="btn blue" onclick="zipAct(\''+r.id+'\',\'quote\')">Start a quote</button>'
+    +'<button class="btn ghost" onclick="zipAct(\''+r.id+'\',\'call\')">Log a call</button>'
+    +'<button class="btn ghost" onclick="zipAct(\''+r.id+'\',\'text\')">Send a text</button>'
+    +'<button class="btn ghost" onclick="zipAct(\''+r.id+'\',\'lost\')">Mark lost</button>'
+    +'</div>';
+  document.getElementById('modal').classList.add('open');
+}
+function zipAct(id,kind){
+  const r=ZIP_ROWS.find(x=>x.id===id); if(!r)return;
+  if(kind==='quote'){r.stage='Prospect';toast(r.name+' moved to Prospect, quote queued in '+r.zip);}
+  if(kind==='call'){toast('Call logged on '+r.name+' · '+r.zip);}
+  if(kind==='text'){toast('Text sent to '+r.name+' from the Cardinal number');}
+  if(kind==='lost'){r.stage='Lost';toast(r.name+' parked as lost, back before renewal');}
+  document.getElementById('modal').classList.remove('open');
+  if(ZIP_PICKED)zipPick(ZIP_PICKED,true);
+}
+function zipBulk(zip,kind){
+  const rows=ZIP_ROWS.filter(r=>r.zip===zip);
+  if(kind==='text'){
+    const n=rows.filter(r=>r.stage==='Lead').length;
+    toast(n+' texts queued to unworked leads in '+zip);
+  } else {
+    const n=rows.filter(r=>r.stage==='Prospect').length;
+    toast(n+' quotes queued for prospects in '+zip);
+  }
+}
+
+</script>
+</body></html>
