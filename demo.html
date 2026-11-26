@@ -182,6 +182,7 @@ tbody tr:hover{background:#FAFBFD}
 .cbtn.off{background:#3a2028;border-color:#5d2f3a;color:#ffc9d1}
 .cbtn.end{background:var(--red);border-color:var(--red)}
 
+@media(max-width:900px){#amsStats{grid-template-columns:1fr 1fr!important}}
 .zipwrap{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;align-items:start}
 @media(max-width:900px){.zipwrap{grid-template-columns:1fr}}
 #zipMap text{pointer-events:none}
@@ -231,6 +232,19 @@ tbody tr:hover{background:#FAFBFD}
 
     <section class="view on" id="v-dash">
       <div class="cards" id="dashKpis"></div>
+      <div class="panel"><div class="head"><h2>Book of business at a glance</h2><div class="spacer"></div><span class="chip n">AMS summary</span></div>
+        <div class="body">
+          <div class="cards" id="amsStats" style="grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px"></div>
+          <div class="zipwrap">
+            <div>
+              <div id="amsMapWrap" style="border:1px solid var(--line);border-radius:10px;background:#FBFCFE;overflow:hidden">
+                <svg id="amsMap" viewBox="0 0 760 440" style="width:100%;height:auto;display:block"></svg>
+              </div>
+              <div class="note" style="margin-top:7px">Contacts by location, same shape as the AMS screen John uses today. Click a ZIP to see the accounts in it.</div>
+            </div>
+            <div id="amsZipDetail"></div>
+          </div>
+        </div></div>
       <div class="cols">
         <div>
           <div class="panel"><div class="head"><h2>Renewals at risk</h2><div class="spacer"></div><span class="chip a" id="riskCount"></span></div>
@@ -705,7 +719,8 @@ CLIENTS.forEach((c,i)=>{
     const base=POL_SEED.find(p=>p[0]===line);
     const carrier=c.type==='business'?['Progressive','The Hartford','Travelers','Openly'][(i+k)%4]:['Safeco','Mercury','Nationwide','Stillwater','Chubb','GAINSCO','Foremost','Bristol West'][(i+k)%8];
     const prem=Math.round((base[2]*(0.82+((i*7+k*11)%30)/100))/10)*10;
-    const eff=addDays(TODAY,-(75+((i*23+k*41)%300)));
+    const recent=(i+k)%11===0;
+    const eff=addDays(TODAY,recent?-(2+((i*3)%22)):-(75+((i*23+k*41)%300)));
     const near=(i+k)%9===0;
     const ren=addDays(TODAY,near?(5+((i*3)%22)):40+((i*29+k*37)%250));
     const due=c.tag==='due'&&k===0;
@@ -1006,6 +1021,7 @@ function renderDash(){
   document.getElementById('moneyBars').innerHTML=m.map(x=>`<div class="bar"><span>${x[0]}</span><div class="track"><div class="fill" style="width:${Math.min(100,Math.round(parseInt(x[1].replace(/\D/g,''))/11920*100))}%"></div></div><span class="n">${x[1]}</span></div>`).join('');
   const bd=CLIENTS.slice(0,5).map((c,i)=>({c,kind:i%2?'Annual review':'Birthday',when:fmtDate(addDays(TODAY,2+i*3))}));
   document.getElementById('bdayBody').innerHTML=bd.map(b=>`<tr><td><b>${b.c.name}</b></td><td>${b.kind}</td><td>${b.when}</td><td><button class="btn sm ghost" onclick="toast('Message queued for ${b.c.name.split(' ')[0]}')">Send</button></td></tr>`).join('');
+  if(typeof renderAms==='function')renderAms();
 }
 
 /* ---------- clients ---------- */
@@ -3076,5 +3092,106 @@ function zipBulk(zip,kind){
   }
 }
 
+</script>
+
+<script>
+/* ---------- AMS summary: ratios, month activity, contacts by location ---------- */
+const AMS_ZIPS=[
+  {zip:'85254',area:'Scottsdale',pts:'70,44 196,36 214,120 150,158 62,138',cx:132,cy:96},
+  {zip:'85205',area:'Mesa',pts:'404,44 606,38 622,150 470,176 398,128',cx:512,cy:104},
+  {zip:'85281',area:'Tempe',pts:'38,166 148,158 160,252 66,262 32,214',cx:98,cy:210},
+  {zip:'85234',area:'Gilbert',pts:'206,152 392,138 412,258 268,286 196,236',cx:300,cy:212},
+  {zip:'85236',area:'Higley',pts:'422,180 552,166 566,286 442,306 408,244',cx:492,cy:240},
+  {zip:'85225',area:'Chandler',pts:'146,286 336,268 352,382 206,404 132,352',cx:244,cy:336},
+  {zip:'85142',area:'Queen Creek',pts:'380,314 600,296 612,404 424,424 366,378',cx:492,cy:366},
+  {zip:'85120',area:'Apache Junction',pts:'642,300 744,292 752,392 660,406 630,352',cx:692,cy:348}
+];
+let AMS_PICK=null;
+
+function amsStats(){
+  const prem=POLICIES.reduce((s,p)=>s+p.premium,0);
+  const n=CLIENTS.length||1, pn=POLICIES.length||1;
+  const month=d2(TODAY).slice(0,7);
+  const nb=POLICIES.filter(p=>(p.eff||'').slice(0,7)===month).length;
+  const ren=POLICIES.filter(p=>(p.renewal||'').slice(0,7)===month).length;
+  const lapsed=CLIENTS.filter(c=>c.tag==='lapsed').length;
+  const carriers=new Set(POLICIES.map(p=>p.carrier)).size;
+  const lines=new Set(POLICIES.map(p=>p.line)).size;
+  return {prem,n,pn,nb,ren,lapsed,carriers,lines,
+    perAcct:prem/n,perPol:prem/pn,polPerAcct:pn/n};
+}
+function amsZip(zip){
+  const cs=CLIENTS.filter(c=>c.zip===zip);
+  const pols=POLICIES.filter(p=>cs.some(c=>c.id===p.clientId));
+  return {cs,pols,prem:pols.reduce((s,p)=>s+p.premium,0)};
+}
+function renderAms(){
+  const st=document.getElementById('amsStats'); if(!st)return;
+  const a=amsStats();
+  const cards=[
+    ['Active accounts',a.n,'households and businesses'],
+    ['Premium',money(a.prem),'in force'],
+    ['Policies',a.pn,'across '+a.carriers+' carriers'],
+    ['Premium per account',money(Math.round(a.perAcct)),'average'],
+    ['Premium per policy',money(Math.round(a.perPol)),'average'],
+    ['Policies per account',a.polPerAcct.toFixed(2),'lines per account'],
+    ['New business',a.nb,'effective this month'],
+    ['Renewals',a.ren,'renewing this month'],
+    ['Cancellations',a.lapsed,'lapsed, not rewritten'],
+    ['Carriers',a.carriers,'appointed'],
+    ['Lines of business',a.lines,'categories written']
+  ];
+  st.innerHTML=cards.map(c=>'<div class="card" style="padding:10px 11px"><div class="lab">'+c[0]+'</div><div class="val" style="font-size:19px">'+c[1]+'</div><div class="delta" style="font-size:10.5px">'+c[2]+'</div></div>').join('');
+  const vals=AMS_ZIPS.map(z=>amsZip(z.zip).cs.length);
+  const max=Math.max.apply(null,vals)||1;
+  let out='<defs><linearGradient id="amsbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7F9FD"/><stop offset="1" stop-color="#EDF2FA"/></linearGradient></defs>';
+  out+='<rect x="0" y="0" width="760" height="440" fill="url(#amsbg)"/>';
+  out+='<g stroke="#DCE4F0" stroke-width="7" fill="none"><path d="M20 262 L740 236"/><path d="M300 20 L352 424"/><path d="M60 160 L690 320"/></g>';
+  AMS_ZIPS.forEach(z=>{
+    const c=amsZip(z.zip), t=c.cs.length/max;
+    const col=[232+Math.round((29-232)*t),238+Math.round((91-238)*t),249+Math.round((214-249)*t)];
+    const fill='rgb('+col.join(',')+')', dark=t>0.55;
+    const txt=dark?'#fff':'#0D1622', sub=dark?'rgba(255,255,255,.82)':'#5A6B82';
+    const picked=AMS_PICK===z.zip;
+    out+='<g style="cursor:pointer" onclick="amsPick(\''+z.zip+'\')">';
+    out+='<polygon points="'+z.pts+'" fill="'+fill+'" stroke="'+(picked?'#0D1622':'#fff')+'" stroke-width="'+(picked?3:2)+'"/>';
+    out+='<text x="'+z.cx+'" y="'+(z.cy-4)+'" text-anchor="middle" font-size="13.5" font-weight="800" fill="'+txt+'" font-family="inherit">'+z.zip+'</text>';
+    out+='<text x="'+z.cx+'" y="'+(z.cy+11)+'" text-anchor="middle" font-size="10" fill="'+sub+'" font-family="inherit">'+z.area+'</text>';
+    out+='<text x="'+z.cx+'" y="'+(z.cy+27)+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+txt+'" font-family="inherit">'+c.cs.length+'</text>';
+    out+='</g>';
+  });
+  document.getElementById('amsMap').innerHTML=out;
+  amsPick(AMS_PICK||AMS_ZIPS.slice().sort((a,b)=>amsZip(b.zip).cs.length-amsZip(a.zip).cs.length)[0].zip);
+}
+function amsPick(zip){
+  AMS_PICK=zip;
+  const z=AMS_ZIPS.find(x=>x.zip===zip), d=amsZip(zip), el=document.getElementById('amsZipDetail');
+  if(!el)return;
+  el.innerHTML='<div style="display:flex;align-items:baseline;gap:8px"><div style="font-size:17px;font-weight:800">'+zip+'</div><div style="color:var(--muted);font-size:12px">'+z.area+'</div></div>'
+    +'<div class="cards" style="grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0 12px">'
+    +'<div class="card" style="padding:9px 11px"><div class="lab">Accounts</div><div class="val">'+d.cs.length+'</div></div>'
+    +'<div class="card" style="padding:9px 11px"><div class="lab">Policies</div><div class="val">'+d.pols.length+'</div></div>'
+    +'<div class="card" style="padding:9px 11px"><div class="lab">Premium</div><div class="val" style="font-size:15px">'+money(d.prem)+'</div></div>'
+    +'</div>'
+    +'<div style="max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:8px"><table><thead><tr><th>Account</th><th class="num">Policies</th><th class="num">Premium</th><th></th></tr></thead><tbody>'
+    + (d.cs.length?d.cs.map(c=>{
+        const pols=POLICIES.filter(p=>p.clientId===c.id), pr=pols.reduce((s,p)=>s+p.premium,0);
+        return '<tr><td><b>'+c.name+'</b><div style="font-size:10.5px;color:var(--muted)">'+c.type+' · '+c.owner+'</div></td>'
+          +'<td class="num">'+pols.length+'</td><td class="num">'+money(pr)+'</td>'
+          +'<td><button onclick="openClient(\''+c.id+'\')" style="font-size:11px;padding:3px 7px">Open</button></td></tr>';
+      }).join(''):'<tr><td colspan="4" style="color:var(--muted);padding:12px">No accounts in this ZIP yet.</td></tr>')
+    +'</tbody></table></div>';
+  // repaint highlight
+  const svg=document.getElementById('amsMap');
+  if(svg&&svg.children.length){renderAmsHighlight();}
+}
+function renderAmsHighlight(){
+  const svg=document.getElementById('amsMap'); if(!svg)return;
+  [...svg.querySelectorAll('polygon')].forEach((poly,i)=>{
+    const z=AMS_ZIPS[i];
+    poly.setAttribute('stroke',AMS_PICK===z.zip?'#0D1622':'#fff');
+    poly.setAttribute('stroke-width',AMS_PICK===z.zip?3:2);
+  });
+}
 </script>
 </body></html>
