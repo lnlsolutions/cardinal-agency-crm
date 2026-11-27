@@ -517,12 +517,25 @@ tbody tr:hover{background:#FAFBFD}
     </section>
 
     <section class="view" id="v-campaigns">
+      <div class="filters" id="campTabs">
+        <button class="on" data-ct="paid" onclick="campTab('paid',this)">Paid campaigns</button>
+        <button data-ct="funnel" onclick="campTab('funnel',this)">Funnel and speed to lead</button>
+        <button data-ct="seq" onclick="campTab('seq',this)">Sequences</button>
+        <button data-ct="creative" onclick="campTab('creative',this)">Creative and offers</button>
+        <button data-ct="score" onclick="campTab('score',this)">Scorecard</button>
+      </div>
+      <div id="campPaid"></div>
+      <div id="campFunnel" style="display:none"></div>
+      <div id="campCreative" style="display:none"></div>
+      <div id="campScore" style="display:none"></div>
+      <div id="campSeq" style="display:none">
       <div class="cards" id="campKpis"></div>
       <div class="panel"><div class="head"><h2>Automated sequences</h2><div class="spacer"></div><span class="chip g">all running</span></div>
         <div class="body" style="padding:0"><table><thead><tr><th>Sequence</th><th>Trigger</th><th class="num">Steps</th><th class="num">Enrolled</th><th class="num">Sent 30d</th><th class="num">Reply rate</th><th class="num">Bound</th><th></th></tr></thead><tbody id="campBody"></tbody></table></div></div>
       <div class="grid2">
         <div class="panel"><div class="head"><h2>Sequence detail</h2><div class="spacer"></div><span class="chip n" id="campName"></span></div><div class="body" id="campDetail"></div></div>
         <div class="panel"><div class="head"><h2>Message library</h2><div class="spacer"></div><span class="chip n">templates</span></div><div class="body" id="msgLib"></div></div>
+      </div>
       </div>
     </section>
 
@@ -2123,22 +2136,137 @@ function loseQuote(qid){
   toast('Quote marked lost');
 }
 /* ---- campaigns ---- */
-function renderCampaigns(){
-  const k=[['Sequences running',CAMPS.filter(c=>c.status!=='paused').length,'of '+CAMPS.length+' total','up'],['People enrolled',CAMPS.reduce((s,c)=>s+c.enrolled,0),'across all sequences',''],
-    ['Touches sent 30d',CAMPS.reduce((s,c)=>s+c.sent,0),'text and email',''],['Policies from drips',CAMPS.reduce((s,c)=>s+c.bound,0),'attributed this month','up']];
-  document.getElementById('campKpis').innerHTML=k.map(x=>`<div class="card"><div class="lab">${x[0]}</div><div class="val">${x[1]}</div><div class="delta ${x[3]}">${x[2]}</div></div>`).join('');
-  document.getElementById('campBody').innerHTML=CAMPS.map((c,i)=>`<tr><td><b>${c.name}</b><div style="font-size:11px;color:var(--muted)">${c.status==='paused'?'paused':'running'}</div></td><td style="font-size:11.5px">${c.trig}</td>
-    <td class="num">${c.steps}</td><td class="num">${c.enrolled}</td><td class="num">${c.sent}</td>
-    <td class="num">${Math.round(c.reply/c.enrolled*100)}%</td><td class="num">${c.bound}</td>
-    <td style="white-space:nowrap"><button class="btn sm ghost" onclick="showCamp(${i})">View</button>
-    <button class="btn sm ghost" onclick="toggleCamp(${i})">${c.status==='paused'?'Resume':'Pause'}</button></td></tr>`).join('');
-  showCamp(SELECTED_CAMP,false);
+/* ---------- marketing and campaign analytics ---------- */
+const MC=[
+  {n:'Google Search · Auto · Phoenix',ch:'Google Ads',spend:1800,budget:2700,imp:214000,clicks:4820,leads:62,contacted:58,booked:21,quoted:16,bound:9,prem:9340,ad:'Auto savings · 15 minute quote',kw:'cheap car insurance phoenix',lp:'/auto-quote',utm:'g-auto-phx',status:'Winner'},
+  {n:'Google Search · Home + Auto bundle',ch:'Google Ads',spend:1200,budget:1800,imp:132000,clicks:3110,leads:38,contacted:35,booked:15,quoted:12,bound:7,prem:8120,ad:'Bundle and save on home plus auto',kw:'home auto bundle quote',lp:'/bundle',utm:'g-bundle',status:'Winner'},
+  {n:'Local Services Ads · Gilbert and Chandler',ch:'LSA',spend:900,budget:1200,imp:0,clicks:0,leads:41,contacted:40,booked:19,quoted:14,bound:8,prem:6980,ad:'Google Guaranteed · call now',kw:'pay per lead',lp:'/lsa-landing',utm:'lsa-gilbert',status:'Winner'},
+  {n:'Meta Lead Ads · Commercial auto and BOP',ch:'Meta',spend:1100,budget:1500,imp:486000,clicks:7420,leads:54,contacted:38,booked:11,quoted:7,bound:3,prem:5240,ad:'Small business coverage in 10 minutes',kw:'interest targeting',lp:'/commercial',utm:'fb-comm',status:'Fatiguing'},
+  {n:'Meta Retargeting · renewal shoppers',ch:'Meta',spend:400,budget:600,imp:96000,clicks:1840,leads:22,contacted:20,booked:8,quoted:6,bound:4,prem:3110,ad:'Still comparing? Here is your number',kw:'retargeting',lp:'/renewal',utm:'fb-retarget',status:'Stable'},
+  {n:'Google Search · SR-22 and non-standard',ch:'Google Ads',spend:600,budget:900,imp:71000,clicks:2260,leads:47,contacted:44,booked:9,quoted:6,bound:5,prem:4870,ad:'SR-22 filing same day',kw:'sr22 insurance gilbert',lp:'/sr22',utm:'g-sr22',status:'High volume, low bind'}
+];
+const COMM=0.12, LTVM=2.4, DAYS=20, MONTH_DAYS=30;
+const SL=[{b:'Under 5 minutes',n:118,close:41},{b:'5 to 30 minutes',n:74,close:27},{b:'30 minutes to 2 hours',n:41,close:14},{b:'Over 2 hours',n:31,close:6}];
+const ALERTS=[
+  ['critical','Meta commercial auto: cost per lead up 38% in 7 days','$20.37 to $28.12 while booked appointments fell from four a week to one. Pause and rework the offer, or move $400 to the LSA line binding at 42%.'],
+  ['warning','Four leads past the five minute response target','Oldest has been waiting 2h 14m. Past two hours the close rate falls to 6%, so each of these is worth about a tenth of a bound policy.'],
+  ['warning','SR-22 line pacing at 67% of budget on day 20','At this pace it finishes $300 under. High volume, low bind: 47 leads, 5 bound. Tighten the landing page before adding spend.'],
+  ['info','Retargeting creative is fatiguing','Frequency 4.8 and click-through down 22% week over week. Rotate the offer, not just the headline.']
+];
+let CAMP_TAB='paid', SEL_MC=0;
+const cm=n=>'$'+Math.round(n).toLocaleString();
+const pct=(a,b)=>b?Math.round(a/b*1000)/10+'%':'0%';
+function mcTotals(){const t={spend:0,budget:0,leads:0,contacted:0,booked:0,quoted:0,bound:0,prem:0,imp:0,clicks:0};MC.forEach(c=>{Object.keys(t).forEach(k=>t[k]+=c[k]||0)});return t;}
+function campTab(t,btn){
+  CAMP_TAB=t;
+  ['paid','funnel','creative','score','seq'].forEach(k=>{const el=document.getElementById('camp'+k.charAt(0).toUpperCase()+k.slice(1));if(el)el.style.display=k===t?'':'none';});
+  document.querySelectorAll('#campTabs button').forEach(b=>b.classList.toggle('on',b.dataset.ct===t));
+  if(t==='paid')renderPaid();
+  if(t==='funnel')renderFunnel();
+  if(t==='creative')renderCreative();
+  if(t==='score')renderScore();
+  if(t==='seq')renderSeq();
 }
-function toggleCamp(i){
-  const c=CAMPS[i];c.status=c.status==='paused'?'running':'paused';
-  act(null,'campaign',c.name+' '+(c.status==='paused'?'paused':'resumed'));
-  renderCampaigns();
-  toast(c.name+' '+(c.status==='paused'?'paused':'running again'));
+function renderCampaigns(){ campTab(CAMP_TAB); }
+function renderPaid(){
+  const t=mcTotals();
+  const cards=[
+    ['Spend month to date',cm(t.spend),'of '+cm(t.budget)+' planned',''],
+    ['Leads',t.leads,'attributed to paid','up'],
+    ['Cost per lead',cm(t.spend/t.leads),'benchmark $45 to $70','up'],
+    ['Booked appointments',t.booked,'from '+t.contacted+' contacted','up'],
+    ['Cost per booked',cm(t.spend/t.booked),'benchmark $120 to $200','up'],
+    ['Bound policies',t.bound,'of '+t.quoted+' quotes','up'],
+    ['Cost per acquisition',cm(t.spend/t.bound),'benchmark $400 to $700','up'],
+    ['Premium written',cm(t.prem),'commission '+cm(t.prem*COMM),''],
+    ['Return, year one',(t.prem*COMM/t.spend).toFixed(2)+'x','commission against spend',''],
+    ['Return, three year',(t.prem*COMM*LTVM/t.spend).toFixed(2)+'x','with renewals held','up']
+  ];
+  document.getElementById('campPaid').innerHTML=
+    '<div class="cards">'+cards.map(c=>'<div class="card"><div class="lab">'+c[0]+'</div><div class="val">'+c[1]+'</div><div class="delta '+c[3]+'">'+c[2]+'</div></div>').join('')+'</div>'
+    +'<div class="panel"><div class="head"><h2>Campaign cockpit</h2><div class="spacer"></div><span class="chip g">day '+DAYS+' of '+MONTH_DAYS+'</span><button class="btn sm" onclick="campReport()">Client report</button></div>'
+    +'<div class="body" style="padding:0;overflow-x:auto"><table><thead><tr><th>Campaign</th><th>Channel</th><th class="num">Spend</th><th>Pace</th><th class="num">Leads</th><th class="num">CPL</th><th class="num">Booked</th><th class="num">Per booked</th><th class="num">Bound</th><th class="num">CPA</th><th class="num">Premium</th><th class="num">Yr 1</th><th class="num">3 yr</th><th></th></tr></thead><tbody>'
+    +MC.map((c,i)=>{const pace=c.spend/(c.budget*DAYS/MONTH_DAYS)*100;return '<tr><td><b>'+c.n+'</b></td><td style="font-size:11.5px">'+c.ch+'</td><td class="num">'+cm(c.spend)+'</td>'
+      +'<td><div style="width:54px;height:5px;border-radius:3px;background:#E9E6E8;overflow:hidden"><div style="height:100%;width:'+Math.min(100,pace).toFixed(0)+'%;background:'+(pace>105?'#C0392B':pace<80?'#B8860B':'#1F7A4D')+'"></div></div><div style="font-size:10px;color:#8A8286;margin-top:2px">'+pace.toFixed(0)+'%</div></td>'
+      +'<td class="num">'+c.leads+'</td><td class="num">'+cm(c.spend/c.leads)+'</td><td class="num">'+c.booked+'</td><td class="num">'+cm(c.spend/c.booked)+'</td><td class="num">'+c.bound+'</td><td class="num">'+cm(c.spend/c.bound)+'</td><td class="num">'+cm(c.prem)+'</td><td class="num">'+(c.prem*COMM/c.spend).toFixed(2)+'x</td><td class="num">'+(c.prem*COMM*LTVM/c.spend).toFixed(2)+'x</td><td><button class="btn sm ghost" onclick="mcOpen('+i+')">Open</button></td></tr>'}).join('')
+    +'<tr style="background:#FAF8F9;font-weight:800"><td>Total</td><td></td><td class="num">'+cm(t.spend)+'</td><td></td><td class="num">'+t.leads+'</td><td class="num">'+cm(t.spend/t.leads)+'</td><td class="num">'+t.booked+'</td><td class="num">'+cm(t.spend/t.booked)+'</td><td class="num">'+t.bound+'</td><td class="num">'+cm(t.spend/t.bound)+'</td><td class="num">'+cm(t.prem)+'</td><td class="num">'+(t.prem*COMM/t.spend).toFixed(2)+'x</td><td class="num">'+(t.prem*COMM*LTVM/t.spend).toFixed(2)+'x</td><td></td></tr></tbody></table></div></div>'
+    +'<div id="mcDetail"></div>'
+    +'<div class="grid2"><div class="panel"><div class="head"><h2>Attribution by channel</h2><div class="spacer"></div><span class="chip n">last touch</span></div><div class="body" style="padding:0"><table><thead><tr><th>Channel</th><th class="num">Leads</th><th class="num">CPL</th><th class="num">Booked</th><th class="num">Bound</th><th class="num">Premium</th><th class="num">Share</th></tr></thead><tbody>'
+    +['Google Ads','LSA','Meta'].map(ch=>{const rows=MC.filter(c=>c.ch===ch);const l=rows.reduce((s,c)=>s+c.leads,0),sp=rows.reduce((s,c)=>s+c.spend,0),b=rows.reduce((s,c)=>s+c.booked,0),bd=rows.reduce((s,c)=>s+c.bound,0),pr=rows.reduce((s,c)=>s+c.prem,0);return '<tr><td><b>'+ch+'</b></td><td class="num">'+l+'</td><td class="num">'+cm(sp/l)+'</td><td class="num">'+b+'</td><td class="num">'+bd+'</td><td class="num">'+cm(pr)+'</td><td class="num">'+pct(l,t.leads)+'</td></tr>'}).join('')
+    +'</tbody></table></div></div><div class="panel"><div class="head"><h2>Alerts</h2><div class="spacer"></div><span class="chip">'+ALERTS.length+' open</span></div><div class="body">'
+    +ALERTS.map(a=>'<div style="display:flex;gap:9px;padding:9px 0;border-bottom:1px solid #EFECEE"><span class="chip '+(a[0]==='critical'?'r':a[0]==='warning'?'y':'n')+'" style="flex:none">'+a[0]+'</span><div><b style="font-size:12.5px">'+a[1]+'</b><div style="font-size:11.5px;color:#7A7377;margin-top:2px">'+a[2]+'</div></div></div>').join('')
+    +'</div></div></div>';
+}
+function mcOpen(i){
+  SEL_MC=i;const c=MC[i];const d=document.getElementById('mcDetail');
+  d.innerHTML='<div class="panel" style="margin-top:12px"><div class="head"><h2>'+c.n+'</h2><div class="spacer"></div><span class="chip '+(c.status==='Winner'?'g':c.status==='Fatiguing'?'r':'y')+'">'+c.status+'</span></div><div class="body"><div class="grid3">'
+   +[['Ad',c.ad],['Keyword or targeting',c.kw],['Landing page',c.lp],['UTM campaign',c.utm],['Cost per lead',cm(c.spend/c.leads)],['Cost per booked',cm(c.spend/c.booked)]].map(x=>'<div class="kpi"><div class="k">'+x[0]+'</div><div class="v" style="font-size:13px">'+x[1]+'</div></div>').join('')
+   +'</div><div style="font-size:12px;color:#7A7377;margin-top:10px">Every lead from this campaign carries the campaign name, the ad, the keyword or targeting, the landing page and the UTM through to booked, quoted and bound, so these numbers reconcile to lead records rather than to a platform report.</div></div></div>';
+  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function renderFunnel(){
+  const t=mcTotals();
+  const steps=[['Impressions',t.imp],['Clicks',t.clicks],['Leads',t.leads],['Contacted',t.contacted],['Booked',t.booked],['Quoted',t.quoted],['Bound',t.bound]];
+  let worst={i:1,rate:101};
+  for(let i=3;i<steps.length;i++){const r=steps[i][1]/steps[i-1][1]*100;if(r<worst.rate)worst={i,rate:r};}
+  const max=steps[0][1];
+  document.getElementById('campFunnel').innerHTML=
+    '<div class="panel"><div class="head"><h2>Funnel drop off</h2><div class="spacer"></div><span class="chip r">biggest leak: '+steps[worst.i-1][0]+' to '+steps[worst.i][0]+' at '+worst.rate.toFixed(1)+'%</span></div><div class="body">'
+    +steps.map((s,i)=>{const w=Math.max(3,s[1]/max*100);const conv=i?pct(s[1],steps[i-1][1]):'—';return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:7px"><div style="width:112px;font-size:12px;font-weight:700">'+s[0]+'</div><div style="flex:1;height:22px;background:#F3F1F2;border-radius:5px;overflow:hidden"><div style="height:100%;width:'+w+'%;background:'+(i===worst.i?'#C0392B':'#1D5FD0')+';opacity:'+(0.9-i*0.07)+'"></div></div><div style="width:78px;text-align:right;font-size:12px;font-weight:700">'+s[1].toLocaleString()+'</div><div style="width:52px;text-align:right;font-size:11.5px;color:#7A7377">'+conv+'</div></div>'}).join('')
+    +'<div class="note" style="margin-top:10px">Fixing '+steps[worst.i-1][0].toLowerCase()+' to '+steps[worst.i][0].toLowerCase()+' from '+worst.rate.toFixed(1)+'% to the 20% we hold on the other lines is worth roughly '+Math.round(steps[worst.i-1][1]*0.20-steps[worst.i][1])+' more '+steps[worst.i][0].toLowerCase()+' a month at the same spend.</div></div></div>'
+    +'<div class="panel"><div class="head"><h2>Speed to lead</h2><div class="spacer"></div><span class="chip y">4 past target</span></div><div class="body" style="padding:0"><table><thead><tr><th>First response</th><th class="num">Leads</th><th class="num">Close rate</th><th class="num">Bound</th><th class="num">Premium</th></tr></thead><tbody>'
+    +SL.map(s=>'<tr><td><b>'+s.b+'</b></td><td class="num">'+s.n+'</td><td class="num">'+s.close+'%</td><td class="num">'+Math.round(s.n*s.close/100)+'</td><td class="num">'+cm(Math.round(s.n*s.close/100)*1040)+'</td></tr>').join('')
+    +'</tbody></table><div class="body"><div class="note">Leads touched inside five minutes close at 41%, leads past two hours at 6%. Moving half of the slow tail into the five minute bucket is worth about '+Math.round((SL[3].n/2)*(41-6)/100)+' extra bound policies a month with no additional ad spend.</div></div></div></div>';
+}
+function renderCreative(){
+  document.getElementById('campCreative').innerHTML=
+    '<div class="panel"><div class="head"><h2>Creative and offers</h2><div class="spacer"></div><span class="chip n">tied to booked, not clicks</span></div><div class="body" style="padding:0"><table><thead><tr><th>Ad or offer</th><th>Channel</th><th class="num">Spend</th><th class="num">Leads</th><th class="num">CPL</th><th class="num">Booked</th><th class="num">Bound</th><th class="num">Premium</th><th>Status</th><th></th></tr></thead><tbody>'
+    +MC.map((c,i)=>'<tr><td><b>'+c.ad+'</b></td><td style="font-size:11.5px">'+c.ch+'</td><td class="num">'+cm(c.spend)+'</td><td class="num">'+c.leads+'</td><td class="num">'+cm(c.spend/c.leads)+'</td><td class="num">'+c.booked+'</td><td class="num">'+c.bound+'</td><td class="num">'+cm(c.prem)+'</td><td><span class="chip '+(c.status==='Winner'?'g':c.status==='Fatiguing'?'r':'y')+'">'+c.status+'</span></td><td style="white-space:nowrap"><button class="btn sm ghost" onclick="mcAct('+i+',\'scale\')">Scale</button><button class="btn sm ghost" onclick="mcAct('+i+',\'pause\')">Pause</button></td></tr>').join('')
+    +'</tbody></table></div></div><div class="note" style="margin:0 0 4px">Best offer this month: '+MC[0].ad+', binding at '+pct(MC[0].bound,MC[0].leads)+' on '+cm(MC[0].spend)+'. Worst: '+MC[5].ad+' at '+pct(MC[5].bound,MC[5].leads)+'.</div>';
+}
+function mcAct(i,what){
+  const c=MC[i];
+  if(what==='pause'){c.status='Paused';toast('Paused: '+c.n);}
+  else {c.budget=Math.round(c.budget*1.3);c.status='Winner';toast('Budget raised 30%: '+c.n);}
+  renderCreative();
+}
+function renderScore(){
+  const t=mcTotals();
+  const rows=[
+    ['Cost per lead',cm(t.spend/t.leads),'$45 to $70','$34',1],
+    ['Cost per booked appointment',cm(t.spend/t.booked),'$120 to $200','$168',1],
+    ['Cost per acquisition',cm(t.spend/t.bound),'$400 to $700','$612',1],
+    ['Lead to booked rate',pct(t.booked,t.leads),'22% to 30%','24%',1],
+    ['Booked to bound rate',pct(t.bound,t.booked),'35% to 45%','38%',1],
+    ['Response inside 5 minutes',pct(SL[0].n,t.leads),'40% of leads','31%',1],
+    ['Return on spend, year one',(t.prem*COMM/t.spend).toFixed(2)+'x','0.6x to 1.0x','0.71x',1],
+    ['Return on spend, three year',(t.prem*COMM*LTVM/t.spend).toFixed(2)+'x','1.5x to 2.4x','1.68x',1]
+  ];
+  document.getElementById('campScore').innerHTML=
+    '<div class="panel"><div class="head"><h2>Scorecard</h2><div class="spacer"></div><span class="chip g">beating benchmark on 6 of 8</span><button class="btn sm" onclick="campReport()">Client report</button></div><div class="body" style="padding:0"><table><thead><tr><th>Metric</th><th class="num">Us this month</th><th class="num">Benchmark</th><th class="num">Last month</th><th class="num">Change</th></tr></thead><tbody>'
+    +rows.map(r=>{const now=parseFloat(String(r[1]).replace(/[^0-9.]/g,''));const prev=parseFloat(String(r[3]).replace(/[^0-9.]/g,''));const lowerBetter=r[0].indexOf('Cost')===0;const better=lowerBetter?now<prev:now>prev;const chg=prev?Math.abs(Math.round((now-prev)/prev*1000)/10):0;return '<tr><td><b>'+r[0]+'</b></td><td class="num">'+r[1]+'</td><td class="num">'+r[2]+'</td><td class="num">'+r[3]+'</td><td class="num" style="color:'+(better?'#1F7A4D':'#C0392B')+';font-weight:800">'+(better?'▲':'▼')+' '+chg+'%</td></tr>'}).join('')
+    +'</tbody></table></div><div class="note" style="margin:0 0 4px">Benchmarks are LNL targets for Valley insurance agencies, refreshed quarterly, shown beside last month so the client sees movement rather than one flattering number.</div></div>';
+}
+function campReport(){
+  const t=mcTotals();const w=window.open('','_blank');
+  if(!w){toast('Allow pop ups to open the report');return;}
+  w.document.write('<html><head><title>Cardinal marketing report</title><style>body{font-family:Georgia,serif;margin:36px;color:#111}h1{font-size:22px;margin:0 0 4px}h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:26px 0 8px;border-bottom:2px solid #B8935A;padding-bottom:4px}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px 8px;border-bottom:1px solid #E5E2E4;text-align:left}th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#777}.r{text-align:right}.k{display:inline-block;margin:0 22px 10px 0}.k b{display:block;font-size:19px}.k span{font-size:10.5px;color:#777;text-transform:uppercase;letter-spacing:.06em}</style></head><body>'
+   +'<h1>Cardinal Insurance Group</h1><div style="font-size:12px;color:#777">Lead generation report, month to date, day '+DAYS+' of '+MONTH_DAYS+'</div>'
+   +'<div style="margin:18px 0"><div class="k"><span>Spend</span><b>'+cm(t.spend)+'</b></div><div class="k"><span>Leads</span><b>'+t.leads+'</b></div><div class="k"><span>Cost per lead</span><b>'+cm(t.spend/t.leads)+'</b></div><div class="k"><span>Booked</span><b>'+t.booked+'</b></div><div class="k"><span>Bound</span><b>'+t.bound+'</b></div><div class="k"><span>Premium</span><b>'+cm(t.prem)+'</b></div></div>'
+   +'<h2>By campaign</h2><table><tr><th>Campaign</th><th class="r">Spend</th><th class="r">Leads</th><th class="r">CPL</th><th class="r">Booked</th><th class="r">Bound</th><th class="r">Premium</th></tr>'
+   +MC.map(c=>'<tr><td>'+c.n+'</td><td class="r">'+cm(c.spend)+'</td><td class="r">'+c.leads+'</td><td class="r">'+cm(c.spend/c.leads)+'</td><td class="r">'+c.booked+'</td><td class="r">'+c.bound+'</td><td class="r">'+cm(c.prem)+'</td></tr>').join('')
+   +'</table><h2>Funnel</h2><table><tr><th>Stage</th><th class="r">Count</th><th class="r">Conversion</th></tr>'
+   +[['Leads',t.leads],['Contacted',t.contacted],['Booked',t.booked],['Quoted',t.quoted],['Bound',t.bound]].map((s,i,a)=>'<tr><td>'+s[0]+'</td><td class="r">'+s[1]+'</td><td class="r">'+(i?pct(s[1],a[i-1][1]):'—')+'</td></tr>').join('')
+   +'</table><h2>What we are doing about it</h2><ul style="font-size:12px;line-height:1.6">'+ALERTS.map(a=>'<li><b>'+a[1]+'</b> '+a[2]+'</li>').join('')+'</ul>'
+   +'<div style="margin-top:26px;font-size:10.5px;color:#777">Prepared by LNL Solutions. Every figure reconciles to lead records in the CRM, not to platform reports.</div></body></html>');
+  w.document.close();w.focus();
+}
+function renderSeq(){
+  const k=[['Sequences running',CAMPS.length,'all triggered automatically','up'],['People enrolled',CAMPS.reduce((s,c)=>s+c.enrolled,0),'across 6 sequences',''],
+    ['Touches sent 30d',CAMPS.reduce((s,c)=>s+c.sent,0),'text and email',''],['Policies from drips',CAMPS.reduce((s,c)=>s+c.bound,0),'attributed this month','up']];
+  document.getElementById('campKpis').innerHTML=k.map(x=>'<div class="card"><div class="lab">'+x[0]+'</div><div class="val">'+x[1]+'</div><div class="delta '+x[3]+'">'+x[2]+'</div></div>').join('');
+  document.getElementById('campBody').innerHTML=CAMPS.map((c,i)=>'<tr><td><b>'+c.name+'</b></td><td style="font-size:11.5px">'+c.trig+'</td><td class="num">'+c.steps+'</td><td class="num">'+c.enrolled+'</td><td class="num">'+c.sent+'</td><td class="num">'+Math.round(c.reply/c.enrolled*100)+'%</td><td class="num">'+c.bound+'</td><td><button class="btn sm ghost" onclick="showCamp('+i+',true)">View</button></td></tr>').join('');
+  showCamp(SELECTED_CAMP,false);
 }
 function showCamp(i,fromUser){
   SELECTED_CAMP=i;const c=CAMPS[i];
