@@ -456,6 +456,35 @@ tbody tr:hover{background:#FAFBFD}
             <button class="btn ghost sm" onclick="lsTemplate()">Template</button>
             <button class="btn blue sm" onclick="lsSend()">Send</button></div></div>
       </div></div>
+      <div class="panel" style="margin-top:12px">
+        <style>
+          .lsflow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+          .lsstep{border:1.5px solid var(--line);border-radius:10px;padding:10px;background:#fff;transition:.25s}
+          .lsstep b{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#E7E4E6;color:#7A7377;align-items:center;justify-content:center;font-size:11px;margin-bottom:6px}
+          .lsstep span{display:block;font-weight:800;font-size:12px}
+          .lsstep i{display:block;font-style:normal;font-size:10.5px;color:var(--muted);margin-top:2px}
+          .lsstep.on{border-color:#1F7A4D;background:#F2FBF6}
+          .lsstep.on b{background:#1F7A4D;color:#fff}
+          .lsstep.now{border-color:#1D5FD0;background:#F3F7FF;box-shadow:0 0 0 3px rgba(29,95,208,.12)}
+          .lslive{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#FBFBFC;flex-wrap:wrap}
+          .lslive .who{font-weight:800;font-size:13px}
+          .lslive .num{font-size:11.5px;color:var(--muted)}
+          .lslive .tmr{font-variant-numeric:tabular-nums;font-weight:800;font-size:16px;margin-left:auto}
+        </style>
+        <div class="head"><h2>Call pipeline</h2><div class="spacer"></div>
+          <span class="chip" id="lsPipeState">idle</span>
+          <button class="btn sm" onclick="lsIngest()">Receive a webhook</button>
+          <button class="btn blue sm" onclick="lsStartCall()">Simulate inbound call</button></div>
+        <div class="body">
+          <div class="lsflow">
+            <div class="lsstep" id="lsS1"><b>1</b><span>Call arrives</span><i>carrier webhook</i></div>
+            <div class="lsstep" id="lsS2"><b>2</b><span>Recording stored</span><i>our own storage</i></div>
+            <div class="lsstep" id="lsS3"><b>3</b><span>Transcribed</span><i>speakers split</i></div>
+            <div class="lsstep" id="lsS4"><b>4</b><span>On the client file</span><i>summary + next steps</i></div>
+          </div>
+          <div id="lsLive" class="lslive"><span class="num">No call in progress. Start one, or receive a webhook, and watch it run the four steps.</span></div>
+        </div>
+      </div>
       <div class="panel" style="margin-top:12px"><div class="head"><h2>Lightspeed connection</h2></div><div class="body" id="lsConn"></div></div>
     </section>
     <section class="view" id="v-messages">
@@ -1204,6 +1233,108 @@ function drawerCalls(c){
   out += th ? th.msgs.map(m=>`<div style="display:flex;justify-content:${m[0]==='out'?'flex-end':'flex-start'};margin-bottom:5px"><div style="max-width:80%;padding:7px 10px;border-radius:11px;font-size:12px;background:${m[0]==='out'?'#046DCD':'#F1F3F7'};color:${m[0]==='out'?'#fff':'#1B2333'}">${m[1]}</div></div>`).join('')
     : '<div class="note">No texts yet.</div>';
   return out;
+}
+
+
+/* ---------- call pipeline: ring, record, transcribe, file ---------- */
+let LS_LIVE = null, LS_CALL_TIMER = null, LS_SEQ = 8842;
+const LS_TURNS = [
+  ['Agent','Thanks for calling Cardinal, this is Jacobo. How can I help?'],
+  ['Client','I got the renewal packet and the auto number went up again.'],
+  ['Agent','Let me pull it up. I have you on the multi-policy credit already.'],
+  ['Client','Can we raise the deductible to keep the payment where it was?'],
+  ['Agent','Yes. I can move the deductible and re-shop the home at the same time, that usually covers the difference.'],
+  ['Client','Do that. And send the COI to my lender.'],
+  ['Agent','Sending the COI within the hour and the re-shop by tomorrow morning.']
+];
+function lsPipeState(txt, cls){
+  const el = document.getElementById('lsPipeState');
+  if(!el) return;
+  el.textContent = txt;
+  el.className = 'chip' + (cls ? ' ' + cls : '');
+}
+function lsStage(n, mode){
+  const el = document.getElementById('lsS' + n);
+  if(!el) return;
+  el.classList.remove('on','now');
+  if(mode) el.classList.add(mode);
+}
+function lsStagesReset(){ [1,2,3,4].forEach(n => lsStage(n, null)); }
+function lsClock(sec){
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return m + ':' + String(s).padStart(2,'0');
+}
+function lsStartCall(){
+  if(LS_LIVE) return toast('A call is already running');
+  const c = CLIENTS[Math.floor(Math.random() * CLIENTS.length)];
+  LS_LIVE = { c: c, started: Date.now(), seconds: 0 };
+  lsStagesReset();
+  lsStage(1, 'now');
+  lsPipeState('ringing', 'b');
+  const live = document.getElementById('lsLive');
+  live.innerHTML = '<div><div class="who">' + c.name + '</div><div class="num">' + (c.phone || '(480) 555-01' + (10 + Math.floor(Math.random()*80))) + ' · inbound to the Gilbert line</div></div>'
+    + '<div class="tmr" id="lsTimer">0:00</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;width:100%;margin-top:6px">'
+    + '<button class="btn sm" onclick="lsEndCall(\'Quoted\')">End · quoted</button>'
+    + '<button class="btn sm" onclick="lsEndCall(\'Callback\')">End · callback set</button>'
+    + '<button class="btn sm" onclick="lsEndCall(\'No answer\')">End · no answer</button></div>';
+  setTimeout(function(){
+    if(!LS_LIVE) return;
+    lsStage(1, 'on'); lsStage(2, 'now');
+    lsPipeState('recording', 'b');
+    setTimeout(function(){ if(LS_LIVE) lsStage(2, 'on'); }, 1400);
+  }, 1600);
+  LS_CALL_TIMER = setInterval(function(){
+    if(!LS_LIVE) return;
+    LS_LIVE.seconds++;
+    const t = document.getElementById('lsTimer');
+    if(t) t.textContent = lsClock(LS_LIVE.seconds);
+  }, 1000);
+}
+function lsEndCall(outcome){
+  if(!LS_LIVE) return;
+  clearInterval(LS_CALL_TIMER);
+  const live = LS_LIVE; LS_LIVE = null;
+  const dur = lsClock(Math.max(live.seconds, 34));
+  const turns = LS_TURNS.map(function(t, i){
+    return [t[0], t[1], lsClock(Math.floor((i + 1) * Math.max(live.seconds, 34) / (LS_TURNS.length + 1)))];
+  });
+  const call = {
+    c: CLIENTS.indexOf(live.c), dir: 'in', by: 'Jacobo M.', at: 'Just now', dur: dur,
+    out: outcome, rec: 'rec_' + (LS_SEQ++), turns: turns,
+    sum: 'Renewal call on ' + live.c.name + '. Payment increase driven by the auto renewal. Client agreed to a higher deductible with a home re-shop, and asked for a COI to the lender.',
+    keys: ['Deductible raised', 'Home re-shop promised', 'COI to lender']
+  };
+  LS_CALLS.unshift(call);
+  lsPipeState('transcribing', 'b');
+  lsStage(3, 'now');
+  setTimeout(function(){
+    lsStage(3, 'on'); lsStage(4, 'now');
+    setTimeout(function(){
+      lsStage(4, 'on');
+      lsPipeState('filed', 'g');
+      document.getElementById('lsLive').innerHTML = '<span class="num">Call with ' + live.c.name + ' ended (' + dur + '). Recording saved, transcript split by speaker, summary and next steps written to the client file.</span>';
+      toast('Call recorded, transcribed and filed to ' + live.c.name);
+      renderCalls();
+    }, 1500);
+  }, 1200);
+}
+function lsIngest(){
+  const c = CLIENTS[Math.floor(Math.random() * CLIENTS.length)];
+  const dur = lsClock(90 + Math.floor(Math.random() * 240));
+  const turns = LS_TURNS.map(function(t, i){ return [t[0], t[1], lsClock(Math.floor((i + 1) * 12))]; });
+  LS_CALLS.unshift({
+    c: CLIENTS.indexOf(c), dir: 'in', by: 'Jacobo M.', at: 'Just now', dur: dur,
+    out: 'Quoted', rec: 'rec_' + (LS_SEQ++), turns: turns,
+    sum: 'Inbound call from ' + c.name + ' handled by Jacobo. Renewal reviewed, options texted, follow-up booked.',
+    keys: ['Renewal reviewed', 'Options texted', 'Follow-up booked']
+  });
+  lsStagesReset();
+  [1,2,3,4].forEach(function(n, i){ setTimeout(function(){ lsStage(n, 'on'); }, i * 320); });
+  lsPipeState('filed', 'g');
+  document.getElementById('lsLive').innerHTML = '<span class="num">Webhook received for ' + c.name + ' (' + dur + '). Recording pulled, transcript generated, summary and next steps written to the client file.</span>';
+  toast('Webhook received: call recorded, transcribed and filed');
+  renderCalls();
 }
 
 /* ---------- dashboard ---------- */
