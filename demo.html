@@ -218,6 +218,7 @@ tbody tr:hover{background:#FAFBFD}
       <button data-v="security"><span class="ic">⛨</span><span>Security</span></button>
       <button data-v="access"><span class="ic">☗</span><span>Users</span></button>
       <button data-v="team"><span class="ic">◎</span><span>Team performance</span></button>
+      <button data-v="capture"><span class="ic">◎</span><span>Capture &amp; reputation</span></button>
       <button data-v="brand"><span class="ic">◐</span><span>Projections</span></button>
     </nav>
     <div class="sidefoot">Signed in as<br><b style="color:#fff">John Chleboun</b> · owner and manager<br>Gilbert office</div>
@@ -538,6 +539,8 @@ tbody tr:hover{background:#FAFBFD}
       </div>
       </div>
     </section>
+
+    <section class="view" id="v-capture"><div id="capShell"></div></section>
 
     <section class="view" id="v-growth">
       <div class="cards" id="growthKpis"></div>
@@ -1045,13 +1048,14 @@ function unlock(){
   if(v===CODE){document.getElementById('gate').remove();renderAll();}
   else toast('That code is not right');
 }
+NAV.capture=['Capture & reputation','Every lead source, client verification and review in one place'];
 function go(v){
   document.getElementById('drawer').classList.remove('open');
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   document.getElementById('ttl').textContent=NAV[v][0];
   document.getElementById('sub').textContent=NAV[v][1];
-  const R={dash:renderDash,leads:renderLeads,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,claims:renderClaims,payments:renderPayments,commissions:renderComms,tasks:renderTasks,email:renderEmail,access:renderAccess,team:renderTeam,messages:renderMessages,calls:renderCalls,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
+  const R={dash:renderDash,leads:renderLeads,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,claims:renderClaims,payments:renderPayments,commissions:renderComms,tasks:renderTasks,email:renderEmail,access:renderAccess,team:renderTeam,messages:renderMessages,calls:renderCalls,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,capture:renderCapture,security:renderSecurity,brand:renderProjections};
   if(R[v])R[v]();
 }
 function quickSearch(v){
@@ -1674,6 +1678,170 @@ function setCoverage(){
 }
 
 /* ---------- campaigns ---------- */
+/* ================= CAPTURE AND REPUTATION: lead sources, client verification, reviews ================= */
+let CAP_TAB = 'sources';
+const CAP_SOURCES = [
+  { n:'Meta Lead Ads · Auto and Home', t:'Paid social', st:'Connected', leads:54, cpl:20, last:'9 min ago', hook:'/hook/meta', map:'full name, phone, email, ZIP, line of business' },
+  { n:'Google Local Services Ads', t:'Pay per lead', st:'Connected', leads:41, cpl:22, last:'26 min ago', hook:'/hook/google-lsa', map:'name, phone, service type, ZIP' },
+  { n:'Website quote form', t:'Owned', st:'Connected', leads:63, cpl:0, last:'41 min ago', hook:'/hook/web', map:'name, phone, email, address, line, notes, photos' },
+  { n:'Google Search · SR-22', t:'Paid search', st:'Connected', leads:47, cpl:13, last:'1 hr ago', hook:'/hook/google', map:'name, phone, keyword, landing page, UTM' },
+  { n:'Inbound call form (Telnyx)', t:'Phone', st:'Connected', leads:38, cpl:18, last:'2 hr ago', hook:'/hook/telnyx', map:'caller number, recording id, transcript, disposition' },
+  { n:'Client verification link', t:'Client initiated', st:'Connected', leads:19, cpl:0, last:'Yesterday', hook:'/hook/verify', map:'carrier, policy number, effective date, coverages, premium' },
+  { n:'Referral · partner agents', t:'Referral', st:'Paused', leads:12, cpl:0, last:'3 days ago', hook:'/hook/referral', map:'name, phone, referred by, line' },
+];
+const CAP_VERIF = [
+  { c:0, st:'Extracted', carrier:'Progressive', pol:'PRG-4471-882', eff:'2026-12-01', prem:2418, cov:'25/50/25 · comp 500 · rental' },
+  { c:1, st:'Connected', carrier:'Travelers', pol:'TRV-9902-114', eff:'2027-01-15', prem:3120, cov:'100/300/100 · comp 1000' },
+  { c:2, st:'Link sent', carrier:'', pol:'', eff:'', prem:0, cov:'' },
+  { c:3, st:'Not started', carrier:'', pol:'', eff:'', prem:0, cov:'' },
+  { c:4, st:'Extracted', carrier:'Safeco', pol:'SAF-3318-207', eff:'2026-12-10', prem:1885, cov:'50/100/50 · comp 500' },
+  { c:5, st:'Link sent', carrier:'', pol:'', eff:'', prem:0, cov:'' },
+];
+const CAP_REVIEWS = [
+  { c:0, via:'SMS', st:'Left a review', rating:5, when:'Nov 24', text:'Andrew got my commercial auto bound the same day. Straight answers, no runaround.', reply:'' },
+  { c:2, via:'SMS', st:'Opened', rating:0, when:'Nov 25', text:'', reply:'' },
+  { c:4, via:'Email', st:'Left a review', rating:5, when:'Nov 21', text:'Switched both cars and the house. Saved me $340 and handled the lender COI in an hour.', reply:'Thank you — glad the COI landed in time.' },
+  { c:1, via:'SMS', st:'Requested', rating:0, when:'Nov 26', text:'', reply:'' },
+  { c:5, via:'SMS', st:'Left a review', rating:4, when:'Nov 18', text:'Good service, took a couple of days to get the quote back.', reply:'' },
+];
+const CAP_POOL = [
+  ['Renata Ochoa','(480) 555-0242','renata.o@gmail.com','Auto + Home'],
+  ['Curtis Bell','(602) 555-0318','cbell@bellroofing.com','Commercial Auto'],
+  ['Maribel Cruz','(480) 555-0173','maribel.cruz@gmail.com','Auto'],
+  ['Dwight Ferris','(480) 555-0295','dwight.ferris@outlook.com','Home'],
+  ['Yolanda Pham','(602) 555-0164','ypham@gmail.com','Renters + Auto'],
+  ['Trent Hollis','(480) 555-0287','trent@hollisplumbing.com','BOP'],
+];
+let CAP_SEQ = 1;
+
+function capTab(t, btn){
+  CAP_TAB = t;
+  document.querySelectorAll('#capTabs button').forEach(b => b.classList.toggle('on', b.dataset.ct === t));
+  ['sources','verif','reviews'].forEach(k => {
+    const el = document.getElementById('cap-' + k);
+    if (el) el.style.display = (k === t) ? '' : 'none';
+  });
+}
+function capCli(i){ return CLIENTS[i] || CLIENTS[0] || { name:'Client' }; }
+function capPct(a,b){ return b ? Math.round(a / b * 100) + '%' : '—'; }
+
+function renderCapture(){
+  const totalLeads = CAP_SOURCES.reduce((s,x)=>s+x.leads,0);
+  const spend = CAP_SOURCES.reduce((s,x)=>s + x.leads * x.cpl,0);
+  const live = CAP_SOURCES.filter(x=>x.st==='Connected').length;
+  const extracted = CAP_VERIF.filter(v=>v.st==='Extracted').length;
+  const reviews = CAP_REVIEWS.filter(r=>r.st==='Left a review');
+  const avg = reviews.length ? (reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1) : '—';
+  const k = [
+    ['Sources connected', live + ' of ' + CAP_SOURCES.length, 'every form, ad and call lands here'],
+    ['Leads captured 30d', totalLeads, 'no manual entry anywhere'],
+    ['Blended cost per lead', '$' + Math.round(spend/totalLeads), 'weighted across paid sources'],
+    ['Verifications extracted', extracted + ' of ' + CAP_VERIF.length, 'dec pages read into the record'],
+    ['Reviews live', reviews.length, 'average ' + avg + ' stars'],
+  ];
+  const kpis = k.map(x=>'<div class="card"><div class="lab">'+x[0]+'</div><div class="val">'+x[1]+'</div><div class="delta">'+x[2]+'</div></div>').join('');
+
+  const srcRows = CAP_SOURCES.map((s,i)=>'<tr><td><b>'+s.n+'</b><div style="font-size:11px;color:#8b8489">'+s.t+' · '+s.hook+'</div></td>'
+    +'<td><span class="chip '+(s.st==='Connected'?'g':'n')+'">'+s.st+'</span></td>'
+    +'<td class="num">'+s.leads+'</td><td class="num">'+(s.cpl?'$'+s.cpl:'free')+'</td><td style="font-size:11.5px">'+s.last+'</td>'
+    +'<td style="font-size:11px;color:#6d666b">'+s.map+'</td>'
+    +'<td><button class="btn sm ghost" onclick="capTestLead('+i+')">Send test lead</button> '
+    +'<button class="btn sm ghost" onclick="capToggle('+i+')">'+(s.st==='Connected'?'Pause':'Resume')+'</button></td></tr>').join('');
+
+  const verRows = CAP_VERIF.map((v,i)=>{const c=capCli(v.c);return '<tr><td><b>'+c.name+'</b><div style="font-size:11px;color:#8b8489">'+(c.line||c.type||'')+'</div></td>'
+    +'<td><span class="chip '+(v.st==='Extracted'?'g':(v.st==='Connected'?'b':'n'))+'">'+v.st+'</span></td>'
+    +'<td>'+(v.carrier||'—')+'</td><td style="font-size:11.5px">'+(v.pol||'—')+'</td><td style="font-size:11.5px">'+(v.eff||'—')+'</td>'
+    +'<td class="num">'+(v.prem?'$'+v.prem.toLocaleString():'—')+'</td>'
+    +'<td style="font-size:11px;color:#6d666b">'+(v.cov||'—')+'</td>'
+    +'<td><button class="btn sm ghost" onclick="capLink('+i+')">'+(v.st==='Not started'?'Generate link':'Resend link')+'</button> '
+    +(v.st==='Connected'||v.st==='Link sent'?'<button class="btn sm ghost" onclick="capExtract('+i+')">Extract</button> ':'')
+    +'<button class="btn sm ghost" onclick="capReset('+i+')">Reset</button></td></tr>';}).join('');
+
+  const revRows = CAP_REVIEWS.map((r,i)=>{const c=capCli(r.c);return '<tr><td><b>'+c.name+'</b><div style="font-size:11px;color:#8b8489">'+r.when+' · '+r.via+'</div></td>'
+    +'<td><span class="chip '+(r.st==='Left a review'?'g':(r.st==='Opened'?'b':'n'))+'">'+r.st+'</span></td>'
+    +'<td class="num">'+(r.rating?'★'.repeat(r.rating):'—')+'</td>'
+    +'<td style="font-size:11.5px;max-width:280px">'+(r.text||'<span style="color:#8b8489">waiting</span>')+'</td>'
+    +'<td style="font-size:11.5px;color:#6d666b">'+(r.reply||'—')+'</td>'
+    +'<td><button class="btn sm ghost" onclick="capAsk('+r.c+')">Request again</button> '
+    +'<button class="btn sm ghost" onclick="capReply('+i+')">Reply</button></td></tr>';}).join('');
+
+  document.getElementById('capShell').innerHTML =
+    '<div class="filters" id="capTabs">'
+    +'<button class="'+(CAP_TAB==='sources'?'on':'')+'" data-ct="sources" onclick="capTab(\'sources\',this)">Lead sources</button>'
+    +'<button class="'+(CAP_TAB==='verif'?'on':'')+'" data-ct="verif" onclick="capTab(\'verif\',this)">Client verification</button>'
+    +'<button class="'+(CAP_TAB==='reviews'?'on':'')+'" data-ct="reviews" onclick="capTab(\'reviews\',this)">Reviews</button>'
+    +'</div>'
+    +'<div class="cards">'+kpis+'</div>'
+    +'<div id="cap-sources">'
+      +'<div class="panel"><div class="head"><h2>Everything that can produce a lead</h2><div class="spacer"></div><span class="chip g">no manual entry</span></div>'
+      +'<div class="body" style="padding:0"><table><thead><tr><th>Source</th><th>Status</th><th class="num">Leads 30d</th><th class="num">CPL</th><th>Last lead</th><th>Fields mapped</th><th></th></tr></thead><tbody>'+srcRows+'</tbody></table></div></div>'
+      +'<div class="grid2">'
+        +'<div class="panel"><div class="head"><h2>Capture endpoints</h2><div class="spacer"></div><span class="chip n">signed webhooks</span></div><div class="body">'
+        +'<div style="font-size:12px;line-height:1.7">Every source posts to our own endpoint, not to a third party. The secret is held in the vault, so a forged post is rejected before it can create a record.'
+        +'<div style="margin-top:10px;font-family:ui-monospace,monospace;font-size:11px;background:#F7F5F6;padding:9px;border-radius:7px">POST /functions/voice · action=lead<br>verify: x-signature header</div></div></div></div>'
+        +'<div class="panel"><div class="head"><h2>What happens on arrival</h2></div><div class="body"><ol style="font-size:12px;line-height:1.75;padding-left:18px;margin:0">'
+        +'<li>Lead is deduped on phone and email</li><li>Assigned by ZIP and line of business</li><li>X-Date set, five minute first-touch task created</li><li>Enters the matching drip sequence</li><li>Source, campaign, keyword and UTM stored for attribution</li></ol></div></div>'
+      +'</div></div>'
+    +'<div id="cap-verif" style="display:none">'
+      +'<div class="panel"><div class="head"><h2>Client verification links</h2><div class="spacer"></div><span class="chip b">replaces Canopy Connect</span></div>'
+      +'<div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Status</th><th>Carrier</th><th>Policy</th><th>Effective</th><th class="num">Premium</th><th>Coverages</th><th></th></tr></thead><tbody>'+verRows+'</tbody></table></div></div>'
+      +'<div class="panel"><div class="head"><h2>How the client sees it</h2></div><div class="body" style="font-size:12px;line-height:1.7">'
+      +'They get a text with a secure link, open it on their phone, pick their carrier and sign in once. We pull the declarations page, read the carrier, policy number, effective date, premium and coverages, and write it onto the record. If a carrier is not on the list they upload the PDF and we read it the same way.</div></div>'
+    +'</div>'
+    +'<div id="cap-reviews" style="display:none">'
+      +'<div class="panel"><div class="head"><h2>Review requests</h2><div class="spacer"></div><button class="btn blue sm" onclick="capAsk(null)">Ask for a review</button></div>'
+      +'<div class="body" style="padding:0"><table><thead><tr><th>Client</th><th>Status</th><th class="num">Rating</th><th>Review</th><th>Our reply</th><th></th></tr></thead><tbody>'+revRows+'</tbody></table></div></div>'
+      +'<div class="panel"><div class="head"><h2>Reputation rules</h2></div><div class="body" style="font-size:12px;line-height:1.7">Requests go out the day a policy binds, never before. One ask per client per year, two reminders maximum. Anything under four stars routes to the office manager before it is answered publicly.</div></div>'
+    +'</div>';
+  capTab(CAP_TAB);
+}
+
+function capTestLead(i){
+  const s = CAP_SOURCES[i]; const p = CAP_POOL[(CAP_SEQ - 1) % CAP_POOL.length]; CAP_SEQ++;
+  const t = new Date(Date.now() + 86400000).toISOString().slice(0,10);
+  LEADS.unshift({ id:'L9' + (900 + CAP_SEQ), name:p[0], phone:p[1], email:p[2], source:s.n, stage:'Lead', last:'', xdate:t, line:p[3], renewal:'', notes:'Arrived through ' + s.n + ' as a test post. Fields mapped automatically.', owner:'Andrew W.' });
+  s.leads += 1; s.last = 'just now';
+  renderCapture(); if (typeof renderLeads === 'function') renderLeads();
+  toast('Lead captured from ' + s.n + ' and queued for a five minute first touch');
+}
+function capToggle(i){
+  const s = CAP_SOURCES[i];
+  s.st = (s.st === 'Connected') ? 'Paused' : 'Connected';
+  renderCapture(); toast(s.n + ' ' + (s.st === 'Connected' ? 'resumed' : 'paused'));
+}
+function capLink(i){
+  const v = CAP_VERIF[i]; const c = capCli(v.c);
+  v.st = 'Link sent';
+  renderCapture();
+  toast('Secure link texted to ' + c.name + ' · expires in 72 hours');
+}
+function capExtract(i){
+  const v = CAP_VERIF[i];
+  const carriers = ['Progressive','Travelers','Safeco','Nationwide','The Hartford','Kemper'];
+  const pick = carriers[(v.c + 2) % carriers.length];
+  v.carrier = v.carrier || pick;
+  v.pol = v.pol || (pick.slice(0,3).toUpperCase() + '-' + (4100 + v.c * 37) + '-' + (800 + v.c * 11));
+  v.eff = v.eff || '2026-12-' + String(10 + v.c);
+  v.prem = v.prem || (1780 + v.c * 215);
+  v.cov = v.cov || '50/100/50 · comp 500 · rental';
+  v.st = 'Extracted';
+  renderCapture();
+  toast('Declarations read: ' + v.carrier + ' ' + v.pol + ' written to the client record');
+}
+function capReset(i){ const v = CAP_VERIF[i]; v.st='Not started'; v.carrier=''; v.pol=''; v.eff=''; v.prem=0; v.cov=''; renderCapture(); toast('Verification reset'); }
+function capAsk(ci){
+  const idx = (ci === null || ci === undefined) ? 1 : ci;
+  CAP_REVIEWS.unshift({ c:idx, via:'SMS', st:'Requested', rating:0, when:'just now', text:'', reply:'' });
+  renderCapture();
+  toast('Review request sent to ' + capCli(idx).name);
+}
+function capReply(i){
+  const r = CAP_REVIEWS[i];
+  const t = prompt('Your reply to ' + capCli(r.c).name, r.reply || '');
+  if (t === null) return;
+  r.reply = t; renderCapture(); toast('Reply posted');
+}
+
 function renderCampaigns(){
   const k=[['Sequences running',CAMPS.length,'all triggered automatically','up'],['People enrolled',CAMPS.reduce((s,c)=>s+c.enrolled,0),'across 6 sequences',''],
     ['Touches sent 30d',CAMPS.reduce((s,c)=>s+c.sent,0),'text and email',''],['Policies from drips',CAMPS.reduce((s,c)=>s+c.bound,0),'attributed this month','up']];
