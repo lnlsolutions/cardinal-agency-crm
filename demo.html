@@ -211,6 +211,7 @@ tbody tr:hover{background:#FAFBFD}
       <button data-v="tasks"><span class="ic">✓</span><span>Tasks</span></button>
       <button data-v="email"><span class="ic">✉</span><span>Email</span></button>
       <button data-v="messages"><span class="ic">◍</span><span>Messages</span></button>
+      <button data-v="calls"><span class="ic">☎</span><span>Calls &amp; texts</span></button>
       <button data-v="campaigns"><span class="ic">↻</span><span>Campaigns</span></button>
       <button data-v="growth"><span class="ic">◈</span><span>Growth</span></button>
       <button data-v="sync"><span class="ic">⇄</span><span>Data sync</span></button>
@@ -436,6 +437,27 @@ tbody tr:hover{background:#FAFBFD}
         </div></div>
     </section>
 
+    <section class="view" id="v-calls">
+      <div class="kpis" id="lsKpis" style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px"></div>
+      <div style="display:grid;grid-template-columns:1.2fr .8fr;gap:12px">
+        <div class="panel"><div class="head"><h2>Call log</h2><div class="spacer"></div>
+          <span class="chip g" id="lsSyncChip">Lightspeed · synced</span>
+          <button class="btn blue sm" onclick="lsSync()">Sync now</button></div>
+          <div class="body" style="padding:0;overflow:auto;max-height:430px"><table class="tbl" id="lsCalls"></table></div></div>
+        <div class="panel"><div class="head"><h2>Recording &amp; transcript</h2><div class="spacer"></div><span class="chip n" id="lsAttachChip">on the client file</span></div>
+          <div class="body" id="lsTranscript" style="max-height:430px;overflow:auto"></div></div>
+      </div>
+      <div class="panel" style="padding:0;margin-top:12px"><div class="chatgrid">
+        <div class="mcol" style="padding:8px;max-width:280px"><div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:6px">Text threads</div><div id="lsThreads"></div></div>
+        <div class="mcol" style="padding:0"><div style="padding:10px 12px;border-bottom:1px solid var(--line);font-weight:700" id="lsThreadHead">Select a thread</div>
+          <div id="lsConvo" style="padding:12px;max-height:320px;overflow:auto"></div>
+          <div style="display:flex;gap:6px;padding:8px 10px;border-top:1px solid var(--line)">
+            <input id="lsInput" placeholder="Text message via Lightspeed" style="flex:1;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit" onkeydown="if(event.key==='Enter')lsSend()">
+            <button class="btn ghost sm" onclick="lsTemplate()">Template</button>
+            <button class="btn blue sm" onclick="lsSend()">Send</button></div></div>
+      </div></div>
+      <div class="panel" style="margin-top:12px"><div class="head"><h2>Lightspeed connection</h2></div><div class="body" id="lsConn"></div></div>
+    </section>
     <section class="view" id="v-messages">
       <div class="panel"><div class="head"><h2>Team presence</h2><div class="spacer"></div><span class="chip g">5 online</span>
         <button class="btn blue sm" onclick="startCall('Team huddle')">Start video call</button></div>
@@ -966,7 +988,8 @@ const NAV={dash:['Dashboard','Book of business at a glance'],leads:['Leads','Wor
   payments:['Payments','Who owes what, and how it gets collected'],
   commissions:['Commissions','Carrier statements reconciled against the book'],
   tasks:['Tasks','Who does what, and who covers'],
-  access:['Users and access','Who can see what at Cardinal'],team:['Team performance','Every producer against goal, month and year'],email:['Email','Every client, carrier and portal thread in one inbox'],messages:['Messages','Team chat, huddles and video in one room'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier']};
+  access:['Users and access','Who can see what at Cardinal'],team:['Team performance','Every producer against goal, month and year'],email:['Email','Every client, carrier and portal thread in one inbox'],messages:['Messages','Team chat, huddles and video in one room'],campaigns:['Campaigns','Sequences that run without being remembered'],growth:['Growth','Where the money goes and what it returns'],sync:['Data sync','EZLynx, carriers and the website'],security:['Security','How client data is protected'],brand:['Projections','What the service earns per tier'],
+  calls:['Calls &amp; texts','Lightspeed: recorded, transcribed and attached to every file']};
 const byId=id=>CLIENTS.find(c=>c.id===id);
 const polsOf=id=>POLICIES.filter(p=>p.clientId===id);
 const premOf=id=>polsOf(id).reduce((s,p)=>s+p.premium,0);
@@ -986,7 +1009,7 @@ function go(v){
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   document.getElementById('ttl').textContent=NAV[v][0];
   document.getElementById('sub').textContent=NAV[v][1];
-  const R={dash:renderDash,leads:renderLeads,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,claims:renderClaims,payments:renderPayments,commissions:renderComms,tasks:renderTasks,email:renderEmail,access:renderAccess,team:renderTeam,messages:renderMessages,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
+  const R={dash:renderDash,leads:renderLeads,clients:renderClients,quotes:renderQuotes,policies:renderPolicies,claims:renderClaims,payments:renderPayments,commissions:renderComms,tasks:renderTasks,email:renderEmail,access:renderAccess,team:renderTeam,messages:renderMessages,calls:renderCalls,campaigns:renderCampaigns,growth:renderGrowth,sync:renderSync,security:renderSecurity,brand:renderProjections};
   if(R[v])R[v]();
 }
 function quickSearch(v){
@@ -994,6 +1017,193 @@ function quickSearch(v){
   if(!q)return;
   const hit=CLIENTS.find(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q)||polsOf(c.id).some(p=>p.policy.toLowerCase().includes(q)));
   if(hit){go('clients');openClient(hit.id);}
+}
+
+
+/* ---------- Lightspeed: calls, recordings, transcripts, texting ---------- */
+const LS_ACCOUNT = { email: 'john@cardinalinsurancegrp.com', platform: 'Lightspeed Voice', status: 'connected', lastSync: 'just now', number: 'Main line · Gilbert office' };
+const LS_CALLS = [
+  { c:0, dir:'out', by:'Jacobo M.', at:'Today 9:42', dur:'4:18', out:'Quoted',
+    sum:'Re-shopped auto and home after the Safeco increase. Client agreed to a $340 lower annual premium and asked to add roadside before binding.',
+    keys:['Premium down $340','Roadside added','Bind Thursday'],
+    turns:[['Producer','Morning Jill, it is Jacobo at Cardinal. I re-ran the auto with the new mileage and I have two carriers that beat the increase.','0:00'],
+           ['Client','The Safeco renewal went up almost four hundred. What did you find?','0:22'],
+           ['Producer','Nationwide is $1,240 for the same limits and Travelers is $1,180 if we move the home too. Both keep your deductible where it is.','0:41'],
+           ['Client','Move both. Can we add roadside for my daughter?','2:05'],
+           ['Producer','Yes, sixteen dollars a month. I will send the summary and we bind Thursday.','2:31']]},
+  { c:3, dir:'in', by:'Dana R.', at:'Today 8:57', dur:'2:04', out:'Callback set',
+    sum:'Inbound question about a payment that did not post. Confirmed autopay date and moved the draft to the 3rd.',
+    keys:['Payment date moved','No lapse risk'],
+    turns:[['Client','I see a late notice but the money is in the account.','0:00'],
+           ['Producer','Autopay was set for the 1st and the bank declined it once. I can move the draft to the 3rd, no lapse.','0:18'],
+           ['Client','Do that and text me the confirmation.','1:40'],
+           ['Producer','Sending it now. You will get a text in a minute.','1:52']]},
+  { c:1, dir:'out', by:'Jacobo M.', at:'Yesterday 4:20', dur:'6:51', out:'Quote sent',
+    sum:'Reviewed the commercial auto schedule, added the new box truck and flagged the driver on the policy who no longer works there.',
+    keys:['Box truck added','Excluded driver'],
+    turns:[['Producer','Marcus, I have the new truck added but the schedule still lists Delgado and he left in March.','0:00'],
+           ['Client','Take him off, he has his own policy now.','1:12'],
+           ['Producer','Done. That drops the premium about two hundred a year. Quote goes out tonight.','1:30'],
+           ['Client','Good. Send it.','6:20']]},
+  { c:5, dir:'out', by:'Andrés W.', at:'Yesterday 11:05', dur:'0:38', out:'No answer',
+    sum:'No answer, left a voicemail about the renewal packet. Text follow-up queued automatically.',
+    keys:['Voicemail left','Text queued'],
+    turns:[['Producer','Hi, this is Andrés with Cardinal calling about your renewal packet, give me a call back at the office.','0:00']]},
+  { c:7, dir:'in', by:'Dana R.', at:'Yesterday 9:31', dur:'3:27', out:'Claim filed',
+    sum:'Reported a kitchen water loss. Claim opened with the carrier on the call, adjuster assigned and a restoration referral texted.',
+    keys:['Claim opened','Adjuster assigned'],
+    turns:[['Client','My dishwasher leaked and the floor is soaked.','0:00'],
+           ['Producer','Is the water shut off? Good. I am opening the claim while we talk so you do not repeat yourself.','0:20'],
+           ['Client','What is my deductible on this one?','1:35'],
+           ['Producer','Two thousand, and the adjuster will call within one business day.','1:48']]},
+  { c:2, dir:'out', by:'Andrés W.', at:'Mon 2:14', dur:'5:02', out:'Quoted',
+    sum:'Life cross-sell on the mortgage refinance. Client wants the term matched to the new loan and a beneficiary change.',
+    keys:['Term matched','Beneficiary update'],
+    turns:[['Producer','You mentioned the refinance closed, so the term should match the new thirty years.','0:00'],
+           ['Client','Can we keep the payment under a hundred?','2:20'],
+           ['Producer','At your age a hundred and ten gets the full amount. I will show both.','2:34']]},
+  { c:9, dir:'in', by:'Jacobo M.', at:'Mon 10:48', dur:'1:44', out:'Info only',
+    sum:'Certificate of insurance request from a property manager. Certificate generated on the call and emailed while the client waited.',
+    keys:['COI generated','Emailed on call'],
+    turns:[['Client','The property manager needs the certificate today.','0:00'],
+           ['Producer','Generating it now, additional insured listed as the management company.','0:15'],
+           ['Client','Perfect, that is what they asked for.','1:30']]},
+  { c:11, dir:'out', by:'Dana R.', at:'Mon 8:12', dur:'2:58', out:'Renewal saved',
+    sum:'Cancellation call turned into a save. Client was going to non-renew over price, we moved the deductible and kept the policy.',
+    keys:['Saved $610','Deductible moved'],
+    turns:[['Client','I am going to let it lapse, the price is too high.','0:00'],
+           ['Producer','Before you do, moving the deductible from one thousand to twenty-five hundred saves six hundred and ten a year.','0:25'],
+           ['Client','Do that and keep the policy.','2:10']]}
+];
+const LS_THREADS = [
+  { c:0, msgs:[['in','Is the roadside on the new quote or extra?','9:51'],['out','It is sixteen a month, already in the total I sent.','9:53'],['in','Perfect, bind it Thursday.','9:54']]},
+  { c:3, msgs:[['out','Draft moved to the 3rd. Confirmation number 8841. No lapse.','8:59'],['in','Got it, thank you.','9:04']]},
+  { c:5, msgs:[['out','Hi, tried you about the renewal packet. Reply here and I will send the two options.','11:06']]},
+  { c:1, msgs:[['out','Delgado is off the schedule. New quote is $340 lower for the year.','16:32'],['in','Send the dec page when it is bound.','17:02'],['out','Will do, binding Friday.','17:03']]}
+];
+let LS_SEL = 0, LS_THREAD = 0, LS_TIMER = null;
+
+function lsClient(i){ return CLIENTS[i] || CLIENTS[0]; }
+function renderCalls(){
+  const total = LS_CALLS.length;
+  const answered = LS_CALLS.filter(c=>c.out!=='No answer').length;
+  const mins = LS_CALLS.reduce((a,c)=>a + (parseInt(c.dur.split(':')[0])||0), 0);
+  const texts = LS_THREADS.reduce((a,t)=>a + t.msgs.filter(m=>m[0]==='out').length, 0);
+  const replies = LS_THREADS.filter(t=>t.msgs.some(m=>m[0]==='in')).length;
+  const kpi = (k,v,s2)=>`<div class="kpi" style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px"><div class="k" style="font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:800">${k}</div><div class="v" style="font-size:20px;font-weight:800;margin-top:4px">${v}</div><div class="s" style="font-size:11px;color:var(--muted)">${s2}</div></div>`;
+  document.getElementById('lsKpis').innerHTML =
+    kpi('Calls logged', total, 'last 7 days') +
+    kpi('Connect rate', Math.round(answered/total*100)+'%', answered+' of '+total+' answered') +
+    kpi('Talk time', mins+' min', 'avg '+(mins/total).toFixed(1)+' min') +
+    kpi('Texts sent', texts, replies+' threads with replies') +
+    kpi('Recordings', total, '100% transcribed') +
+    kpi('Attached to files', total, 'zero manual filing');
+
+  document.getElementById('lsCalls').innerHTML =
+    `<thead><tr><th>When</th><th>Client</th><th>Dir</th><th>By</th><th class="num">Dur</th><th>Outcome</th><th></th></tr></thead><tbody>` +
+    LS_CALLS.map((c,i)=>{ const cl=lsClient(c.c); return `<tr onclick="lsOpenCall(${i})" style="cursor:pointer;${i===LS_SEL?'background:#F6F9FF':''}">
+      <td style="font-size:11.5px;white-space:nowrap">${c.at}</td>
+      <td style="font-weight:600">${cl.name}</td>
+      <td><span class="chip ${c.dir==='in'?'g':'n'}">${c.dir==='in'?'In':'Out'}</span></td>
+      <td style="font-size:11.5px">${c.by}</td>
+      <td class="num">${c.dur}</td>
+      <td style="font-size:11.5px">${c.out}</td>
+      <td><button class="btn ghost sm" onclick="event.stopPropagation();lsOpenCall(${i})">Open</button></td></tr>`;}).join('') + '</tbody>';
+
+  lsOpenCall(LS_SEL);
+  document.getElementById('lsThreads').innerHTML = LS_THREADS.map((t,i)=>{
+    const cl=lsClient(t.c); const last=t.msgs[t.msgs.length-1];
+    return `<div onclick="lsSelectThread(${i})" style="cursor:pointer;padding:9px 10px;border-radius:9px;margin-bottom:6px;background:${i===LS_THREAD?'#F1F6FF':'#fff'};border:1px solid ${i===LS_THREAD?'#C9DBFB':'var(--line)'}">
+      <div style="font-weight:700;font-size:12.5px">${cl.name}</div>
+      <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last[1]}</div></div>`;}).join('');
+
+  const acct = LS_ACCOUNT;
+  document.getElementById('lsConn').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div class="kpi" style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px"><div class="k" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800">Platform</div><div class="v" style="font-weight:700;margin-top:4px">${acct.platform}</div><div class="s" style="font-size:11px;color:var(--muted)">${acct.number}</div></div>
+      <div class="kpi" style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px"><div class="k" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800">Account</div><div class="v" style="font-weight:700;margin-top:4px;font-size:13px">${acct.email}</div><div class="s" style="font-size:11px;color:var(--muted)"><span class="chip g">connected</span> last sync ${acct.lastSync}</div></div>
+      <div class="kpi" style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px"><div class="k" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800">What syncs</div><div class="v" style="font-size:12.5px;margin-top:4px;line-height:1.5">Recordings · transcripts · texts · call KPIs</div><div class="s" style="font-size:11px;color:var(--muted)">every 5 minutes</div></div>
+    </div>
+    <div class="note" style="margin-top:10px"><b>Credentials stay server side.</b> The Lightspeed login is held in the encrypted vault and used by the sync worker. It is never written into this page, a shared link or an export, so the account cannot be lifted from the browser.</div>`;
+  lsSelectThread(LS_THREAD);
+}
+
+function lsOpenCall(i){
+  LS_SEL = i; const c = LS_CALLS[i], cl = lsClient(c.c);
+  const turns = c.turns.map(t=>`<div style="margin-bottom:9px"><div style="font-size:10.5px;font-weight:800;color:${t[0]==='Producer'?'#046DCD':'#8A6A12'};letter-spacing:.05em;text-transform:uppercase">${t[0]} <span style="color:var(--muted);font-weight:600">${t[2]}</span></div><div style="font-size:12.5px;line-height:1.5;margin-top:2px">${t[1]}</div></div>`).join('');
+  document.getElementById('lsTranscript').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <button class="btn blue sm" id="lsPlayBtn" onclick="lsPlay()">▶ Play</button>
+      <div style="flex:1;height:6px;background:#EDF1F7;border-radius:99px;overflow:hidden"><div id="lsProg" style="height:100%;width:0;background:#046DCD"></div></div>
+      <span style="font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums" id="lsTime">0:00 / ${c.dur}</span>
+    </div>
+    <div style="font-size:11.5px;color:var(--muted);margin-bottom:10px">${cl.name} · ${c.at} · ${c.by} · ${c.dir==='in'?'inbound':'outbound'} · ${c.dur}</div>
+    <div class="note" style="margin-bottom:10px"><b>Summary:</b> ${c.sum}</div>
+    <div style="margin-bottom:10px">${c.keys.map(k=>`<span class="chip a" style="margin:0 4px 4px 0">${k}</span>`).join('')}</div>
+    ${turns}
+    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn ghost sm" onclick="openClient('${cl.id}')">Open client file</button><button class="btn ghost sm" onclick="toast('Transcript attached to '+${JSON.stringify(cl.name)})">Attach to file</button></div>`;
+  const rows = document.querySelectorAll('#lsCalls tbody tr');
+  rows.forEach((r,k)=>r.style.background = k===i ? '#F6F9FF' : '');
+}
+
+function lsPlay(){
+  const prog = document.getElementById('lsProg'), btn = document.getElementById('lsPlayBtn');
+  const c = LS_CALLS[LS_SEL]; const parts = c.dur.split(':').map(Number); const total = parts[0]*60 + (parts[1]||0);
+  if(LS_TIMER){ clearInterval(LS_TIMER); LS_TIMER = null; btn.textContent = '▶ Play'; return; }
+  btn.textContent = '❚❚ Pause';
+  let t = 0;
+  LS_TIMER = setInterval(()=>{
+    t += 1; const p = Math.min(100, t/total*100);
+    prog.style.width = p + '%';
+    document.getElementById('lsTime').textContent = Math.floor(t/60)+':'+String(t%60).padStart(2,'0')+' / '+c.dur;
+    if(t>=total){ clearInterval(LS_TIMER); LS_TIMER=null; btn.textContent='▶ Play'; }
+  }, 220);
+}
+
+function lsSelectThread(i){
+  LS_THREAD = i; const t = LS_THREADS[i]; if(!t) return; const cl = lsClient(t.c);
+  document.getElementById('lsThreadHead').innerHTML = `${cl.name} <span style="font-weight:500;color:var(--muted);font-size:12px">· ${cl.phone} · Lightspeed number</span>`;
+  document.getElementById('lsConvo').innerHTML = t.msgs.map(m=>`<div style="display:flex;justify-content:${m[0]==='out'?'flex-end':'flex-start'};margin-bottom:7px"><div style="max-width:78%;padding:8px 11px;border-radius:12px;font-size:12.5px;line-height:1.45;background:${m[0]==='out'?'#046DCD':'#F1F3F7'};color:${m[0]==='out'?'#fff':'#1B2333'}">${m[1]}<div style="font-size:10px;opacity:.7;margin-top:3px">${m[2]}</div></div></div>`).join('');
+  const list = document.getElementById('lsThreads').children;
+  for(let k=0;k<list.length;k++){ const on = k===i; list[k].style.background = on?'#F1F6FF':'#fff'; list[k].style.borderColor = on?'#C9DBFB':'var(--line)'; }
+}
+
+function lsSend(){
+  const inp = document.getElementById('lsInput'); const v = (inp.value||'').trim(); if(!v) return;
+  const t = LS_THREADS[LS_THREAD];
+  t.msgs.push(['out', v, new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})]);
+  inp.value = ''; lsSelectThread(LS_THREAD);
+  toast('Text sent via Lightspeed to ' + lsClient(t.c).name);
+}
+
+function lsTemplate(){
+  const inp = document.getElementById('lsInput');
+  inp.value = 'Hi {first}, your renewal lands soon. I re-shopped it and have two options before it auto-renews. Want me to send them over?';
+  inp.focus(); toast('SMS template inserted');
+}
+
+function lsSync(){
+  const chip = document.getElementById('lsSyncChip');
+  chip.textContent = 'Lightspeed · syncing'; chip.className = 'chip a';
+  toast('Pulling recordings, transcripts and texts from Lightspeed');
+  setTimeout(()=>{ chip.textContent = 'Lightspeed · synced just now'; chip.className='chip g'; LS_ACCOUNT.lastSync='just now'; renderCalls(); toast('Sync complete · ' + LS_CALLS.length + ' calls, ' + LS_THREADS.length + ' threads'); }, 1200);
+}
+
+function drawerCalls(c){
+  const calls = LS_CALLS.filter(x=>lsClient(x.c).id===c.id);
+  const th = LS_THREADS.find(t=>lsClient(t.c).id===c.id);
+  let out = `<div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:6px">Calls on file</div>`;
+  out += calls.length ? calls.map(c2=>{
+    const i = LS_CALLS.indexOf(c2);
+    return `<div style="border:1px solid var(--line);border-radius:9px;padding:9px 10px;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;font-size:12px"><b>${c2.at}</b><span style="color:var(--muted)">${c2.dir==='in'?'Inbound':'Outbound'} · ${c2.dur} · ${c2.by}</span></div>
+      <div style="font-size:11.5px;color:var(--muted);margin:4px 0 6px">${c2.out} · ${c2.keys.join(' · ')}</div>
+      <button class="btn ghost sm" onclick="go('calls');lsOpenCall(${i})">Recording &amp; transcript</button></div>`;}).join('')
+    : '<div class="note">No calls logged yet. Lightspeed adds every recording and transcript here automatically.</div>';
+  out += `<div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:12px 0 6px">Text thread</div>`;
+  out += th ? th.msgs.map(m=>`<div style="display:flex;justify-content:${m[0]==='out'?'flex-end':'flex-start'};margin-bottom:5px"><div style="max-width:80%;padding:7px 10px;border-radius:11px;font-size:12px;background:${m[0]==='out'?'#046DCD':'#F1F3F7'};color:${m[0]==='out'?'#fff':'#1B2333'}">${m[1]}</div></div>`).join('')
+    : '<div class="note">No texts yet.</div>';
+  return out;
 }
 
 /* ---------- dashboard ---------- */
@@ -1060,7 +1270,7 @@ function renderDrawer(){
     <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${c.type==='business'?'Business account':'Household'} · ${c.city} ${c.zip} · client since ${c.since}</div>
     <div style="margin-top:6px"><span class="chip ${c.tag==='due'?'r':c.tag==='renewing'?'a':'g'}">${c.tag||'current'}</span> <span class="chip n">${c.owner}</span></div></div>
     <button class="btn sm ghost" onclick="closeDrawer()">Close</button>`;
-  const tabs=[['overview','Overview'],['policies','Policies'],['docs','Documents'],['claims','Claims'],['activity','Activity']];
+  const tabs=[['overview','Overview'],['policies','Policies'],['docs','Documents'],['claims','Claims'],['activity','Activity'],['calls','Calls &amp; texts']];
   let body=`<div class="tabs">${tabs.map(t=>`<button class="${DRAWER_TAB===t[0]?'on':''}" onclick="setDrawerTab('${t[0]}')">${t[1]}</button>`).join('')}</div>`;
   if(DRAWER_TAB==='overview'){
     body+=`<div class="grid2">
@@ -1097,6 +1307,7 @@ function renderDrawer(){
     });
     body+=`</div></div>`;
   }
+  if(DRAWER_TAB==='calls'){ body+=drawerCalls(c); }
   if(DRAWER_TAB==='claims'){
     body+=cl.length?`<table><thead><tr><th>Carrier</th><th>Loss</th><th>Date</th><th class="num">Reserve</th><th class="num">Paid</th><th>Status</th></tr></thead><tbody>`+
       cl.map(x=>`<tr><td>${x.carrier}</td><td>${x.type}<div style="font-size:11px;color:var(--muted)">adjuster ${x.adjuster}</div></td><td>${x.date}</td><td class="num">${money(x.reserve)}</td><td class="num">${money(x.paid)}</td><td><span class="chip ${x.status==='closed'?'g':'a'}">${x.status}</span></td></tr>`).join('')+`</tbody></table>`
@@ -1554,7 +1765,7 @@ function renderDrawer(){
     <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${c.type==='business'?'Business account':'Household'} · ${c.city} ${c.zip} · client since ${c.since}</div>
     <div style="margin-top:6px"><span class="chip ${c.tag==='due'?'r':c.tag==='renewing'?'a':'g'}">${c.tag||'current'}</span> <span class="chip n">${c.owner}</span></div></div>
     <button class="btn sm ghost" onclick="closeDrawer()">Close</button>`;
-  const tabs=[['overview','Overview'],['policies','Policies'],['docs','Documents'],['claims','Claims'],['activity','Activity']];
+  const tabs=[['overview','Overview'],['policies','Policies'],['docs','Documents'],['claims','Claims'],['activity','Activity'],['calls','Calls &amp; texts']];
   let body=`<div class="tabs">${tabs.map(t=>`<button class="${DRAWER_TAB===t[0]?'on':''}" onclick="setDrawerTab('${t[0]}')">${t[1]}</button>`).join('')}</div>`;
   if(DRAWER_TAB==='overview'){
     body+=`<div class="grid2">
@@ -1596,6 +1807,7 @@ function renderDrawer(){
     });
     body+=`</div></div>`;
   }
+  if(DRAWER_TAB==='calls'){ body+=drawerCalls(c); }
   if(DRAWER_TAB==='claims'){
     body+=cl.length?`<table><thead><tr><th>Carrier</th><th>Loss</th><th>Date</th><th class="num">Reserve</th><th class="num">Paid</th><th>Status</th><th></th></tr></thead><tbody>`+
       cl.map(x=>`<tr><td>${x.carrier}</td><td>${x.type}<div style="font-size:11px;color:var(--muted)">adjuster ${x.adjuster}</div></td><td>${x.date}</td><td class="num">${money(x.reserve)}</td><td class="num">${money(x.paid)}</td><td><span class="chip ${x.status==='closed'?'g':'a'}">${x.status}</span></td><td><button class="btn sm ghost" onclick="claimDetail('${x.id}')">Open</button></td></tr>`).join('')+`</tbody></table>`
